@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';">
+  <title>UnMarket</title>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1 class="logo">UnMarket</h1>
+        <span class="version">v0.1.0</span>
+      </div>
+
+      <nav class="nav">
+        <a href="#" class="nav-item active" data-page="products">
+          <span class="nav-icon">📦</span>
+          <span class="nav-text">Products</span>
+        </a>
+        <a href="#" class="nav-item" data-page="publish">
+          <span class="nav-icon">🚀</span>
+          <span class="nav-text">Publish</span>
+        </a>
+        <a href="#" class="nav-item" data-page="accounts">
+          <span class="nav-icon">👤</span>
+          <span class="nav-text">Accounts</span>
+        </a>
+        <a href="#" class="nav-item" data-page="stats">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">Statistics</span>
+        </a>
+        <a href="#" class="nav-item" data-page="settings">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-text">Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="status-indicator" id="browserStatus">
+          <span class="status-dot"></span>
+          <span class="status-text">Checking...</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Products Page -->
+      <div class="page active" id="page-products">
+        <header class="page-header">
+          <h2>Products</h2>
+          <button class="btn btn-primary" id="btnAddProduct">
+            <span>+ Add Product</span>
+          </button>
+        </header>
+
+        <div class="products-grid" id="productsGrid">
+          <!-- Products will be loaded here -->
+        </div>
+
+        <!-- Empty state -->
+        <div class="empty-state" id="emptyProducts" style="display: none;">
+          <div class="empty-icon">📦</div>
+          <h3>No products yet</h3>
+          <p>Add your first product to start marketing globally</p>
+          <button class="btn btn-primary" id="btnAddProductEmpty">Add Product</button>
+        </div>
+      </div>
+
+      <!-- Publish Page -->
+      <div class="page" id="page-publish">
+        <header class="page-header">
+          <h2>Publish Content</h2>
+        </header>
+
+        <div class="publish-container">
+          <div class="publish-sidebar">
+            <div class="form-group">
+              <label>Select Product</label>
+              <select id="publishProduct" class="select">
+                <option value="">Choose a product...</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Platforms</label>
+              <div class="checkbox-group" id="platformsGroup">
+                <label class="checkbox"><input type="checkbox" value="twitter" checked> Twitter</label>
+                <label class="checkbox"><input type="checkbox" value="linkedin" checked> LinkedIn</label>
+                <label class="checkbox"><input type="checkbox" value="reddit"> Reddit</label>
+                <label class="checkbox"><input type="checkbox" value="hackernews"> Hacker News</label>
+                <label class="checkbox"><input type="checkbox" value="producthunt"> Product Hunt</label>
+                <label class="checkbox"><input type="checkbox" value="devto"> Dev.to</label>
+                <label class="checkbox"><input type="checkbox" value="facebook"> Facebook</label>
+                <label class="checkbox"><input type="checkbox" value="weibo"> Weibo</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Languages</label>
+              <div class="checkbox-group" id="languagesGroup">
+                <label class="checkbox"><input type="checkbox" value="en" checked> English</label>
+                <label class="checkbox"><input type="checkbox" value="zh" checked> Chinese</label>
+                <label class="checkbox"><input type="checkbox" value="ja"> Japanese</label>
+                <label class="checkbox"><input type="checkbox" value="ko"> Korean</label>
+                <label class="checkbox"><input type="checkbox" value="de"> German</label>
+                <label class="checkbox"><input type="checkbox" value="fr"> French</label>
+                <label class="checkbox"><input type="checkbox" value="es"> Spanish</label>
+                <label class="checkbox"><input type="checkbox" value="ru"> Russian</label>
+              </div>
+            </div>
+
+            <button class="btn btn-primary btn-full" id="btnGenerate">
+              Generate Content
+            </button>
+          </div>
+
+          <div class="publish-preview">
+            <div class="preview-header">
+              <h3>Content Preview</h3>
+              <div class="preview-tabs" id="previewTabs">
+                <!-- Tabs will be generated dynamically -->
+              </div>
+            </div>
+            <div class="preview-content" id="previewContent">
+              <div class="preview-placeholder">
+                <p>Select a product and generate content to preview</p>
+              </div>
+            </div>
+            <div class="preview-actions">
+              <button class="btn btn-secondary" id="btnSimulate">Simulate</button>
+              <button class="btn btn-primary" id="btnPublish" disabled>Publish All</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accounts Page -->
+      <div class="page" id="page-accounts">
+        <header class="page-header">
+          <h2>Platform Accounts</h2>
+          <button class="btn btn-primary" id="btnAddAccount">
+            <span>+ Add Account</span>
+          </button>
+        </header>
+
+        <!-- Auto Registration Section -->
+        <section class="settings-section" style="margin-bottom: 20px;">
+          <h3>🤖 Auto-Register (via Unzoo)</h3>
+          <div class="gmail-status" id="gmailStatus" style="margin-bottom: 15px;">
+            <span class="status-badge" id="gmailBadge">Checking...</span>
+            <span id="gmailEmail"></span>
+          </div>
+          <div class="form-group">
+            <button class="btn btn-secondary" id="btnSetupGmail">Connect Gmail</button>
+          </div>
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <label style="margin-bottom: 0;">Select Platforms <span class="text-muted">(📱 = phone, 🔗 = Google OAuth)</span></label>
+              <div class="btn-group">
+                <button class="btn btn-small btn-secondary" id="btnSelectAll">Select All</button>
+                <button class="btn btn-small btn-secondary" id="btnDeselectAll">Deselect All</button>
+              </div>
+            </div>
+            <div id="registerPlatforms" style="max-height: 350px; overflow-y: auto; padding-right: 10px;">
+              <!-- Platforms will be loaded dynamically -->
+            </div>
+          </div>
+          <button class="btn btn-primary" id="btnAutoRegister" disabled>
+            Auto-Login/Register Selected
+          </button>
+          <div class="register-progress" id="registerProgress" style="display: none; margin-top: 15px;">
+            <!-- Progress will be shown here -->
+          </div>
+        </section>
+
+        <h3 style="margin-bottom: 15px;">Existing Accounts</h3>
+        <div class="accounts-list" id="accountsList">
+          <!-- Accounts will be loaded here -->
+        </div>
+
+        <div class="empty-state" id="emptyAccounts" style="display: none;">
+          <div class="empty-icon">👤</div>
+          <h3>No accounts configured</h3>
+          <p>Use auto-register or add accounts manually</p>
+          <button class="btn btn-primary" id="btnAddAccountEmpty">Add Manually</button>
+        </div>
+      </div>
+
+      <!-- Stats Page -->
+      <div class="page" id="page-stats">
+        <header class="page-header">
+          <h2>Statistics</h2>
+        </header>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="statPosts">0</div>
+            <div class="stat-label">Total Posts</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statViews">0</div>
+            <div class="stat-label">Total Views</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statEngagements">0</div>
+            <div class="stat-label">Engagements</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statRate">0%</div>
+            <div class="stat-label">Engagement Rate</div>
+          </div>
+        </div>
+
+        <div class="stats-details">
+          <h3>Platform Performance</h3>
+          <div class="platform-stats" id="platformStats">
+            <p class="text-muted">No data available yet</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Page -->
+      <div class="page" id="page-settings">
+        <header class="page-header">
+          <h2>Settings</h2>
+        </header>
+
+        <div class="settings-container">
+          <!-- AI Configuration -->
+          <section class="settings-section">
+            <h3>AI Configuration</h3>
+            <div class="form-group">
+              <label>AI Provider</label>
+              <select id="aiProvider" class="select">
+                <option value="openrouter">OpenRouter (多模型) ⭐推荐</option>
+                <option value="anthropic">Anthropic (Claude)</option>
+                <option value="openai">OpenAI (GPT)</option>
+                <option value="google">Google (Gemini)</option>
+                <option value="deepseek">DeepSeek (便宜)</option>
+                <option value="qwen">Alibaba (Qwen)</option>
+                <option value="glm">Zhipu (GLM)</option>
+                <option value="kimi">Moonshot (Kimi)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Model</label>
+              <select id="aiModel" class="select">
+                <!-- Models will be populated based on provider -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label>API Key / Session Key</label>
+              <input type="password" id="aiApiKey" class="input" placeholder="Enter your API key">
+              <p class="text-muted" id="apiKeyHelp" style="font-size: 12px; margin-top: 5px;"></p>
+            </div>
+            <button class="btn btn-primary" id="btnSaveAI">Save AI Settings</button>
+            <span class="save-status" id="aiSaveStatus"></span>
+          </section>
+
+          <!-- Browser Configuration -->
+          <section class="settings-section">
+            <h3>Browser (Unzoo)</h3>
+            <div class="browser-status-detail" id="browserStatusDetail">
+              <span class="status-badge">Checking...</span>
+            </div>
+            <div class="form-group">
+              <label>Unzoo Path</label>
+              <input type="text" id="unzooPath" class="input" readonly>
+            </div>
+          </section>
+
+          <!-- Scheduler Configuration -->
+          <section class="settings-section">
+            <h3>Scheduler</h3>
+            <div class="form-group">
+              <label>Mode</label>
+              <select id="schedulerMode" class="select">
+                <option value="round-robin">Round Robin</option>
+                <option value="weighted">Weighted</option>
+                <option value="priority">Priority</option>
+                <option value="smart">Smart (AI-based)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Interval (minutes)</label>
+              <input type="number" id="schedulerInterval" class="input" value="60" min="5">
+            </div>
+            <div class="form-group">
+              <label>Max Daily Posts</label>
+              <input type="number" id="schedulerMaxPosts" class="input" value="50" min="1">
+            </div>
+            <button class="btn btn-primary" id="btnSaveScheduler">Save Scheduler Settings</button>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add Product Modal -->
+  <div class="modal" id="modalAddProduct">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add Product</h3>
+        <button class="modal-close" data-close>&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="tabs">
+          <button class="tab active" data-tab="manual">Manual Entry</button>
+          <button class="tab" data-tab="analyze">Analyze URL</button>
+        </div>
+
+        <div class="tab-content active" id="tab-manual">
+          <div class="form-group">
+            <label>Product Name *</label>
+            <input type="text" id="productName" class="input" placeholder="e.g., My Awesome Tool">
+          </div>
+          <div class="form-group">
+            <label>URL *</label>
+            <input type="url" id="productUrl" class="input" placeholder="https://example.com">
+          </div>
+          <div class="form-group">
+            <label>Tagline</label>
+            <input type="text" id="productTagline" class="input" placeholder="One-line description">
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="productDescription" class="input" rows="3" placeholder="Detailed description"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Type</label>
+              <select id="productType" class="select">
+                <option value="tool">Tool</option>
+                <option value="saas">SaaS</option>
+                <option value="app">App</option>
+                <option value="service">Service</option>
+                <option value="library">Library</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Priority</label>
+              <input type="number" id="productPriority" class="input" value="5" min="0" max="10">
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="tab-analyze">
+          <div class="form-group">
+            <label>Product URL</label>
+            <input type="url" id="analyzeUrl" class="input" placeholder="https://example.com">
+          </div>
+          <p class="text-muted">We'll analyze the URL and automatically extract product information.</p>
+          <button class="btn btn-secondary btn-full" id="btnAnalyze">
+            <span class="loading-spinner" style="display: none;"></span>
+            <span>Analyze URL</span>
+          </button>
+          <div class="analyze-result" id="analyzeResult" style="display: none;">
+            <!-- Analysis result will be shown here -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Cancel</button>
+        <button class="btn btn-primary" id="btnSaveProduct">Save Product</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Account Modal -->
+  <div class="modal" id="modalAddAccount">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add Platform Account</h3>
+        <button class="modal-close" data-close>&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Platform</label>
+          <select id="accountPlatform" class="select">
+            <option value="twitter">Twitter / X</option>
+            <option value="linkedin">LinkedIn</option>
+            <option value="reddit">Reddit</option>
+            <option value="facebook">Facebook</option>
+            <option value="devto">Dev.to</option>
+            <option value="medium">Medium</option>
+            <option value="discord">Discord</option>
+            <option value="telegram">Telegram</option>
+            <option value="mastodon">Mastodon</option>
+            <option value="weibo">Weibo</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Username / Email</label>
+          <input type="text" id="accountUsername" class="input" placeholder="username or email">
+        </div>
+        <div class="form-group">
+          <label>Password / API Key</label>
+          <input type="password" id="accountPassword" class="input" placeholder="password or API key">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Cancel</button>
+        <button class="btn btn-primary" id="btnSaveAccount">Save Account</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="scripts/app.js"></script>
+</body>
+</html>

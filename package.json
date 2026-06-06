@@ -1,0 +1,61 @@
+{
+  "name": "unmarket",
+  "version": "0.1.0",
+  "description": "Global marketing automation tool - Input a product URL, auto-generate multilingual content and publish to 200+ platforms worldwide",
+  "type": "module",
+  "bin": {
+    "unmarket": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:cli": "npm rebuild better-sqlite3 && tsc",
+    "rebuild:node": "npm rebuild better-sqlite3",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "mcp": "node dist/mcp/server.js",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
+    "lint": "eslint src --ext .ts",
+    "test": "vitest"
+  },
+  "keywords": [
+    "marketing",
+    "automation",
+    "product-hunt",
+    "social-media",
+    "global",
+    "ai",
+    "content-generation",
+    "multilingual"
+  ],
+  "author": "UnzooAI",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@tauri-apps/api": "^2.11.0",
+    "better-sqlite3": "^11.1.2",
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "dotenv": "^16.4.5",
+    "keytar": "^7.9.0",
+    "node-cron": "^3.0.3",
+    "node-notifier": "^10.0.1",
+    "ora": "^8.0.1",
+    "pino": "^9.2.0",
+    "pino-pretty": "^11.2.1",
+    "yaml": "^2.4.5"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0",
+    "@types/better-sqlite3": "^7.6.11",
+    "@types/node": "^20.14.10",
+    "@types/node-cron": "^3.0.11",
+    "@types/node-notifier": "^8.0.5",
+    "esbuild": "^0.28.0",
+    "typescript": "^5.5.3",
+    "vitest": "^1.6.0"
+  }
+}

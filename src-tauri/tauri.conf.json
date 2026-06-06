@@ -1,0 +1,57 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "UnMarket",
+  "version": "0.1.0",
+  "identifier": "com.unzooai.unmarket",
+  "build": {
+    "frontendDist": "../dist/tauri",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npx esbuild src/tauri-frontend/app.ts --bundle --outfile=dist/tauri/scripts/app.js",
+    "beforeDevCommand": "npx serve dist/tauri -l 1420 -s"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "UnMarket - Global Marketing Automation",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 900,
+        "minHeight": 600,
+        "resizable": true,
+        "fullscreen": false,
+        "center": true,
+        "visible": true,
+        "focus": true,
+        "decorations": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["msi", "nsis"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "resources": ["resources/mihomo.exe"],
+    "windows": {
+      "wix": null,
+      "nsis": {
+        "installerIcon": "icons/icon.ico",
+        "displayLanguageSelector": true,
+        "languages": ["English", "SimpChinese"]
+      }
+    }
+  },
+  "plugins": {
+    "shell": {
+      "open": true
+    }
+  }
+}

@@ -1,0 +1,20 @@
+# SoloMD AutoGit defaults
+.DS_Store
+Thumbs.db
+desktop.ini
+node_modules/
+.obsidian/workspace*
+.obsidian/cache
+.vscode/
+*.tmp
+*~
+
+# --- UnMarket: Rust / Tauri build artifacts (do NOT commit, huge) ---
+/src-tauri/target/
+/release/
+/src-tauri/gen/
+*.db
+*.db-journal
+*.log
+
+# mihomo.exe (bundled kernel) IS committed intentionally — see src-tauri/resources/

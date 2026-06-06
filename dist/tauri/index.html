@@ -1,0 +1,1939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- CSP disabled for Tauri IPC -->
+  <title>UnMarket</title>
+  <script>
+    console.log('=== WebView IPC Check ===');
+    console.log('chrome.webview:', window.chrome?.webview);
+    console.log('webkit.messageHandlers:', window.webkit?.messageHandlers);
+    console.log('ipc:', window.ipc);
+    // Check all window properties for IPC-related
+    const ipcProps = Object.getOwnPropertyNames(window).filter(k =>
+      k.toLowerCase().includes('ipc') ||
+      k.toLowerCase().includes('tauri') ||
+      k.toLowerCase().includes('invoke') ||
+      k.toLowerCase().includes('message')
+    );
+    console.log('IPC-related properties:', ipcProps);
+  </script>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1 class="logo">UnMarket</h1>
+        <span class="version">v0.1.0</span>
+      </div>
+
+      <nav class="nav">
+        <a href="#" class="nav-item active" data-page="dashboard">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-text">Dashboard</span>
+        </a>
+        <a href="#" class="nav-item" data-page="campaigns">
+          <span class="nav-icon">🎯</span>
+          <span class="nav-text">Campaigns</span>
+        </a>
+        <a href="#" class="nav-item" data-page="products">
+          <span class="nav-icon">📦</span>
+          <span class="nav-text">Products</span>
+        </a>
+        <a href="#" class="nav-item" data-page="publish">
+          <span class="nav-icon">🚀</span>
+          <span class="nav-text">Publish</span>
+        </a>
+        <a href="#" class="nav-item" data-page="articles">
+          <span class="nav-icon">📝</span>
+          <span class="nav-text">Articles</span>
+        </a>
+        <a href="#" class="nav-item" data-page="engage">
+          <span class="nav-icon">💬</span>
+          <span class="nav-text">Engage</span>
+        </a>
+        <a href="#" class="nav-item" data-page="accounts">
+          <span class="nav-icon">👤</span>
+          <span class="nav-text">Accounts</span>
+        </a>
+        <a href="#" class="nav-item" data-page="tasks">
+          <span class="nav-icon">📋</span>
+          <span class="nav-text">Tasks</span>
+        </a>
+        <a href="#" class="nav-item" data-page="content">
+          <span class="nav-icon">📣</span>
+          <span class="nav-text">内容发布</span>
+        </a>
+        <a href="#" class="nav-item" data-page="marketplaces">
+          <span class="nav-icon">🏪</span>
+          <span class="nav-text">市场提交</span>
+        </a>
+        <a href="#" class="nav-item" data-page="metrics">
+          <span class="nav-icon">📈</span>
+          <span class="nav-text">成效追踪</span>
+        </a>
+        <a href="#" class="nav-item" data-page="personas">
+          <span class="nav-icon">🧑‍🤝‍🧑</span>
+          <span class="nav-text">身份隔离</span>
+        </a>
+        <a href="#" class="nav-item" data-page="stats">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">Statistics</span>
+        </a>
+        <a href="#" class="nav-item" data-page="settings">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-text">Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="status-indicator" id="browserStatus">
+          <span class="status-dot"></span>
+          <span class="status-text">Checking...</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Dashboard Page -->
+      <div class="page active" id="page-dashboard">
+        <header class="page-header">
+          <h2>🎛️ 控制台</h2>
+          <button class="btn btn-primary" id="btnAutopilot" style="font-size:15px;">🟢 一键全自动</button>
+        </header>
+
+        <!-- 主状态：自动驾驶 -->
+        <div id="consAutopilot" style="margin:4px 0 12px;"></div>
+
+        <!-- 只在这里需要你（真正的人工项；没有则显示全自动无需操作） -->
+        <div id="consAttention" style="margin:12px 0;"></div>
+
+        <!-- 安全设置：设一次，引擎自动遵守 -->
+        <div class="card" style="padding:14px;margin:12px 0;">
+          <details id="consSafetyDetails">
+            <summary style="cursor:pointer;font-weight:600;">🛡️ 安全设置 <span class="text-muted" style="font-weight:400;font-size:12px;">— 设一次即可，引擎自动遵守，不用每次确认</span></summary>
+            <div style="margin-top:12px;display:grid;gap:10px;">
+              <label style="display:flex;align-items:center;gap:10px;">回复模式
+                <select id="optReplyMode" class="select" style="width:auto;">
+                  <option value="auto">全自动（直接发，无人值守）</option>
+                  <option value="review">半自动（生成后我审核再发）</option>
+                </select>
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" id="optWarmupGate"> 养号期保护（新号先只养号、养熟自动解锁对外）<span class="text-muted" style="font-size:12px;">关掉=新号立刻对外，风险高</span></label>
+              <label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" id="optDryRun"> 演练模式（只跑流程、不真实发布）</label>
+              <label style="display:flex;align-items:center;gap:8px;">意向阈值 <input type="number" id="optIntentMin" min="0" max="100" style="width:70px;padding:4px;"> <span class="text-muted" style="font-size:12px;">低于此分不回复（默认40）</span></label>
+              <label style="display:flex;align-items:center;gap:8px;">安静时段 <input type="number" id="optQuietStart" min="0" max="23" placeholder="始" style="width:55px;padding:4px;"> — <input type="number" id="optQuietEnd" min="0" max="23" placeholder="止" style="width:55px;padding:4px;"> <span class="text-muted" style="font-size:12px;">整点；该时段不对外发（留空=不限）</span></label>
+            </div>
+          </details>
+        </div>
+
+        <!-- 今日自动战果 -->
+        <div class="card" style="padding:14px;margin:12px 0;">
+          <strong>📈 今日自动战果</strong>
+          <div id="consToday" style="margin-top:8px;"></div>
+        </div>
+
+        <!-- 更多页面 -->
+        <div class="card" style="padding:12px;margin:12px 0;">
+          <details>
+            <summary style="cursor:pointer;font-weight:600;">⚙️ 更多 / 高级页面</summary>
+            <div class="btn-group" style="margin-top:10px;flex-wrap:wrap;">
+              <button class="btn btn-small btn-secondary" onclick="navigateTo('tasks')">任务 / 审核 / 养号 / 分析 / 线索</button>
+              <button class="btn btn-small btn-secondary" onclick="navigateTo('marketplaces')">🏪 市场提交</button>
+              <button class="btn btn-small btn-secondary" onclick="navigateTo('campaigns')">推广活动 / 关键词</button>
+              <button class="btn btn-small btn-secondary" onclick="navigateTo('products')">产品</button>
+              <button class="btn btn-small btn-secondary" onclick="navigateTo('accounts')">账号 / 绑定 profile</button>
+              <button class="btn btn-small btn-secondary" onclick="navigateTo('settings')">设置 / AI Key / 全局 profile</button>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- Campaigns Page -->
+      <div class="page" id="page-campaigns">
+        <header class="page-header">
+          <h2 data-i18n="campaigns.title">Campaigns</h2>
+          <button class="btn btn-primary" id="btnCreateCampaign" data-i18n="campaigns.create">+ Create Campaign</button>
+        </header>
+
+        <!-- Campaign Stats -->
+        <div class="campaign-stats">
+          <div class="stat-card mini">
+            <div class="stat-value" id="campaignStatActive">0</div>
+            <div class="stat-label" data-i18n="campaigns.active">Active</div>
+          </div>
+          <div class="stat-card mini">
+            <div class="stat-value" id="campaignStatScheduled">0</div>
+            <div class="stat-label" data-i18n="campaigns.scheduled">Scheduled</div>
+          </div>
+          <div class="stat-card mini">
+            <div class="stat-value" id="campaignStatCompleted">0</div>
+            <div class="stat-label" data-i18n="campaigns.completed">Completed</div>
+          </div>
+          <div class="stat-card mini">
+            <div class="stat-value" id="campaignStatTotalTasks">0</div>
+            <div class="stat-label" data-i18n="campaigns.totalTasks">Total Tasks</div>
+          </div>
+        </div>
+
+        <!-- Campaign Filters -->
+        <div class="campaign-filters">
+          <select class="select" id="campaignFilterStatus">
+            <option value="all">All Status</option>
+            <option value="running">Running</option>
+            <option value="scheduled">Scheduled</option>
+            <option value="paused">Paused</option>
+            <option value="completed">Completed</option>
+            <option value="draft">Draft</option>
+          </select>
+          <select class="select" id="campaignFilterPlatform">
+            <option value="all">All Platforms</option>
+            <option value="twitter">Twitter</option>
+            <option value="reddit">Reddit</option>
+            <option value="linkedin">LinkedIn</option>
+            <option value="zhihu">知乎</option>
+            <option value="weibo">微博</option>
+          </select>
+        </div>
+
+        <!-- Campaign List -->
+        <div class="campaigns-container" id="campaignsList">
+          <div class="empty-state" id="emptyCampaigns">
+            <div class="empty-icon">🎯</div>
+            <h3>No campaigns yet</h3>
+            <p>Create your first marketing campaign to start publishing across platforms</p>
+            <button class="btn btn-primary" onclick="showCreateCampaignModal()">Create Campaign</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Create Campaign Modal -->
+      <div class="modal" id="createCampaignModal">
+        <div class="modal-content modal-large">
+          <div class="modal-header">
+            <h3>Create Campaign</h3>
+            <button class="modal-close" onclick="closeModal('createCampaignModal')">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="campaign-form">
+              <!-- Step 1: Basic Info -->
+              <div class="form-section">
+                <h4>1. Campaign Details</h4>
+                <div class="form-group">
+                  <label>Campaign Name *</label>
+                  <input type="text" id="campaignName" class="input" placeholder="e.g., Product Launch Week 1">
+                </div>
+                <div class="form-group">
+                  <label>Product *</label>
+                  <select id="campaignProduct" class="select">
+                    <option value="">Select a product...</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Description</label>
+                  <textarea id="campaignDescription" class="input" rows="2" placeholder="Campaign goals and notes..."></textarea>
+                </div>
+              </div>
+
+              <!-- Step 2: Platforms -->
+              <div class="form-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                  <h4 style="margin: 0;">2. Target Platforms</h4>
+                  <div style="display: flex; gap: 8px;">
+                    <button type="button" class="btn btn-small btn-secondary" id="btnSelectAllCampaignPlatforms">Select All</button>
+                    <button type="button" class="btn btn-small btn-secondary" id="btnDeselectAllCampaignPlatforms">Deselect All</button>
+                  </div>
+                </div>
+                <p class="form-hint">国际社交</p>
+                <div class="platform-checkboxes">
+                  <label class="checkbox-card">
+                    <input type="checkbox" name="campaignPlatform" value="twitter">
+                    <span class="checkbox-icon">🐦</span>
+                    <span class="checkbox-label">Twitter</span>
+                  </label>
+                  <label class="checkbox-card">
+                    <input type="checkbox" name="campaignPlatform" value="reddit">
+                    <span class="checkbox-icon">🔴</span>
+                    <span class="checkbox-label">Reddit</span>
+                  </label>
+                  <label class="checkbox-card">
+                    <input type="checkbox" name="campaignPlatform" value="linkedin">
+                    <span class="checkbox-icon">💼</span>
+                    <span class="checkbox-label">LinkedIn</span>
+                  </label>
+                  <label class="checkbox-card">
+                    <input type="checkbox" name="campaignPlatform" value="facebook">
+                    <span class="checkbox-icon">📘</span>
+                    <span class="checkbox-label">Facebook</span>
+                  </label>
+                </div>
+                <p class="form-hint">开发者平台</p>
+                <div class="platform-checkboxes">
+                  <label class="checkbox-card">
+                    <input type="checkbox" name="campaignPlatform" value="github">
+                    <span class="checkbox-icon">🐙</span>
+                    <span class="checkbox-label">GitHub</span>
+                  </label>
+                  <label class="checkbox-card">
+                    <input type="checkbox" name="campaignPlatform" value="producthunt">
+                    <span class="checkbox-icon">🚀</span>
+                    <span class="checkbox-label">Product Hunt</span>
+                  </label>
+                  <label class="checkbox-card">
+                    <input type="checkbox" name="campaignPlatform" value="hackernews">
+                    <span class="checkbox-icon">🟠</span>
+                    <span class="checkbox-label">Hacker News</span>
+                  </label>
+                  <label class="checkbox-card">
+                    <input type="checkbox" name="campaignPlatform" value="devto">
+                    <span class="checkbox-icon">💻</span>
+                    <span class="checkbox-label">DEV.to</span>
+                  </label>
+                  <label class="checkbox-card">
+                    <input type="checkbox" name="campaignPlatform" value="medium">
+                    <span class="checkbox-icon">📝</span>
+                    <span class="checkbox-label">Medium</span>
+                  </label>
+                  <label class="checkbox-card">
+                    <input type="checkbox" name="campaignPlatform" value="hashnode">
+                    <span class="checkbox-icon">#️⃣</span>
+                    <span class="checkbox-label">Hashnode</span>
+                  </label>
+                  <label class="checkbox-card">
+                    <input type="checkbox" name="campaignPlatform" value="indiehackers">
+                    <span class="checkbox-icon">💡</span>
+                    <span class="checkbox-label">IndieHackers</span>
+                  </label>
+                </div>
+                <p class="form-hint">中国平台</p>
+                <div class="platform-checkboxes">
+                  <label class="checkbox-card">
+                    <input type="checkbox" name="campaignPlatform" value="zhihu">
+                    <span class="checkbox-icon">知</span>
+                    <span class="checkbox-label">知乎</span>
+                  </label>
+                  <label class="checkbox-card">
+                    <input type="checkbox" name="campaignPlatform" value="weibo">
+                    <span class="checkbox-icon">微</span>
+                    <span class="checkbox-label">微博</span>
+                  </label>
+                  <label class="checkbox-card">
+                    <input type="checkbox" name="campaignPlatform" value="v2ex">
+                    <span class="checkbox-icon">V2</span>
+                    <span class="checkbox-label">V2EX</span>
+                  </label>
+                  <label class="checkbox-card">
+                    <input type="checkbox" name="campaignPlatform" value="sspai">
+                    <span class="checkbox-icon">派</span>
+                    <span class="checkbox-label">少数派</span>
+                  </label>
+                  <label class="checkbox-card">
+                    <input type="checkbox" name="campaignPlatform" value="jike">
+                    <span class="checkbox-icon">⚡</span>
+                    <span class="checkbox-label">即刻</span>
+                  </label>
+                  <label class="checkbox-card">
+                    <input type="checkbox" name="campaignPlatform" value="xiaohongshu">
+                    <span class="checkbox-icon">📕</span>
+                    <span class="checkbox-label">小红书</span>
+                  </label>
+                </div>
+                <p class="form-hint">日本/韩国/俄罗斯</p>
+                <div class="platform-checkboxes">
+                  <label class="checkbox-card">
+                    <input type="checkbox" name="campaignPlatform" value="qiita">
+                    <span class="checkbox-icon">Q</span>
+                    <span class="checkbox-label">Qiita</span>
+                  </label>
+                  <label class="checkbox-card">
+                    <input type="checkbox" name="campaignPlatform" value="zenn">
+                    <span class="checkbox-icon">Z</span>
+                    <span class="checkbox-label">Zenn</span>
+                  </label>
+                  <label class="checkbox-card">
+                    <input type="checkbox" name="campaignPlatform" value="habr">
+                    <span class="checkbox-icon">H</span>
+                    <span class="checkbox-label">Habr</span>
+                  </label>
+                  <label class="checkbox-card">
+                    <input type="checkbox" name="campaignPlatform" value="vk">
+                    <span class="checkbox-icon">VK</span>
+                    <span class="checkbox-label">VK</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Step 3: Content Strategy -->
+              <div class="form-section">
+                <h4>3. Content Strategy</h4>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Post Types</label>
+                    <div class="checkbox-group-inline">
+                      <label><input type="checkbox" name="postType" value="article" checked> Articles</label>
+                      <label><input type="checkbox" name="postType" value="reply"> Replies</label>
+                      <label><input type="checkbox" name="postType" value="comment"> Comments</label>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Languages</label>
+                    <div class="checkbox-group-inline">
+                      <label><input type="checkbox" name="campaignLang" value="en" checked> English</label>
+                      <label><input type="checkbox" name="campaignLang" value="zh"> Chinese</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Target Keywords (one per line)</label>
+                  <textarea id="campaignKeywords" class="input" rows="3" placeholder="AI tools&#10;productivity software&#10;..."></textarea>
+                </div>
+              </div>
+
+              <!-- Step 4: Schedule -->
+              <div class="form-section">
+                <h4>4. Schedule</h4>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Schedule Type</label>
+                    <select id="campaignScheduleType" class="select">
+                      <option value="immediate">Start Immediately</option>
+                      <option value="scheduled">Schedule for Later</option>
+                      <option value="recurring">Recurring (Daily/Weekly)</option>
+                    </select>
+                  </div>
+                  <div class="form-group" id="scheduleTimeGroup" style="display:none;">
+                    <label>Start Time</label>
+                    <input type="datetime-local" id="campaignStartTime" class="input">
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Posts per Day</label>
+                    <input type="number" id="campaignPostsPerDay" class="input" value="3" min="1" max="50">
+                  </div>
+                  <div class="form-group">
+                    <label>Duration (days)</label>
+                    <input type="number" id="campaignDuration" class="input" value="7" min="1" max="90">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('createCampaignModal')">Cancel</button>
+            <button class="btn btn-primary" id="btnSaveCampaignDraft">Save as Draft</button>
+            <button class="btn btn-success" id="btnStartCampaign">Start Campaign</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Products Page -->
+      <div class="page" id="page-products">
+        <header class="page-header">
+          <h2 data-i18n="products.title">Products</h2>
+          <button class="btn btn-primary" id="btnAddProduct">
+            <span data-i18n="products.add">+ Add Product</span>
+          </button>
+        </header>
+
+        <!-- Batch Action Bar -->
+        <div class="batch-action-bar" id="productsBatchBar" style="display: none;">
+          <div class="batch-left">
+            <button class="btn btn-small btn-secondary" id="btnSelectAllProducts" data-i18n="products.selectAll">Select All</button>
+            <button class="btn btn-small btn-secondary" id="btnClearSelection" data-i18n="products.clear">Clear</button>
+            <span class="batch-count" id="selectedCount" data-i18n="products.noSelection">No selection</span>
+          </div>
+          <div class="batch-right">
+            <button class="btn btn-small btn-primary" id="btnBatchPublish" disabled data-i18n="products.publishSelected">Publish Selected</button>
+          </div>
+        </div>
+
+        <div class="products-grid" id="productsGrid">
+          <!-- Products will be loaded here -->
+        </div>
+
+        <!-- Empty state -->
+        <div class="empty-state" id="emptyProducts" style="display: none;">
+          <div class="empty-icon">📦</div>
+          <h3 data-i18n="products.noProducts">No products yet</h3>
+          <p data-i18n="products.addFirst">Add your first product to start marketing globally</p>
+          <button class="btn btn-primary" id="btnAddProductEmpty" data-i18n="products.add">Add Product</button>
+        </div>
+      </div>
+
+      <!-- Publish Page -->
+      <div class="page" id="page-publish">
+        <header class="page-header">
+          <h2 data-i18n="publish.title">Publish Content</h2>
+          <button class="btn btn-secondary" id="btnRefreshStrategies" data-i18n="publish.refreshLimits">🔄 Refresh Limits</button>
+        </header>
+
+        <!-- Publishing Strategies Section -->
+        <section class="strategies-section" id="strategiesSection">
+          <h3 data-i18n="publish.platformStatus">📊 Platform Publishing Status</h3>
+          <p class="text-muted" data-i18n="publish.statusHint">Anti-ban limits protect your accounts. Green = can post now, Yellow = wait, Red = daily limit reached.</p>
+          <div class="strategies-grid" id="strategiesGrid">
+            <!-- Strategies will be loaded here -->
+            <p class="text-muted">Loading strategies...</p>
+          </div>
+        </section>
+
+        <div class="publish-container">
+          <div class="publish-sidebar">
+            <div class="form-group">
+              <label>Select Products <span class="text-muted">(multi-select)</span></label>
+              <div class="publish-products-list" id="publishProductsList">
+                <!-- Product checkboxes will be loaded here -->
+              </div>
+              <div class="publish-products-actions">
+                <button class="btn btn-small btn-secondary" id="btnSelectAllPublish">All</button>
+                <button class="btn btn-small btn-secondary" id="btnClearPublish">Clear</button>
+                <span class="text-muted" id="publishProductsCount">0 selected</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <label>Platforms <span class="text-muted">(only showing available)</span></label>
+                <div style="display: flex; gap: 8px;">
+                  <button type="button" class="btn btn-small btn-secondary" id="btnSelectAllPublishPlatforms">Select All</button>
+                  <button type="button" class="btn btn-small btn-secondary" id="btnDeselectAllPublishPlatforms">Deselect All</button>
+                </div>
+              </div>
+              <div class="checkbox-group" id="platformsGroup">
+                <!-- 国际 -->
+                <label class="checkbox"><input type="checkbox" value="twitter"> 🐦 Twitter</label>
+                <label class="checkbox"><input type="checkbox" value="linkedin"> 💼 LinkedIn</label>
+                <label class="checkbox"><input type="checkbox" value="reddit"> 🔴 Reddit</label>
+                <label class="checkbox"><input type="checkbox" value="facebook"> 📘 Facebook</label>
+                <!-- 开发者 -->
+                <label class="checkbox"><input type="checkbox" value="github"> 🐙 GitHub</label>
+                <label class="checkbox"><input type="checkbox" value="hackernews"> 🟠 Hacker News</label>
+                <label class="checkbox"><input type="checkbox" value="producthunt"> 🚀 Product Hunt</label>
+                <label class="checkbox"><input type="checkbox" value="devto"> 💻 Dev.to</label>
+                <label class="checkbox"><input type="checkbox" value="medium"> 📝 Medium</label>
+                <label class="checkbox"><input type="checkbox" value="hashnode"> #️⃣ Hashnode</label>
+                <label class="checkbox"><input type="checkbox" value="indiehackers"> 💡 IndieHackers</label>
+                <!-- 中国 -->
+                <label class="checkbox"><input type="checkbox" value="zhihu"> 知 知乎</label>
+                <label class="checkbox"><input type="checkbox" value="weibo"> 微 微博</label>
+                <label class="checkbox"><input type="checkbox" value="v2ex"> V2 V2EX</label>
+                <label class="checkbox"><input type="checkbox" value="sspai"> 派 少数派</label>
+                <label class="checkbox"><input type="checkbox" value="jike"> ⚡ 即刻</label>
+                <label class="checkbox"><input type="checkbox" value="xiaohongshu"> 📕 小红书</label>
+                <!-- 日本/俄罗斯 -->
+                <label class="checkbox"><input type="checkbox" value="qiita"> Q Qiita</label>
+                <label class="checkbox"><input type="checkbox" value="zenn"> Z Zenn</label>
+                <label class="checkbox"><input type="checkbox" value="habr"> H Habr</label>
+                <label class="checkbox"><input type="checkbox" value="vk"> VK VK</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Languages</label>
+              <div class="checkbox-group" id="languagesGroup">
+                <label class="checkbox"><input type="checkbox" value="en" checked> English</label>
+                <label class="checkbox"><input type="checkbox" value="zh" checked> Chinese</label>
+                <label class="checkbox"><input type="checkbox" value="ja"> Japanese</label>
+                <label class="checkbox"><input type="checkbox" value="ko"> Korean</label>
+                <label class="checkbox"><input type="checkbox" value="de"> German</label>
+                <label class="checkbox"><input type="checkbox" value="fr"> French</label>
+                <label class="checkbox"><input type="checkbox" value="es"> Spanish</label>
+                <label class="checkbox"><input type="checkbox" value="ru"> Russian</label>
+              </div>
+            </div>
+
+            <button class="btn btn-primary btn-full" id="btnGenerate">
+              Generate Content
+            </button>
+          </div>
+
+          <div class="publish-preview">
+            <div class="preview-header">
+              <h3>Content Preview</h3>
+              <div class="preview-tabs" id="previewTabs">
+                <!-- Tabs will be generated dynamically -->
+              </div>
+            </div>
+            <div class="preview-content" id="previewContent">
+              <div class="preview-placeholder">
+                <p>Select a product and generate content to preview</p>
+              </div>
+            </div>
+            <div class="preview-actions">
+              <button class="btn btn-secondary" id="btnSimulate">Simulate</button>
+              <button class="btn btn-primary" id="btnPublish" disabled>Publish All</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Articles Page - 软文系统 -->
+      <div class="page" id="page-articles">
+        <header class="page-header">
+          <h2 data-i18n="articles.title">Articles</h2>
+          <button class="btn btn-primary" id="btnNewArticle" data-i18n="articles.new">+ New Article</button>
+        </header>
+
+        <!-- Article Generation -->
+        <div class="articles-container">
+          <div class="articles-sidebar">
+            <!-- Product Selection -->
+            <div class="form-group">
+              <label>Select Product</label>
+              <select id="articleProduct" class="select">
+                <option value="">Choose a product...</option>
+              </select>
+            </div>
+
+            <!-- Article Type -->
+            <div class="form-group">
+              <label>Article Type</label>
+              <div class="article-types" id="articleTypes">
+                <label class="radio-card active" data-type="tutorial">
+                  <input type="radio" name="articleType" value="tutorial" checked>
+                  <span class="radio-icon">📚</span>
+                  <span class="radio-label">Tutorial/Guide</span>
+                  <span class="radio-desc">How to use, step-by-step guide</span>
+                </label>
+                <label class="radio-card" data-type="comparison">
+                  <input type="radio" name="articleType" value="comparison">
+                  <span class="radio-icon">⚖️</span>
+                  <span class="radio-label">Comparison</span>
+                  <span class="radio-desc">Compare with alternatives</span>
+                </label>
+                <label class="radio-card" data-type="problem">
+                  <input type="radio" name="articleType" value="problem">
+                  <span class="radio-icon">💡</span>
+                  <span class="radio-label">Problem-Solving</span>
+                  <span class="radio-desc">Pain point → Solution</span>
+                </label>
+                <label class="radio-card" data-type="story">
+                  <input type="radio" name="articleType" value="story">
+                  <span class="radio-icon">📖</span>
+                  <span class="radio-label">Story/Case</span>
+                  <span class="radio-desc">User story, use case</span>
+                </label>
+                <label class="radio-card" data-type="listicle">
+                  <input type="radio" name="articleType" value="listicle">
+                  <span class="radio-icon">📋</span>
+                  <span class="radio-label">Listicle</span>
+                  <span class="radio-desc">Top 10, Best X tools</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Target Platforms -->
+            <div class="form-group">
+              <label>Target Platforms</label>
+              <div class="checkbox-group" id="articlePlatforms">
+                <label class="checkbox"><input type="checkbox" value="zhihu" checked> 知乎</label>
+                <label class="checkbox"><input type="checkbox" value="wechat"> 公众号</label>
+                <label class="checkbox"><input type="checkbox" value="medium" checked> Medium</label>
+                <label class="checkbox"><input type="checkbox" value="devto"> Dev.to</label>
+                <label class="checkbox"><input type="checkbox" value="toutiao"> 头条</label>
+                <label class="checkbox"><input type="checkbox" value="reddit"> Reddit</label>
+                <label class="checkbox"><input type="checkbox" value="blog"> Blog/SEO</label>
+              </div>
+            </div>
+
+            <!-- SEO Keywords -->
+            <div class="form-group">
+              <label>SEO Keywords <span class="text-muted">(comma separated)</span></label>
+              <input type="text" id="articleKeywords" class="input" placeholder="e.g., markdown editor, note taking, productivity">
+            </div>
+
+            <!-- Language -->
+            <div class="form-group">
+              <label>Language</label>
+              <div class="checkbox-group" id="articleLanguages">
+                <label class="checkbox"><input type="checkbox" value="zh" checked> 中文</label>
+                <label class="checkbox"><input type="checkbox" value="en" checked> English</label>
+              </div>
+            </div>
+
+            <!-- Tone -->
+            <div class="form-group">
+              <label>Tone</label>
+              <select id="articleTone" class="select">
+                <option value="professional">Professional</option>
+                <option value="casual" selected>Casual/Friendly</option>
+                <option value="technical">Technical</option>
+                <option value="storytelling">Storytelling</option>
+              </select>
+            </div>
+
+            <button class="btn btn-primary btn-full" id="btnGenerateArticle">Generate Articles</button>
+          </div>
+
+          <!-- Article Preview -->
+          <div class="articles-preview">
+            <div class="preview-header">
+              <h3>Generated Articles</h3>
+              <div class="article-versions" id="articleVersions">
+                <!-- Version tabs will be generated -->
+              </div>
+            </div>
+            <div class="article-content" id="articleContent">
+              <div class="preview-placeholder">
+                <p>Select a product and generate articles</p>
+                <p class="text-muted">Articles will be optimized for each platform</p>
+              </div>
+            </div>
+            <div class="preview-actions">
+              <button class="btn btn-secondary" id="btnCopyArticle">Copy</button>
+              <button class="btn btn-secondary" id="btnEditArticle">Edit</button>
+              <button class="btn btn-primary" id="btnPublishArticle" disabled>Add to Queue</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Saved Articles -->
+        <section class="saved-articles-section" style="margin-top: 24px;">
+          <h3>Saved Articles</h3>
+          <div class="saved-articles-list" id="savedArticlesList">
+            <p class="text-muted">No saved articles yet</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- Engage Page - 回复系统 -->
+      <div class="page" id="page-engage">
+        <header class="page-header">
+          <h2 data-i18n="engage.title">💬 Engage (Reply System)</h2>
+          <button class="btn btn-primary" id="btnAddKeyword" data-i18n="engage.addKeyword">+ Add Keyword</button>
+        </header>
+
+        <!-- Reply Strategies -->
+        <section class="strategies-section">
+          <h3 data-i18n="engage.replyStatus">📊 Reply Status</h3>
+          <p class="text-muted" data-i18n="engage.replyHint">Natural engagement through replies is safer and more effective than posting.</p>
+          <div class="strategies-grid" id="replyStrategiesGrid">
+            <p class="text-muted">Loading...</p>
+          </div>
+        </section>
+
+        <!-- Keywords -->
+        <section class="settings-section" style="margin-bottom: 20px;">
+          <h3>🔍 Monitoring Keywords</h3>
+          <p class="text-muted">We'll find posts matching these keywords and suggest replies.</p>
+          <div id="keywordsList" class="keywords-list">
+            <p class="text-muted">No keywords yet. Add keywords to start discovering relevant posts.</p>
+          </div>
+        </section>
+
+        <!-- Discovered Posts -->
+        <section class="settings-section">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3>📬 Discovered Posts</h3>
+            <div>
+              <select id="filterPlatform" class="select" style="width: auto; display: inline-block; margin-right: 10px;">
+                <option value="">All Platforms</option>
+                <option value="reddit">Reddit</option>
+                <option value="twitter">Twitter</option>
+                <option value="hackernews">Hacker News</option>
+                <option value="linkedin">LinkedIn</option>
+                <option value="zhihu">知乎</option>
+              </select>
+              <button class="btn btn-secondary" id="btnDiscoverNow">🔍 Discover Now</button>
+            </div>
+          </div>
+          <div id="discoveredPosts" class="discovered-posts">
+            <p class="text-muted">Add keywords and click "Discover Now" to find relevant posts.</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- Accounts Page -->
+      <div class="page" id="page-accounts">
+        <header class="page-header">
+          <h2 data-i18n="accounts.title">Platform Accounts</h2>
+          <button class="btn btn-primary" id="btnAddAccount">
+            <span data-i18n="accounts.addAccount">+ Add Account</span>
+          </button>
+        </header>
+
+        <!-- Account Health Overview -->
+        <div class="account-health-overview">
+          <div class="health-summary">
+            <div class="health-circle" id="overallHealthCircle">
+              <svg viewBox="0 0 36 36">
+                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                <path class="circle-progress" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+              </svg>
+              <div class="health-percentage" id="overallHealthPercent">--%</div>
+            </div>
+            <div class="health-label" data-i18n="accounts.overallHealth">Overall Health</div>
+          </div>
+          <div class="health-breakdown">
+            <div class="health-stat">
+              <span class="health-stat-icon">✅</span>
+              <span class="health-stat-value" id="healthStatActive">0</span>
+              <span class="health-stat-label" data-i18n="accounts.active">Active</span>
+            </div>
+            <div class="health-stat">
+              <span class="health-stat-icon">⚠️</span>
+              <span class="health-stat-value" id="healthStatWarning">0</span>
+              <span class="health-stat-label" data-i18n="accounts.warning">Warning</span>
+            </div>
+            <div class="health-stat">
+              <span class="health-stat-icon">🔴</span>
+              <span class="health-stat-value" id="healthStatBanned">0</span>
+              <span class="health-stat-label" data-i18n="accounts.banned">Banned</span>
+            </div>
+            <div class="health-stat">
+              <span class="health-stat-icon">🔥</span>
+              <span class="health-stat-value" id="healthStatWarmup">0</span>
+              <span class="health-stat-label" data-i18n="accounts.warming">Warming</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Auto Registration Section -->
+        <section class="settings-section" style="margin-bottom: 20px;">
+          <h3>🤖 <span data-i18n="accounts.autoRegister">Auto-Register (via Unzoo)</span></h3>
+          <div class="gmail-status" id="gmailStatus" style="margin-bottom: 15px;">
+            <span class="status-badge" id="gmailBadge" data-i18n="accounts.checking">Checking...</span>
+            <span id="gmailEmail"></span>
+          </div>
+          <div class="form-group">
+            <button class="btn btn-secondary" id="btnSetupGmail" data-i18n="accounts.connectGmail">Connect Gmail</button>
+          </div>
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <label style="margin-bottom: 0;" data-i18n="accounts.selectPlatforms">Select Platforms</label>
+              <div class="btn-group">
+                <button class="btn btn-small btn-secondary" id="btnSelectAll" data-i18n="accounts.selectAll">Select All</button>
+                <button class="btn btn-small btn-secondary" id="btnDeselectAll" data-i18n="accounts.deselectAll">Deselect All</button>
+              </div>
+            </div>
+            <div id="registerPlatforms" style="max-height: 350px; overflow-y: auto; padding-right: 10px;">
+              <!-- Platforms will be loaded dynamically -->
+            </div>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn btn-primary" id="btnAutoRegister" disabled data-i18n="accounts.autoLogin">
+              Auto-Login/Register Selected
+            </button>
+            <button class="btn btn-secondary" id="btnSyncAll">
+              🔄 <span data-i18n="accounts.syncAll">Sync All</span>
+            </button>
+          </div>
+          <p class="text-muted" style="margin-top: 8px; font-size: 12px;" data-i18n="accounts.syncAllHint">
+            "Sync All" will check which platforms you're already logged into in Unzoo browser.
+          </p>
+          <div class="register-progress" id="registerProgress" style="display: none; margin-top: 15px;">
+            <!-- Progress will be shown here -->
+          </div>
+        </section>
+
+        <h3 style="margin-bottom: 15px;" data-i18n="accounts.existingAccounts">Existing Accounts</h3>
+        <div class="accounts-list" id="accountsList">
+          <!-- Accounts will be loaded here -->
+        </div>
+
+        <div class="empty-state" id="emptyAccounts" style="display: none;">
+          <div class="empty-icon">👤</div>
+          <h3 data-i18n="accounts.noAccounts">No accounts configured</h3>
+          <p data-i18n="accounts.autoRegisterHint">Use auto-register or add accounts manually</p>
+          <button class="btn btn-primary" id="btnAddAccountEmpty" data-i18n="accounts.addAccount">Add Manually</button>
+        </div>
+      </div>
+
+      <!-- Tasks Page -->
+      <div class="page" id="page-tasks">
+        <header class="page-header">
+          <h2 data-i18n="tasks.title">Tasks</h2>
+          <div class="btn-group">
+            <span id="engineBadge" class="task-stat" style="font-weight:600;">引擎: <span id="engineState">…</span></span>
+            <button class="btn btn-primary" id="btnStartEngine">▶ 启动引擎</button>
+            <button class="btn btn-secondary" id="btnStopEngine">⏸ 停止引擎</button>
+            <button class="btn btn-success" id="btnCreateNurtureTask">🌱 Create Nurture Task / 新建养号任务</button>
+            <button class="btn btn-secondary" id="btnClearCompleted" data-i18n="tasks.clearCompleted">Clear Completed</button>
+          </div>
+        </header>
+
+        <!-- Task Stats -->
+        <div class="task-stats">
+          <span class="task-stat" id="taskStatPending">0 <span data-i18n="tasks.pending">pending</span></span>
+          <span class="task-stat" id="taskStatRunning">0 <span data-i18n="tasks.running">running</span></span>
+          <span class="task-stat" id="taskStatCompleted">0 <span data-i18n="tasks.completed">completed</span></span>
+        </div>
+
+        <!-- 回复模式 + 半自动审核队列 -->
+        <div class="card" style="margin:12px 0;padding:12px;">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <strong>💬 回复模式</strong>
+            <select id="replyModeSelect" style="padding:6px;min-width:220px;">
+              <option value="review">半自动 — AI 生成后人工审核再发</option>
+              <option value="auto">全自动 — AI 直接发布（无人值守）</option>
+            </select>
+            <span class="text-muted" style="font-size:12px;">引擎读取真实帖子 → AI 判定相关性 → 生成针对性回复</span>
+            <span style="margin-left:auto;" class="task-stat">待审 <span id="reviewCount">0</span></span>
+          </div>
+          <div id="reviewList" style="margin-top:8px;"></div>
+        </div>
+
+        <!-- 养号调度总览 (P0-1/P0-3) -->
+        <div class="card" style="margin:12px 0;padding:12px;">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <strong>🌱 养号调度</strong>
+            <span class="text-muted" style="font-size:12px;">引擎按平台策略+号龄分期，活跃时段自动安排浏览养号；每日体检账号健康度</span>
+          </div>
+          <div id="nurtureOverview" style="margin-top:8px;"></div>
+        </div>
+
+        <!-- 效果分析 (P1-6) -->
+        <div class="card" style="margin:12px 0;padding:12px;">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <strong>📊 效果分析</strong>
+            <span class="text-muted" style="font-size:12px;">发现/跳过/回复/线索/转化漏斗，按平台+关键词看 ROI</span>
+          </div>
+          <div id="marketingStats" style="margin-top:8px;"></div>
+        </div>
+
+        <!-- 线索 / 转化 (P1-5) -->
+        <div class="card" style="margin:12px 0;padding:12px;">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <strong>🎯 线索 / 转化</strong>
+            <span class="text-muted" style="font-size:12px;">每条发出的回复=一条线索，跟踪谁回应了、谁转化了</span>
+            <span style="margin-left:auto;" class="task-stat">线索 <span id="leadsCount">0</span></span>
+          </div>
+          <div id="leadsList" style="margin-top:8px;"></div>
+        </div>
+
+        <!-- 选择器自检 -->
+        <div class="card" style="margin:12px 0;padding:12px;">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <strong>🔍 选择器自检</strong>
+            <input id="selCheckPlatform" placeholder="平台 (reddit/twitter/linkedin/producthunt/hackernews...)" style="flex:1;min-width:240px;padding:6px;" value="reddit" />
+            <input id="selCheckKeyword" placeholder="关键词" style="width:160px;padding:6px;" value="AI tools" />
+            <button class="btn btn-primary" id="btnSelCheck">检测</button>
+          </div>
+          <pre id="selCheckResult" style="margin-top:8px;white-space:pre-wrap;font-size:12px;color:var(--text-muted,#888);"></pre>
+        </div>
+
+        <!-- Task List -->
+        <div class="tasks-container" id="tasksList">
+          <div class="tasks-empty">
+            <div class="tasks-empty-icon">📋</div>
+            <p data-i18n="tasks.noTasks">No tasks yet</p>
+            <p class="text-muted" data-i18n="tasks.tasksHint">Tasks will appear here when you publish or reply</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Marketplaces Page -->
+      <div class="page" id="page-marketplaces">
+        <header class="page-header">
+          <h2>🏪 市场提交</h2>
+          <div class="btn-group">
+            <select class="select" id="mpProductSelect" style="width:auto;min-width:160px;"></select>
+            <button class="btn btn-secondary" id="btnMpRefresh">刷新</button>
+          </div>
+        </header>
+        <div class="card" style="margin:12px 0;padding:12px;">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <strong>仓库</strong>
+            <input id="mpRepoUrl" placeholder="GitHub 仓库地址 (https://github.com/you/repo)" style="flex:1;min-width:280px;padding:6px;" />
+            <input id="mpInstallCmd" placeholder="安装命令 (npx ... / pip ...)" style="width:220px;padding:6px;" />
+            <button class="btn btn-primary" id="btnMpSaveRepo">保存</button>
+          </div>
+          <p class="text-muted" style="font-size:12px;margin-top:6px;">先填产品的公开仓库和安装命令——生成上架资料时会用到。多数市场要求有公开仓库。</p>
+        </div>
+        <div id="mpList"></div>
+        <!-- 资料查看弹层 -->
+        <div id="mpListingModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center;">
+          <div style="background:var(--bg,#fff);max-width:760px;width:90%;max-height:80vh;overflow:auto;border-radius:10px;padding:16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <strong id="mpListingTitle">上架资料</strong>
+              <div class="btn-group">
+                <button class="btn btn-small btn-primary" id="btnMpCopyListing">复制</button>
+                <button class="btn btn-small btn-secondary" onclick="document.getElementById('mpListingModal').style.display='none'">关闭</button>
+              </div>
+            </div>
+            <pre id="mpListingBody" style="white-space:pre-wrap;font-size:13px;margin-top:10px;"></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- 内容发布 Page -->
+      <div class="page" id="page-content">
+        <header class="page-header">
+          <h2>📣 内容发布 · 原创 + 定时</h2>
+          <div class="btn-group">
+            <button class="btn btn-secondary" id="btnPostRefresh">刷新</button>
+          </div>
+        </header>
+        <p class="text-muted" style="font-size:12px;margin:0 0 10px;">
+          写一次内容，定时自动发到对应平台账号。文本平台（X / LinkedIn / Reddit）+ 中文图文/视频（小红书 / 抖音）。媒体上传、定时发布全程走 Unzoo，自动驾驶引擎到点自动执行。
+        </p>
+
+        <div class="card" style="margin:0 0 14px;padding:14px;">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+            <div>
+              <label class="text-muted" style="font-size:12px;">产品</label>
+              <select class="select" id="postProduct" style="width:100%;"></select>
+            </div>
+            <div>
+              <label class="text-muted" style="font-size:12px;">平台</label>
+              <select class="select" id="postPlatform" style="width:100%;">
+                <option value="twitter">X / Twitter（文本+配图）</option>
+                <option value="linkedin">LinkedIn（文本）</option>
+                <option value="reddit">Reddit（标题+正文）</option>
+                <option value="xiaohongshu">小红书（图文·需图片）</option>
+                <option value="douyin">抖音（视频·需视频文件）</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-muted" style="font-size:12px;">账号</label>
+              <select class="select" id="postAccount" style="width:100%;"></select>
+            </div>
+          </div>
+
+          <div style="margin-top:10px;">
+            <label class="text-muted" style="font-size:12px;">标题（Reddit / 小红书 / 抖音 需要）</label>
+            <input id="postTitle" placeholder="标题" style="width:100%;padding:8px;" />
+          </div>
+
+          <div style="margin-top:10px;">
+            <label class="text-muted" style="font-size:12px;">正文</label>
+            <textarea id="postBody" rows="5" placeholder="正文内容…" style="width:100%;padding:8px;resize:vertical;"></textarea>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+            <div>
+              <label class="text-muted" style="font-size:12px;">话题 / 标签（逗号分隔，免 #）</label>
+              <input id="postTopics" placeholder="效率工具, 好物分享" style="width:100%;padding:8px;" />
+            </div>
+            <div>
+              <label class="text-muted" style="font-size:12px;">定时（留空=立即可发）</label>
+              <input id="postSchedule" type="datetime-local" style="width:100%;padding:7px;" />
+            </div>
+          </div>
+
+          <div style="margin-top:10px;">
+            <label class="text-muted" style="font-size:12px;">媒体文件绝对路径（逗号分隔，图文/视频必填）</label>
+            <input id="postMedia" placeholder="C:\\Users\\you\\pics\\1.jpg, C:\\...\\2.jpg" style="width:100%;padding:8px;" />
+            <span class="text-muted" style="font-size:11px;">小红书=图片（≥1张）；抖音=视频（取第1个）；X=可选配图（≤4张）。</span>
+          </div>
+
+          <div class="btn-group" style="margin-top:12px;flex-wrap:wrap;gap:8px;">
+            <button class="btn btn-secondary" id="btnPostGen">✨ AI 生成文案</button>
+            <button class="btn btn-secondary" id="btnPostSave">💾 存草稿</button>
+            <button class="btn btn-primary" id="btnPostSchedule">⏰ 定时发布</button>
+            <button class="btn btn-primary" id="btnPostNow">🚀 立即发布</button>
+            <button class="btn btn-secondary" id="btnPostClear" style="margin-left:auto;">清空</button>
+          </div>
+          <input type="hidden" id="postEditId" />
+        </div>
+
+        <div id="postList"></div>
+      </div>
+
+      <!-- 成效追踪 Page -->
+      <div class="page" id="page-metrics">
+        <header class="page-header">
+          <h2>📈 成效追踪 · 搜索排名 + 品牌提及</h2>
+          <div class="btn-group" style="gap:8px;">
+            <button class="btn btn-secondary" id="btnMetricsRefresh">刷新</button>
+            <button class="btn btn-primary" id="btnMetricsCollect">🔍 立即采集</button>
+          </div>
+        </header>
+        <p class="text-muted" style="font-size:12px;margin:0 0 10px;">
+          每天自动用专用 <b>auto/Default</b> profile（与发帖账号隔离，排名最干净）走 Unzoo 采集：
+          <b>品牌词排名</b>（守，应永远 #1）、<b>长尾词排名</b>（攻，越低越好）、<b>品牌提及</b>（第三方独立域名数，领先指标）。
+          地区固定 <code>gl=us / hl=zh-CN / pws=0</code> 保证历史可比。
+        </p>
+        <div class="card" style="margin:0 0 12px;padding:10px 14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+          <span class="text-muted" style="font-size:12px;" id="metricsSettings">采集设置加载中…</span>
+          <label style="font-size:12px;display:flex;align-items:center;gap:6px;margin-left:auto;cursor:pointer;">
+            <input type="checkbox" id="metricsTrends" /> 启用 Google Trends 采集（小品牌通常无数据，默认关）
+          </label>
+        </div>
+
+        <!-- 关键词管理 -->
+        <div class="card" style="margin:0 0 14px;padding:14px;">
+          <h3 style="margin:0 0 10px;font-size:14px;">🎯 追踪关键词</h3>
+          <div style="display:grid;grid-template-columns:2fr 1fr 1.4fr auto;gap:8px;align-items:end;">
+            <div>
+              <label class="text-muted" style="font-size:12px;">关键词</label>
+              <input id="kwInput" placeholder="如：Claude Code 做产品" style="width:100%;padding:8px;" />
+            </div>
+            <div>
+              <label class="text-muted" style="font-size:12px;">类型</label>
+              <select class="select" id="kwKind" style="width:100%;">
+                <option value="longtail">长尾词（攻排名）</option>
+                <option value="brand">品牌词（守排名）</option>
+                <option value="mention">品牌提及（领先）</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-muted" style="font-size:12px;">目标域名</label>
+              <input id="kwDomain" value="doaipm.com" style="width:100%;padding:8px;" />
+            </div>
+            <button class="btn btn-primary" id="btnKwAdd">+ 添加</button>
+          </div>
+          <div id="kwList" style="margin-top:12px;"></div>
+        </div>
+
+        <!-- 成效总览 -->
+        <div id="metricsOverview"></div>
+      </div>
+
+      <!-- 身份隔离 Page -->
+      <div class="page" id="page-personas">
+        <header class="page-header">
+          <h2>🧑‍🤝‍🧑 身份隔离 · 一个 Gmail = 一套独立身份</h2>
+          <div class="btn-group" style="gap:8px;">
+            <button class="btn btn-secondary" id="btnPersonaRefresh">刷新</button>
+          </div>
+        </header>
+        <p class="text-muted" style="font-size:12px;margin:0 0 12px;">
+          每个 Gmail 创建一套<b>独立身份</b>：独立浏览器(cookie/登录态) + 独立出口 IP(机场节点) + 独立指纹。
+          同一个平台要多个号？就多建几个身份——它们互不关联，平台看不出是同一个人，<b>防关联封号</b>。全自动，你只管填 Gmail。
+        </p>
+
+        <!-- 第一步：机场订阅 -->
+        <div class="card" style="margin:0 0 14px;padding:14px;">
+          <h3 style="margin:0 0 4px;font-size:14px;">① 机场代理（出口 IP 来源）</h3>
+          <div id="airportStatus" class="text-muted" style="font-size:12px;margin-bottom:8px;">加载中…</div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input id="airportUrl" placeholder="粘贴你的机场订阅链接（Clash 订阅）" style="flex:1;padding:8px;" />
+            <button class="btn btn-primary" id="btnAirportSave">保存并拉取节点</button>
+          </div>
+          <div class="text-muted" style="font-size:11px;margin-top:6px;">
+            自带独立内核(Mihomo)，与你日常用的 Clash Verge 互不干扰。节点不直接暴露，仅本机使用。
+          </div>
+        </div>
+
+        <!-- 第二步：创建身份 -->
+        <div class="card" style="margin:0 0 14px;padding:14px;">
+          <h3 style="margin:0 0 8px;font-size:14px;">② 创建身份</h3>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input id="personaEmail" placeholder="输入一个真实 Gmail，如 yourname@gmail.com" style="flex:1;padding:8px;" />
+            <button class="btn btn-primary" id="btnPersonaCreate">+ 创建身份</button>
+          </div>
+          <div class="text-muted" style="font-size:11px;margin-top:6px;">
+            点一下，自动完成：建独立浏览器 → 随机指纹 → 分配一个出口节点 → 绑定。约 5-10 秒。
+          </div>
+        </div>
+
+        <!-- 身份列表 -->
+        <h3 style="margin:6px 0 8px;font-size:14px;">③ 已有身份</h3>
+        <div id="personaList"></div>
+      </div>
+
+      <!-- Stats Page -->
+      <div class="page" id="page-stats">
+        <header class="page-header">
+          <h2 data-i18n="stats.title">Statistics & Analytics</h2>
+          <div class="stats-controls">
+            <select class="select" id="statsTimeRange" style="width: auto;">
+              <option value="7" data-i18n="stats.last7days">Last 7 days</option>
+              <option value="30" selected data-i18n="stats.last30days">Last 30 days</option>
+              <option value="90" data-i18n="stats.last90days">Last 90 days</option>
+              <option value="365" data-i18n="stats.lastYear">Last year</option>
+              <option value="0" data-i18n="stats.allTime">All time</option>
+            </select>
+            <button class="btn btn-secondary" id="btnExportStats" data-i18n="stats.export">📥 Export</button>
+          </div>
+        </header>
+
+        <!-- Overview Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon-bg success">📝</div>
+            <div class="stat-content">
+              <div class="stat-value" id="statPosts">0</div>
+              <div class="stat-label" data-i18n="stats.totalPosts">Total Posts</div>
+              <div class="stat-change positive" id="statPostsChange">--</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon-bg info">👁️</div>
+            <div class="stat-content">
+              <div class="stat-value" id="statViews">0</div>
+              <div class="stat-label" data-i18n="stats.totalViews">Total Views</div>
+              <div class="stat-change positive" id="statViewsChange">--</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon-bg warning">💬</div>
+            <div class="stat-content">
+              <div class="stat-value" id="statEngagements">0</div>
+              <div class="stat-label" data-i18n="stats.engagements">Engagements</div>
+              <div class="stat-change positive" id="statEngagementsChange">--</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon-bg accent">📈</div>
+            <div class="stat-content">
+              <div class="stat-value" id="statRate">0%</div>
+              <div class="stat-label" data-i18n="stats.engagementRate">Engagement Rate</div>
+              <div class="stat-change" id="statRateChange">--</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Trend Chart -->
+        <section class="stats-section">
+          <div class="section-header">
+            <h3 data-i18n="stats.activityTrend">📊 Activity Trend</h3>
+            <div class="chart-legend">
+              <span class="legend-item"><span class="legend-dot posts"></span> <span data-i18n="stats.posts">Posts</span></span>
+              <span class="legend-item"><span class="legend-dot views"></span> <span data-i18n="stats.views">Views</span></span>
+              <span class="legend-item"><span class="legend-dot engagements"></span> <span data-i18n="stats.engagements">Engagements</span></span>
+            </div>
+          </div>
+          <div class="activity-chart" id="activityChart">
+            <div class="chart-bars" id="chartBars">
+              <!-- Bars will be generated dynamically -->
+            </div>
+            <div class="chart-labels" id="chartLabels">
+              <!-- Labels will be generated dynamically -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Two Column Layout -->
+        <div class="stats-row">
+          <!-- Platform Performance -->
+          <section class="stats-section stats-half">
+            <div class="section-header">
+              <h3 data-i18n="stats.platformPerformance">🌐 Platform Performance</h3>
+            </div>
+            <div class="platform-performance" id="platformStats">
+              <div class="platform-perf-item">
+                <div class="platform-perf-info">
+                  <span class="platform-perf-icon">🐦</span>
+                  <span class="platform-perf-name">Twitter</span>
+                </div>
+                <div class="platform-perf-bar-container">
+                  <div class="platform-perf-bar" style="width: 0%"></div>
+                </div>
+                <span class="platform-perf-value">0</span>
+              </div>
+              <div class="platform-perf-item">
+                <div class="platform-perf-info">
+                  <span class="platform-perf-icon">🔴</span>
+                  <span class="platform-perf-name">Reddit</span>
+                </div>
+                <div class="platform-perf-bar-container">
+                  <div class="platform-perf-bar" style="width: 0%"></div>
+                </div>
+                <span class="platform-perf-value">0</span>
+              </div>
+              <div class="platform-perf-item">
+                <div class="platform-perf-info">
+                  <span class="platform-perf-icon">💼</span>
+                  <span class="platform-perf-name">LinkedIn</span>
+                </div>
+                <div class="platform-perf-bar-container">
+                  <div class="platform-perf-bar" style="width: 0%"></div>
+                </div>
+                <span class="platform-perf-value">0</span>
+              </div>
+              <div class="platform-perf-item">
+                <div class="platform-perf-info">
+                  <span class="platform-perf-icon">知</span>
+                  <span class="platform-perf-name">Zhihu</span>
+                </div>
+                <div class="platform-perf-bar-container">
+                  <div class="platform-perf-bar" style="width: 0%"></div>
+                </div>
+                <span class="platform-perf-value">0</span>
+              </div>
+              <div class="platform-perf-item">
+                <div class="platform-perf-info">
+                  <span class="platform-perf-icon">微</span>
+                  <span class="platform-perf-name">Weibo</span>
+                </div>
+                <div class="platform-perf-bar-container">
+                  <div class="platform-perf-bar" style="width: 0%"></div>
+                </div>
+                <span class="platform-perf-value">0</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Content Type Breakdown -->
+          <section class="stats-section stats-half">
+            <div class="section-header">
+              <h3 data-i18n="stats.contentBreakdown">📑 Content Type Breakdown</h3>
+            </div>
+            <div class="content-breakdown" id="contentBreakdown">
+              <div class="breakdown-item">
+                <div class="breakdown-header">
+                  <span class="breakdown-label">📝 <span data-i18n="stats.articles">Articles</span></span>
+                  <span class="breakdown-value" id="breakdownArticles">0</span>
+                </div>
+                <div class="breakdown-bar-container">
+                  <div class="breakdown-bar articles" id="breakdownArticlesBar" style="width: 0%"></div>
+                </div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-header">
+                  <span class="breakdown-label">💬 <span data-i18n="stats.replies">Replies</span></span>
+                  <span class="breakdown-value" id="breakdownReplies">0</span>
+                </div>
+                <div class="breakdown-bar-container">
+                  <div class="breakdown-bar replies" id="breakdownRepliesBar" style="width: 0%"></div>
+                </div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-header">
+                  <span class="breakdown-label">🔄 <span data-i18n="stats.reposts">Reposts</span></span>
+                  <span class="breakdown-value" id="breakdownReposts">0</span>
+                </div>
+                <div class="breakdown-bar-container">
+                  <div class="breakdown-bar reposts" id="breakdownRepostsBar" style="width: 0%"></div>
+                </div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-header">
+                  <span class="breakdown-label">🗨️ <span data-i18n="stats.comments">Comments</span></span>
+                  <span class="breakdown-value" id="breakdownComments">0</span>
+                </div>
+                <div class="breakdown-bar-container">
+                  <div class="breakdown-bar comments" id="breakdownCommentsBar" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Best Performing Content -->
+        <section class="stats-section">
+          <div class="section-header">
+            <h3>🏆 Best Performing Content</h3>
+            <a href="#" class="link-muted" onclick="navigateTo('tasks'); return false;">View All</a>
+          </div>
+          <div class="best-content-list" id="bestContentList">
+            <div class="empty-state-inline">
+              <p>No content published yet. Start posting to see your top performers!</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Recent Publishing Activity -->
+        <section class="stats-section">
+          <div class="section-header">
+            <h3>📅 Recent Publishing Activity</h3>
+          </div>
+          <div class="activity-heatmap" id="activityHeatmap">
+            <div class="heatmap-header">
+              <span>Less</span>
+              <div class="heatmap-scale">
+                <span class="heatmap-level level-0"></span>
+                <span class="heatmap-level level-1"></span>
+                <span class="heatmap-level level-2"></span>
+                <span class="heatmap-level level-3"></span>
+                <span class="heatmap-level level-4"></span>
+              </div>
+              <span>More</span>
+            </div>
+            <div class="heatmap-grid" id="heatmapGrid">
+              <!-- Heatmap cells will be generated dynamically -->
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Settings Page -->
+      <div class="page" id="page-settings">
+        <header class="page-header">
+          <h2 data-i18n="settings.title">Settings</h2>
+        </header>
+
+        <div class="settings-container">
+          <!-- AI Configuration -->
+          <section class="settings-section">
+            <h3>🤖 <span data-i18n="settings.aiConfig">AI Configuration</span></h3>
+            <p class="text-muted" style="margin-bottom: 15px;" data-i18n="settings.aiConfigDesc">Configure AI for generating natural reply content. Enter your AI service API Key.</p>
+
+            <div class="form-group">
+              <label>默认 AI Provider</label>
+              <select id="aiProvider" class="select">
+                <option value="gemini">Google Gemini ⭐推荐 (免费额度)</option>
+                <option value="openai">OpenAI (GPT-4/3.5)</option>
+                <option value="deepseek">DeepSeek (便宜)</option>
+                <option value="qwen">阿里千问 (Qwen)</option>
+              </select>
+            </div>
+
+            <div class="ai-keys-grid">
+              <div class="form-group">
+                <label>🔷 Google Gemini API Key</label>
+                <input type="password" id="aiKeyGemini" class="input" placeholder="AIza...">
+                <p class="text-muted" style="font-size: 11px;">从 <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a> 获取</p>
+              </div>
+
+              <div class="form-group">
+                <label>🟢 OpenAI API Key</label>
+                <input type="password" id="aiKeyOpenai" class="input" placeholder="sk-...">
+                <p class="text-muted" style="font-size: 11px;">从 <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a> 获取</p>
+              </div>
+
+              <div class="form-group">
+                <label>🔵 DeepSeek API Key</label>
+                <input type="password" id="aiKeyDeepseek" class="input" placeholder="sk-...">
+                <p class="text-muted" style="font-size: 11px;">从 <a href="https://platform.deepseek.com/" target="_blank">DeepSeek Platform</a> 获取</p>
+              </div>
+
+              <div class="form-group">
+                <label>🟠 阿里千问 API Key</label>
+                <input type="password" id="aiKeyQwen" class="input" placeholder="sk-...">
+                <p class="text-muted" style="font-size: 11px;">从 <a href="https://dashscope.console.aliyun.com/" target="_blank">阿里云 DashScope</a> 获取</p>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+              <label>Model <button type="button" class="btn btn-small" id="btnRefreshModels" style="margin-left: 10px; padding: 2px 8px; font-size: 11px;">🔄 刷新模型列表</button></label>
+              <select id="aiModel" class="select">
+                <!-- Models will be populated based on provider -->
+              </select>
+              <p class="text-muted" style="font-size: 11px;">输入 API Key 后点击刷新获取最新模型列表</p>
+            </div>
+
+            <button class="btn btn-primary" id="btnSaveAI">Save AI Settings</button>
+            <button class="btn btn-secondary" id="btnTestAI" style="margin-left: 10px;">Test Connection</button>
+            <span class="save-status" id="aiSaveStatus"></span>
+          </section>
+
+          <!-- Browser Configuration -->
+          <section class="settings-section">
+            <h3>🌐 <span data-i18n="settings.browser">Browser (Unzoo)</span></h3>
+            <div class="browser-status-detail" id="browserStatusDetail">
+              <span class="status-badge" data-i18n="accounts.checking">Checking...</span>
+            </div>
+
+            <!-- Profile Selection -->
+            <div class="form-group" style="margin-top: 15px;">
+              <label data-i18n="settings.browserProfile">Browser Profile</label>
+              <p class="text-muted" style="font-size: 12px; margin-bottom: 8px;" data-i18n="settings.browserProfileDesc">Select browser profile for publishing. Will auto-connect next time.</p>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <select id="browserProfile" class="select" style="flex: 1;">
+                  <option value="" data-i18n="settings.selectProfile">-- Select Profile --</option>
+                </select>
+                <button class="btn btn-secondary" id="btnRefreshProfiles">🔄</button>
+                <button class="btn btn-primary" id="btnConnectProfile" data-i18n="settings.connect">Connect</button>
+              </div>
+              <div id="profileStatus" style="margin-top: 8px; font-size: 12px;"></div>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+              <label data-i18n="settings.unzooPath">Unzoo Path</label>
+              <input type="text" id="unzooPath" class="input" readonly>
+            </div>
+          </section>
+
+          <!-- Language Settings -->
+          <section class="settings-section">
+            <h3 data-i18n="settings.language">Language / 语言</h3>
+            <p class="text-muted" style="font-size: 12px; margin-bottom: 8px;" data-i18n="settings.languageDesc">Select interface language</p>
+            <div class="form-group">
+              <select id="languageSelect" class="select" onchange="setLanguage(this.value)" style="width: 200px;">
+                <option value="zh" data-i18n="settings.chinese">简体中文</option>
+                <option value="en" data-i18n="settings.english">English</option>
+              </select>
+            </div>
+          </section>
+
+          <!-- Scheduler Configuration -->
+          <section class="settings-section">
+            <h3 data-i18n="settings.scheduler">Scheduler</h3>
+            <div class="form-group">
+              <label data-i18n="settings.schedulerMode">Mode</label>
+              <select id="schedulerMode" class="select">
+                <option value="round-robin" data-i18n="settings.roundRobin">Round Robin</option>
+                <option value="weighted" data-i18n="settings.weighted">Weighted</option>
+                <option value="priority" data-i18n="settings.priority">Priority</option>
+                <option value="smart" data-i18n="settings.smart">Smart (AI)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label data-i18n="settings.interval">Interval (minutes)</label>
+              <input type="number" id="schedulerInterval" class="input" value="60" min="5">
+            </div>
+            <div class="form-group">
+              <label data-i18n="settings.maxDailyPosts">Max Daily Posts</label>
+              <input type="number" id="schedulerMaxPosts" class="input" value="50" min="1">
+            </div>
+            <button class="btn btn-primary" id="btnSaveScheduler" data-i18n="settings.saveScheduler">Save Scheduler Settings</button>
+          </section>
+
+          <!-- Proxy Management -->
+          <section class="settings-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+              <h3>🌐 <span data-i18n="settings.proxyPool">Proxy Pool</span></h3>
+              <button class="btn btn-primary btn-small" id="btnAddProxy" data-i18n="settings.addProxy">+ Add Proxy</button>
+            </div>
+            <p class="text-muted" style="margin-bottom: 15px;" data-i18n="settings.proxyDesc">Manage proxies for multi-account operations. Each account can use a different proxy.</p>
+
+            <!-- Proxy Stats -->
+            <div class="proxy-stats">
+              <div class="proxy-stat">
+                <span class="proxy-stat-value" id="proxyStatTotal">0</span>
+                <span class="proxy-stat-label" data-i18n="settings.total">Total</span>
+              </div>
+              <div class="proxy-stat">
+                <span class="proxy-stat-value" id="proxyStatActive">0</span>
+                <span class="proxy-stat-label" data-i18n="settings.active">Active</span>
+              </div>
+              <div class="proxy-stat">
+                <span class="proxy-stat-value" id="proxyStatUsed">0</span>
+                <span class="proxy-stat-label" data-i18n="settings.inUse">In Use</span>
+              </div>
+              <div class="proxy-stat">
+                <span class="proxy-stat-value" id="proxyStatFailed">0</span>
+                <span class="proxy-stat-label" data-i18n="settings.failed">Failed</span>
+              </div>
+            </div>
+
+            <!-- Proxy List -->
+            <div class="proxy-list" id="proxyList">
+              <div class="empty-state-inline">
+                <p data-i18n="settings.noProxies">No proxies configured. Add a proxy to get started.</p>
+              </div>
+            </div>
+
+            <!-- Bulk Import -->
+            <div class="form-group" style="margin-top: 15px;">
+              <label data-i18n="settings.bulkImportHint">Bulk Import (one per line: protocol://ip:port or protocol://user:pass@ip:port)</label>
+              <textarea id="bulkProxyInput" class="input" rows="3" placeholder="socks5://127.0.0.1:1080&#10;http://user:pass@proxy.example.com:8080"></textarea>
+              <button class="btn btn-secondary" id="btnBulkImportProxy" style="margin-top: 8px;" data-i18n="settings.importProxies">Import Proxies</button>
+            </div>
+          </section>
+
+          <!-- Scheduled Jobs -->
+          <section class="settings-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+              <h3 data-i18n="settings.scheduledJobs">⏰ Scheduled Jobs (Unzoo)</h3>
+              <button class="btn btn-primary btn-small" id="btnAddSchedule" data-i18n="settings.addJob">+ Add Job</button>
+            </div>
+            <p class="text-muted" style="margin-bottom: 15px;" data-i18n="settings.jobsDesc">Configure automated tasks using Unzoo's scheduler API.</p>
+            <div id="scheduledJobsList" class="scheduled-jobs-list">
+              <p class="text-muted">Loading...</p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add Product Modal -->
+  <div class="modal" id="modalAddProduct">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add Product</h3>
+        <button class="modal-close" data-close>&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="tabs">
+          <button class="tab active" data-tab="manual">Manual Entry</button>
+          <button class="tab" data-tab="analyze">Analyze URL</button>
+        </div>
+
+        <div class="tab-content active" id="tab-manual">
+          <div class="form-group">
+            <label>Product Name *</label>
+            <input type="text" id="productName" class="input" placeholder="e.g., My Awesome Tool">
+          </div>
+          <div class="form-group">
+            <label>URL *</label>
+            <input type="url" id="productUrl" class="input" placeholder="https://example.com">
+          </div>
+          <div class="form-group">
+            <label>Tagline</label>
+            <input type="text" id="productTagline" class="input" placeholder="One-line description">
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="productDescription" class="input" rows="3" placeholder="Detailed description"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Type</label>
+              <select id="productType" class="select">
+                <option value="tool">Tool</option>
+                <option value="saas">SaaS</option>
+                <option value="app">App</option>
+                <option value="service">Service</option>
+                <option value="library">Library</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Priority</label>
+              <input type="number" id="productPriority" class="input" value="5" min="0" max="10">
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="tab-analyze">
+          <div class="form-group">
+            <label>Product URL</label>
+            <input type="url" id="analyzeUrl" class="input" placeholder="https://example.com">
+          </div>
+          <p class="text-muted">We'll analyze the URL and automatically extract product information.</p>
+          <button class="btn btn-secondary btn-full" id="btnAnalyze">
+            <span class="loading-spinner" style="display: none;"></span>
+            <span>Analyze URL</span>
+          </button>
+          <div class="analyze-result" id="analyzeResult" style="display: none;">
+            <!-- Analysis result will be shown here -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Cancel</button>
+        <button class="btn btn-primary" id="btnSaveProduct">Save Product</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Account Modal -->
+  <div class="modal" id="modalAddAccount">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add Platform Account</h3>
+        <button class="modal-close" data-close>&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Platform</label>
+          <select id="accountPlatform" class="select">
+            <option value="twitter">Twitter / X</option>
+            <option value="linkedin">LinkedIn</option>
+            <option value="reddit">Reddit</option>
+            <option value="facebook">Facebook</option>
+            <option value="devto">Dev.to</option>
+            <option value="medium">Medium</option>
+            <option value="discord">Discord</option>
+            <option value="telegram">Telegram</option>
+            <option value="mastodon">Mastodon</option>
+            <option value="weibo">Weibo</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Username / Email</label>
+          <input type="text" id="accountUsername" class="input" placeholder="username or email">
+        </div>
+        <div class="form-group">
+          <label>Password / API Key</label>
+          <input type="password" id="accountPassword" class="input" placeholder="password or API key">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Cancel</button>
+        <button class="btn btn-primary" id="btnSaveAccount">Save Account</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Keyword Modal -->
+  <div class="modal" id="modalAddKeyword">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add Monitoring Keyword</h3>
+        <button class="modal-close" data-close>&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Keyword / Phrase</label>
+          <input type="text" id="keywordText" class="input" placeholder="e.g. 'recommend markdown editor'">
+          <p class="text-muted" style="font-size: 12px;">Use phrases that indicate someone is looking for a solution.</p>
+        </div>
+        <div class="form-group">
+          <label>Related Product (Optional)</label>
+          <select id="keywordProduct" class="select">
+            <option value="">No specific product</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Platforms to Search</label>
+          <div class="checkbox-group" id="keywordPlatforms">
+            <label class="checkbox"><input type="checkbox" value="reddit" checked> Reddit</label>
+            <label class="checkbox"><input type="checkbox" value="twitter" checked> Twitter/X</label>
+            <label class="checkbox"><input type="checkbox" value="hackernews"> Hacker News</label>
+            <label class="checkbox"><input type="checkbox" value="linkedin"> LinkedIn</label>
+            <label class="checkbox"><input type="checkbox" value="zhihu"> 知乎</label>
+            <label class="checkbox"><input type="checkbox" value="v2ex"> V2EX</label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Cancel</button>
+        <button class="btn btn-primary" id="btnSaveKeyword">Save Keyword</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reply Modal -->
+  <div class="modal" id="modalReply">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3>Reply to Post</h3>
+        <button class="modal-close" data-close>&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Original Post</label>
+          <div id="replyPostInfo" class="post-preview">
+            <!-- Post info will be shown here -->
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Select Product to Mention</label>
+          <select id="replyProduct" class="select">
+            <option value="">No product (generic reply)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Reply Content</label>
+          <textarea id="replyContent" class="input" rows="5" placeholder="Write a natural, helpful reply..."></textarea>
+          <p class="text-muted" style="font-size: 12px;">Keep it natural and helpful. Don't be too promotional.</p>
+        </div>
+        <button class="btn btn-secondary" id="btnGenerateReply" style="margin-bottom: 15px;">✨ Generate Reply</button>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Cancel</button>
+        <button class="btn btn-primary" id="btnSendReply">Send Reply</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Proxy to Pool Modal -->
+  <div class="modal" id="modalAddProxy">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add Proxy</h3>
+        <button class="modal-close" onclick="closeModal('modalAddProxy')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Proxy Name</label>
+          <input type="text" id="proxyName" class="input" placeholder="e.g., US Residential 1">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Protocol</label>
+            <select id="proxyProtocol" class="select">
+              <option value="socks5">SOCKS5</option>
+              <option value="http">HTTP</option>
+              <option value="https">HTTPS</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Host</label>
+            <input type="text" id="proxyHost" class="input" placeholder="127.0.0.1">
+          </div>
+          <div class="form-group">
+            <label>Port</label>
+            <input type="number" id="proxyPort" class="input" placeholder="1080">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Username (optional)</label>
+            <input type="text" id="proxyUsername" class="input" placeholder="">
+          </div>
+          <div class="form-group">
+            <label>Password (optional)</label>
+            <input type="password" id="proxyPassword" class="input" placeholder="">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Tags (comma-separated)</label>
+          <input type="text" id="proxyTags" class="input" placeholder="us, residential, fast">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('modalAddProxy')">Cancel</button>
+        <button class="btn btn-secondary" id="btnTestProxy">Test Proxy</button>
+        <button class="btn btn-primary" id="btnSavePoolProxy">Save Proxy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Set Proxy Modal -->
+  <div class="modal" id="modalSetProxy">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Set Proxy for Profile</h3>
+        <button class="modal-close" data-close>&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="proxyProfileId">
+        <div class="form-group">
+          <label>Proxy URL</label>
+          <input type="text" id="proxyUrl" class="input" placeholder="socks5://127.0.0.1:1080 or http://user:pass@proxy:port">
+          <p class="text-muted" style="font-size: 12px;">Leave empty to clear proxy. Supports SOCKS5 and HTTP proxies.</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Cancel</button>
+        <button class="btn btn-primary" id="btnSaveProxy">Save Proxy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nurture Account Modal -->
+  <div class="modal" id="modalNurture">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Account Nurturing / 账号养护</h3>
+        <button class="modal-close" data-close>&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="nurtureAccountId">
+        <input type="hidden" id="nurturePlatform">
+        <p id="nurtureAccountInfo" style="margin-bottom: 15px; font-weight: bold;"></p>
+
+        <!-- 设置界面 (养号前显示) -->
+        <div id="nurtureSetup">
+          <p class="text-muted" style="font-size: 13px; margin-bottom: 15px;">
+            Simulate normal user browsing to improve account weight and reduce ban risk.<br>
+            模拟正常用户浏览行为，提升账号权重，降低被封风险。
+          </p>
+          <div class="form-group">
+            <label data-i18n="nurture.duration">Duration / 浏览时长</label>
+            <select id="nurtureDuration" class="select">
+              <option value="30">30 seconds / 30 秒</option>
+              <option value="60" selected>1 minute / 1 分钟</option>
+              <option value="120">2 minutes / 2 分钟</option>
+              <option value="300">5 minutes / 5 分钟</option>
+              <option value="600">10 minutes / 10 分钟</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 进度界面 (养号中显示) -->
+        <div id="nurtureProgress" style="display: none;">
+          <div style="text-align: center; padding: 20px 0;">
+            <div class="nurture-timer" id="nurtureTimer" style="font-size: 48px; font-weight: bold; color: var(--primary); margin-bottom: 15px;">00:00</div>
+            <div class="progress-bar-container" style="background: var(--border); border-radius: 8px; height: 12px; overflow: hidden; margin-bottom: 15px;">
+              <div id="nurtureProgressBar" style="background: linear-gradient(90deg, var(--success), var(--primary)); height: 100%; width: 0%; transition: width 1s linear; border-radius: 8px;"></div>
+            </div>
+            <p id="nurtureStatusText" style="color: var(--text-muted); font-size: 14px;">
+              <span class="spinner-small"></span> 浏览中... / Browsing...
+            </p>
+          </div>
+        </div>
+
+        <!-- 完成界面 (养号后显示) -->
+        <div id="nurtureComplete" style="display: none;">
+          <div style="text-align: center; padding: 20px 0;">
+            <div style="font-size: 64px; margin-bottom: 15px;">✅</div>
+            <p style="font-size: 18px; font-weight: bold; color: var(--success); margin-bottom: 10px;" data-i18n="nurture.completed">养号完成</p>
+            <p id="nurtureCompleteSummary" style="color: var(--text-muted);"></p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btnNurtureCancel" data-close>Cancel / 取消</button>
+        <button class="btn btn-success" id="btnNurtureStart" onclick="startNurtureFromModal()">Start Nurturing / 开始养号</button>
+        <button class="btn btn-danger" id="btnNurtureStop" style="display: none;" onclick="stopNurture()">Stop / 停止</button>
+        <button class="btn btn-primary" id="btnNurtureClose" style="display: none;" data-close>Close / 关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Batch Nurture Task Modal -->
+  <div class="modal" id="modalBatchNurture">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3>🌱 Create Nurture Task / 新建养号任务</h3>
+        <button class="modal-close" data-close>&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted" style="font-size: 13px; margin-bottom: 15px;">
+          Select accounts to nurture. The task will run automatically and nurture each account in sequence.<br>
+          选择要养护的账号。任务将自动运行，依次为每个账号进行养护。
+        </p>
+
+        <div class="form-group">
+          <label>Select Accounts / 选择账号</label>
+          <div class="select-all-btns" style="margin-bottom: 10px;">
+            <button class="btn btn-small btn-secondary" onclick="selectAllNurtureAccounts()">Select All / 全选</button>
+            <button class="btn btn-small btn-secondary" onclick="deselectAllNurtureAccounts()">Deselect All / 取消全选</button>
+          </div>
+          <div id="nurtureAccountList" class="checkbox-group" style="max-height: 300px; overflow-y: auto; border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
+            <!-- Accounts will be populated dynamically -->
+            <p class="text-muted">Loading accounts... / 加载账号中...</p>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Duration per Account / 每个账号浏览时长</label>
+          <select id="batchNurtureDuration" class="select">
+            <option value="30">30 seconds / 30 秒</option>
+            <option value="60" selected>1 minute / 1 分钟</option>
+            <option value="120">2 minutes / 2 分钟</option>
+            <option value="300">5 minutes / 5 分钟</option>
+            <option value="600">10 minutes / 10 分钟</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox" style="margin-top: 10px;">
+            <input type="checkbox" id="batchNurtureContinuous">
+            Continuous Mode / 持续运行 (养完一轮后间隔5分钟继续下一轮)
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Cancel / 取消</button>
+        <button class="btn btn-success" id="btnStartBatchNurture" onclick="startBatchNurtureTask()">🌱 Start Task / 开始任务</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Scheduled Job Modal -->
+  <div class="modal" id="modalAddSchedule">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add Scheduled Job</h3>
+        <button class="modal-close" data-close>&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Job Name</label>
+          <input type="text" id="jobName" class="input" placeholder="e.g., Daily Twitter Post">
+        </div>
+        <div class="form-group">
+          <label>Schedule (Cron Expression)</label>
+          <input type="text" id="jobSchedule" class="input" placeholder="0 9 * * * (daily at 9 AM)">
+          <p class="text-muted" style="font-size: 12px;">Cron format: minute hour day month weekday</p>
+        </div>
+        <div class="form-group">
+          <label>Task Type</label>
+          <select id="jobTaskType" class="select">
+            <option value="publish">Publish Content</option>
+            <option value="reply">Auto Reply</option>
+            <option value="discover">Discover Posts</option>
+            <option value="sync">Sync Accounts</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Task Data (JSON, optional)</label>
+          <textarea id="jobTaskData" class="input" rows="3" placeholder='{"platform": "twitter", "product_id": "..."}'></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Cancel</button>
+        <button class="btn btn-primary" id="btnSaveSchedule">Create Job</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script type="module" src="scripts/app.js"></script>
+</body>
+</html>
