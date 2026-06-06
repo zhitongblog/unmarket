@@ -18,3 +18,4 @@ node_modules/
 *.log
 
 # mihomo.exe (bundled kernel) IS committed intentionally — see src-tauri/resources/
+.solomd/

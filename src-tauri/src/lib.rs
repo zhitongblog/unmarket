@@ -11283,16 +11283,16 @@ fn enqueue_post_task(conn: &Connection, post: &PostItem) -> Result<String, Strin
 // ===================== 成效追踪（搜索排名 + 品牌提及 + 可选 Trends）=====================
 // 全程走 Unzoo 的专用 auto/Default profile（与发帖 profile 隔离 → 排名最干净、最可比）。
 // 实测验证过：SERP 解析 JS 可定位域名排名；品牌词 Trends 对小品牌返回"无足够数据"。
-const METRICS_PROFILE_NAME: &str = "auto"; // 专用采集 profile 名（独立窗口，与发帖隔离）
+const METRICS_PROFILE_NAME: &str = "um-metrics"; // 专用采集 profile（干净/不登录/不绑代理，与身份隔离的 auto 分开）
 const METRICS_GL: &str = "us";
 const METRICS_HL: &str = "zh-CN";
 const METRICS_REGION: &str = "us/zh-CN";
 
 struct KwRow { keyword: String, kind: String, domain: String }
 
-/// 解析采集 profile 的完整路径：默认按 name=="auto"，否则取 path 末段=="Default" 的（即 auto/默认 profile）。
-/// 关键：/tabs/create 的 profile_id 不会真正切到目标 profile（会落回当前活动窗口），
-/// 必须用 /profiles/launch + profile_path 才能在目标 profile 自己的独立窗口里开标签。
+/// 解析专用采集 profile 的完整路径：按 name=="um-metrics" 找；找不到就建一个**干净**的（不登录/不绑代理）。
+/// 关键：绝不回退到 auto/Default——那个现在可能是某个登录态身份，会污染排名采集。
+/// 也：/tabs/create 的 profile_id 不会真正切 profile，必须 /profiles/launch + profile_path。
 fn metrics_resolve_profile_path() -> Result<String, String> {
     let client = get_blocking_client();
     let resp = client.get(&format!("{}/profiles", UNZOO_API_BASE))
@@ -11301,19 +11301,27 @@ fn metrics_resolve_profile_path() -> Result<String, String> {
     let arr = v.get("data").and_then(|d| d.get("profiles"))
         .or_else(|| v.get("profiles"))
         .and_then(|x| x.as_array()).cloned().unwrap_or_default();
-    // 优先按名字 "auto"
+    // 按文件夹 Profile_um-metrics 匹配（Unzoo 给程序建的 profile 显示名是默认"用户N"，不能按显示名匹配）
+    let want_folder = format!("Profile_{}", METRICS_PROFILE_NAME);
     for p in &arr {
-        if p.get("name").and_then(|n| n.as_str()) == Some(METRICS_PROFILE_NAME) {
-            if let Some(path) = p.get("path").and_then(|x| x.as_str()) { return Ok(path.to_string()); }
+        let name = p.get("name").and_then(|n| n.as_str());
+        let path = p.get("path").and_then(|x| x.as_str()).unwrap_or("");
+        let norm = path.replace('/', "\\");
+        let folder = norm.rsplit('\\').next().unwrap_or("");
+        if name == Some(METRICS_PROFILE_NAME) || folder == want_folder {
+            return Ok(path.to_string());
         }
     }
-    // 退而求其次：path 末段是 "Default"
-    for p in &arr {
-        if let Some(path) = p.get("path").and_then(|x| x.as_str()) {
-            if path.replace('/', "\\").rsplit('\\').next() == Some("Default") { return Ok(path.to_string()); }
-        }
-    }
-    Err(format!("找不到名为 {} 的采集 profile（也无 Default 兜底）", METRICS_PROFILE_NAME))
+    // 不存在 → 现建一个干净的专用采集 profile（不登录、不绑代理）
+    let resp = client.post(&format!("{}/profiles/create", UNZOO_API_BASE))
+        .json(&serde_json::json!({"name": METRICS_PROFILE_NAME, "group": "metrics", "tags": ["unmarket-metrics"]}))
+        .send().map_err(|e| format!("建采集 profile 失败: {}", e))?;
+    if !resp.status().is_success() { return Err(format!("建采集 profile 失败: HTTP {}", resp.status())); }
+    let data: serde_json::Value = resp.json().unwrap_or_default();
+    let path = data.get("data").and_then(|d| d.get("path")).and_then(|p| p.as_str())
+        .or_else(|| data.get("path").and_then(|p| p.as_str()))
+        .ok_or("建采集 profile 成功但无 path")?;
+    Ok(path.to_string())
 }
 
 /// 启动专用采集 profile（auto，独立窗口，与发帖 profile 完全隔离）并返回其窗口里的一个标签页 id。
@@ -11413,23 +11421,36 @@ fn metrics_search_url(query: &str) -> Result<String, String> {
     ).map(|u| u.to_string()).map_err(|e| e.to_string())
 }
 
-/// 采一个词的搜索排名。返回 (排名位次或 None, detail JSON)。
+/// 是否被 Google 拦截（/sorry/ 异常流量 CAPTCHA）。被拦时不能把结果当"未进前30"记，否则是假数据。
+fn metrics_blocked(tab_id: &str) -> bool {
+    let raw = metrics_evaluate(tab_id, "location.href").unwrap_or_default();
+    let href = serde_json::from_str::<String>(&raw).unwrap_or(raw);
+    href.contains("/sorry")
+}
+
+/// 采一个词的搜索排名。返回 (排名位次或 None, detail JSON)。被 Google 限流时返回 Err("BLOCKED")。
 fn metrics_collect_serp(tab_id: &str, keyword: &str, domain: &str) -> Result<(Option<i64>, String), String> {
     let url = metrics_search_url(keyword)?;
     metrics_navigate(tab_id, &url)?;
     std::thread::sleep(std::time::Duration::from_millis(2500));
+    if metrics_blocked(tab_id) { return Err("BLOCKED: Google 限流(CAPTCHA)".into()); }
     let raw = metrics_evaluate(tab_id, &metrics_serp_js(domain))?;
     let v = metrics_parse(&raw);
+    // 零自然结果 = 软限流/异常页（正常搜索一定有结果）→ 当作被拦，不记假"未进前30"
+    if v.get("total").and_then(|x| x.as_i64()).unwrap_or(0) == 0 {
+        return Err("BLOCKED: 0 结果(疑似软限流)".into());
+    }
     let rank = v.get("rank").and_then(|x| x.as_i64());
     Ok((rank, v.to_string()))
 }
 
-/// 采一个词的品牌提及（精确匹配 + 排除自家域名）。返回 (第三方域名数, detail JSON)。
+/// 采一个词的品牌提及（精确匹配 + 排除自家域名）。返回 (第三方域名数, detail JSON)。被限流时 Err("BLOCKED")。
 fn metrics_collect_mention(tab_id: &str, keyword: &str, domain: &str) -> Result<(i64, String), String> {
     let q = format!("\"{}\" -site:{}", keyword, domain);
     let url = metrics_search_url(&q)?;
     metrics_navigate(tab_id, &url)?;
     std::thread::sleep(std::time::Duration::from_millis(2500));
+    if metrics_blocked(tab_id) { return Err("BLOCKED: Google 限流(CAPTCHA)".into()); }
     let raw = metrics_evaluate(tab_id, &metrics_mention_js(domain))?;
     let v = metrics_parse(&raw);
     let domains = v.get("domains").and_then(|x| x.as_i64()).unwrap_or(0);
@@ -11476,17 +11497,22 @@ fn metrics_collect_all(app: &AppHandle) -> Result<(usize, usize), String> {
     let mut serp_done = 0usize;
     let mut mention_done = 0usize;
 
+    let mut blocked = false;
     for kw in &rows {
-        let (source, value, detail): (&str, Option<i64>, String) = match kw.kind.as_str() {
-            "mention" => match metrics_collect_mention(&tab_id, &kw.keyword, &kw.domain) {
-                Ok((d, det)) => { mention_done += 1; ("mention", Some(d), det) }
-                Err(e) => { log::warn!("[METRICS] mention {} 失败: {}", kw.keyword, e); continue; }
-            },
-            _ => match metrics_collect_serp(&tab_id, &kw.keyword, &kw.domain) {
-                Ok((rank, det)) => { serp_done += 1; ("serp", rank, det) }
-                Err(e) => { log::warn!("[METRICS] serp {} 失败: {}", kw.keyword, e); continue; }
-            },
+        let collected: Result<(&str, Option<i64>, String), String> = match kw.kind.as_str() {
+            "mention" => metrics_collect_mention(&tab_id, &kw.keyword, &kw.domain).map(|(d, det)| ("mention", Some(d), det)),
+            _ => metrics_collect_serp(&tab_id, &kw.keyword, &kw.domain).map(|(rank, det)| ("serp", rank, det)),
         };
+        let (source, value, detail) = match collected {
+            Ok(v) => v,
+            // 被 Google 限流：立刻停，绝不把后续记成"未进前30"假数据
+            Err(e) if e.starts_with("BLOCKED") => {
+                log::warn!("[METRICS] {}，本轮提前结束（已采 serp {} / mention {}）", e, serp_done, mention_done);
+                blocked = true; break;
+            }
+            Err(e) => { log::warn!("[METRICS] {} 采集失败: {}", kw.keyword, e); continue; }
+        };
+        if source == "serp" { serp_done += 1; } else { mention_done += 1; }
         {
             let state = app.state::<AppState>();
             let guard = state.db.lock();
@@ -11500,7 +11526,7 @@ fn metrics_collect_all(app: &AppHandle) -> Result<(usize, usize), String> {
         std::thread::sleep(std::time::Duration::from_millis(1500 + (human_type_delay_ms() as u64) * 8));
     }
 
-    if trends_on {
+    if trends_on && !blocked {
         let brand_terms: Vec<String> = rows.iter().filter(|k| k.kind == "brand").map(|k| k.keyword.clone()).collect();
         for term in brand_terms {
             if let Ok((val, det)) = metrics_collect_trends(&tab_id, &term) {
@@ -11517,7 +11543,11 @@ fn metrics_collect_all(app: &AppHandle) -> Result<(usize, usize), String> {
     }
 
     metrics_close_tab(&tab_id);
-    log::info!("[METRICS] 采集完成：排名 {} 词，提及 {} 词", serp_done, mention_done);
+    // 整轮一开头就被限流、一条没采到 → 明确报错（引擎会择机重试），不要假装"采集完成"
+    if blocked && serp_done == 0 && mention_done == 0 {
+        return Err("Google 临时限流(CAPTCHA)，本轮未采到数据；通常是短时间查询过多，稍后自动重试即可".into());
+    }
+    log::info!("[METRICS] 采集{}：排名 {} 词，提及 {} 词", if blocked {"中断(限流)"} else {"完成"}, serp_done, mention_done);
     Ok((serp_done, mention_done))
 }
 
@@ -12754,6 +12784,8 @@ async fn engine_execute(app: &AppHandle, task: &ClaimedTask) -> TaskOutcome {
             let app2 = app.clone();
             match tauri::async_runtime::spawn_blocking(move || metrics_collect_all(&app2)).await {
                 Ok(Ok((s, m))) => TaskOutcome::Success(Some(format!("采集完成：排名 {} 词，提及 {} 词", s, m))),
+                // 被 Google 限流：不要重试（会继续撞墙、加重限流），标 blocked，等明天的 tick 再采
+                Ok(Err(e)) if e.contains("限流") || e.contains("CAPTCHA") || e.contains("BLOCKED") => TaskOutcome::Blocked(e),
                 Ok(Err(e)) => TaskOutcome::Retry(e),
                 Err(e) => TaskOutcome::Failed(format!("采集线程异常: {}", e)),
             }
@@ -13505,7 +13537,8 @@ fn get_run_state(state: State<'_, AppState>) -> Result<RunState, String> {
         quiet_end: qi("engine_quiet_end"),
         processed: engine_cfg_get(&conn, "engine_processed").and_then(|v| v.parse().ok()).unwrap_or(0),
         pending_review: cnt("SELECT COUNT(*) FROM reply_history WHERE status='pending_review'"),
-        blocked_tasks: cnt("SELECT COUNT(*) FROM tasks WHERE status='blocked'"),
+        // 排除 metrics_collect：它被 Google 限流时标 blocked 是正常退避，不是"卡住需人工"
+        blocked_tasks: cnt("SELECT COUNT(*) FROM tasks WHERE status='blocked' AND task_type<>'metrics_collect'"),
         // 只有"已配置 profile 或 persona"的账号掉登录/被封才算真问题；没配置的不报警
         unhealthy_accounts: cnt(
             "SELECT COUNT(*) FROM accounts WHERE health_status IN ('logged_out','banned','shadowbanned') \
