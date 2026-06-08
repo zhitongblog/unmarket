@@ -2503,6 +2503,10 @@ pub struct Account {
     pub total_nurture_seconds: i64,
     #[serde(default)]
     pub last_nurture_at: Option<String>,
+    #[serde(default)]
+    pub persona_id: Option<String>,      // 所属身份(Gmail)
+    #[serde(default)]
+    pub persona_email: Option<String>,   // 所属身份的 Gmail（展示用）
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -3739,9 +3743,10 @@ Be concise and accurate. Extract real information from the content."#,
 fn list_accounts(state: State<AppState>) -> Result<Vec<Account>, String> {
     let conn = state.db.lock().map_err(|e| e.to_string())?;
     let mut stmt = conn.prepare(
-        "SELECT id, platform, username, email, status, created_at, profile_id, \
-                COALESCE(health_status,'unknown'), COALESCE(total_nurture_seconds,0), last_nurture_at \
-         FROM accounts ORDER BY created_at DESC")
+        "SELECT a.id, a.platform, a.username, a.email, a.status, a.created_at, a.profile_id, \
+                COALESCE(a.health_status,'unknown'), COALESCE(a.total_nurture_seconds,0), a.last_nurture_at, \
+                a.persona_id, p.email \
+         FROM accounts a LEFT JOIN personas p ON p.id = a.persona_id ORDER BY a.created_at DESC")
         .map_err(|e| e.to_string())?;
 
     let accounts = stmt.query_map([], |row| {
@@ -3756,10 +3761,23 @@ fn list_accounts(state: State<AppState>) -> Result<Vec<Account>, String> {
             health_status: row.get(7)?,
             total_nurture_seconds: row.get(8)?,
             last_nurture_at: row.get(9)?,
+            persona_id: row.get(10)?,
+            persona_email: row.get(11)?,
         })
     }).map_err(|e| e.to_string())?;
 
     accounts.collect::<Result<Vec<_>, _>>().map_err(|e| e.to_string())
+}
+
+/// 把账号归属到某个身份(persona)；persona_id 为空=解除归属。归属后该账号自动用 persona 的 profile。
+#[tauri::command]
+fn set_account_persona(state: State<AppState>, account_id: String, persona_id: Option<String>) -> Result<(), String> {
+    let conn = state.db.lock().map_err(|e| e.to_string())?;
+    match persona_id.filter(|s| !s.is_empty()) {
+        Some(pid) => conn.execute("UPDATE accounts SET persona_id=?1 WHERE id=?2", params![pid, account_id]),
+        None => conn.execute("UPDATE accounts SET persona_id=NULL WHERE id=?1", params![account_id]),
+    }.map_err(|e| e.to_string())?;
+    Ok(())
 }
 
 #[tauri::command]
@@ -3784,6 +3802,8 @@ fn add_account(state: State<AppState>, platform: String, username: String, passw
         health_status: Some("unknown".to_string()),
         total_nurture_seconds: 0,
         last_nurture_at: None,
+        persona_id: None,
+        persona_email: None,
     })
 }
 
@@ -4196,6 +4216,40 @@ fn get_platform_home_url(platform: &str) -> &'static str {
     }
 }
 
+/// 点完"用 Google 登录"后，完成 Google 侧的【选账号 + 授权】——老代码漏了这步，是自动登录静默失败的主因。
+/// 处理同标签跳转的 OAuth（accounts.google.com 选账号页 + 授权页）。返回是否检测到并处理了 Google 页。
+fn complete_google_oauth() -> bool {
+    let mut handled = false;
+    for _ in 0..5 {
+        std::thread::sleep(std::time::Duration::from_secs(2));
+        let raw = unzoo_evaluate("location.href").unwrap_or_default();
+        let url = serde_json::from_str::<String>(&raw).unwrap_or(raw);
+        if !url.contains("accounts.google.com") && !url.contains("oauth") { continue; }
+        handled = true;
+        // 选账号：profile 里通常只有一个已登录 Gmail → 点第一个账号条目
+        for s in ["div[data-identifier]", "[data-authuser=\"0\"]", "li[class] div[role=link]",
+                  "div[role=link]", "ul li div"] {
+            if unzoo_click(s).is_ok() { break; }
+        }
+        std::thread::sleep(std::time::Duration::from_secs(2));
+        // 授权/继续/允许
+        for s in ["#submit_approve_access", "button:has-text(\"Continue\")", "text=Continue",
+                  "text=继续", "text=Allow", "text=允许", "text=Authorize"] {
+            if unzoo_click(s).is_ok() { break; }
+        }
+        std::thread::sleep(std::time::Duration::from_secs(3));
+    }
+    handled
+}
+
+/// 点掉常见 cookie 同意弹窗（很多平台不点就遮住登录按钮）。
+fn accept_cookies_best_effort() {
+    for s in ["text=Accept all", "text=Accept All", "text=同意", "text=接受全部", "text=Allow all",
+              "button:has-text(\"Accept\")", "#onetrust-accept-btn-handler"] {
+        if unzoo_click(s).is_ok() { std::thread::sleep(std::time::Duration::from_millis(800)); break; }
+    }
+}
+
 #[tauri::command]
 async fn register_platform(state: State<'_, AppState>, platform: String) -> Result<RegistrationResult, String> {
     let config = match get_platform_config(&platform) {
@@ -4272,6 +4326,7 @@ async fn register_platform(state: State<'_, AppState>, platform: String) -> Resu
             log::error!("Failed to navigate to login page: {}", e);
         } else {
             std::thread::sleep(std::time::Duration::from_secs(2));
+            accept_cookies_best_effort(); // 点掉 cookie 弹窗，免得遮住登录按钮
 
             // Try to click Google OAuth button
             let google_selectors = [
@@ -4297,8 +4352,10 @@ async fn register_platform(state: State<'_, AppState>, platform: String) -> Resu
             }
 
             if clicked {
-                // Wait for OAuth flow to complete
-                std::thread::sleep(std::time::Duration::from_secs(5));
+                // 关键补齐：完成 Google 选账号 + 授权（老代码就缺这步）
+                std::thread::sleep(std::time::Duration::from_secs(3));
+                complete_google_oauth();
+                std::thread::sleep(std::time::Duration::from_secs(2));
 
                 // Check current page for special states
                 if let Ok(page_text) = unzoo_get_text() {
@@ -4391,7 +4448,9 @@ async fn register_platform(state: State<'_, AppState>, platform: String) -> Resu
         for selector in signup_selectors {
             if unzoo_click(selector).is_ok() {
                 log::info!("✓ Clicked Google signup button");
-                std::thread::sleep(std::time::Duration::from_secs(5));
+                std::thread::sleep(std::time::Duration::from_secs(3));
+                complete_google_oauth(); // 选账号 + 授权
+                std::thread::sleep(std::time::Duration::from_secs(2));
 
                 // Check for phone/email verification
                 if let Ok(page_text) = unzoo_get_text() {
@@ -4489,6 +4548,135 @@ fn save_account_and_return_success(
         needs_manual_verification: false,
         verification_reason: None,
     })
+}
+
+/// 平台登录页 URL（敌意平台用专门的登录入口；其余取 platform config，再不行用域名）。
+fn platform_login_url(platform: &str) -> String {
+    match platform.to_lowercase().as_str() {
+        "twitter" | "x" => "https://x.com/i/flow/login".to_string(),
+        "reddit" => "https://www.reddit.com/login/".to_string(),
+        _ => get_platform_config(platform).map(|c| c.login_url.to_string())
+            .unwrap_or_else(|| format!("https://{}/", platform)),
+    }
+}
+
+/// 自动确保某账号在其身份(persona)的浏览器里已登录：切到 persona profile → 查登录 → 否则 Google 登录/注册。
+/// 友好平台全自动；敌意平台(X/Reddit)做到"打开登录页 + 提示你点最后一下"。
+#[tauri::command]
+async fn account_auto_login(app: AppHandle, account_id: String) -> Result<String, String> {
+    let platform: String = {
+        let st = app.state::<AppState>();
+        let guard = st.db.lock();
+        let conn = guard.map_err(|e| e.to_string())?;
+        conn.query_row("SELECT platform FROM accounts WHERE id=?1", params![account_id], |r| r.get::<_, String>(0))
+            .map_err(|_| "账号不存在".to_string())?
+    };
+    let acc = Some(account_id.clone());
+    ensure_browser_connected().await.map_err(|e| format!("浏览器未就绪: {}", e))?;
+    // 切到该账号所属身份的 profile（同 Gmail 下账号共用一个浏览器/IP）
+    engine_select_profile(&app, &platform, &acc).await?;
+    // 已登录？
+    let p = platform.clone();
+    let logged = tauri::async_runtime::spawn_blocking(move || verify_login_blocking(&p)).await.unwrap_or(false);
+    if logged {
+        let st = app.state::<AppState>();
+        let guard = st.db.lock();
+        if let Ok(conn) = guard { let _ = conn.execute("UPDATE accounts SET health_status='healthy', last_health_check=datetime('now') WHERE id=?1", params![account_id]); }
+        return Ok(format!("{}：已登录 ✓", platform));
+    }
+    // 敌意平台（X/Reddit）：自动登录有锁号风险/技术上进不去 → 不硬试，直接打开登录页让用户点最后一下
+    let hostile = matches!(platform.to_lowercase().as_str(), "twitter" | "x" | "reddit");
+    if !hostile {
+        // 友好平台：先全自动（Google 登录 → 否则注册）
+        let st = app.state::<AppState>();
+        let res = register_platform(st, platform.clone()).await?;
+        if res.success {
+            let st2 = app.state::<AppState>();
+            let guard = st2.db.lock();
+            if let Ok(conn) = guard { let _ = conn.execute("UPDATE accounts SET health_status='healthy', last_health_check=datetime('now') WHERE id=?1", params![account_id]); }
+            return Ok(format!("{}：自动登录成功 ✓", platform));
+        }
+        // 没成 → 落到"打开登录页让你点一下"（产品已做完 95%）
+    }
+    // 打开登录页（已在对的身份 profile + 独立 IP），引导用户做最后一下人手点击
+    let login_url = platform_login_url(&platform);
+    let _ = tauri::async_runtime::spawn_blocking(move || { let _ = unzoo_navigate(&login_url); }).await;
+    Ok(format!("MANUAL::{} 已打开登录页（已挂好这个身份的独立 IP）。请在弹出的浏览器窗口里登录一下——只需这一次，之后系统全自动复用。", platform))
+}
+
+/// 一键登录某身份(Gmail)下的所有账号：逐个走 account_auto_login。
+#[tauri::command]
+async fn persona_login_all(app: AppHandle, persona_id: String) -> Result<String, String> {
+    let accts: Vec<String> = {
+        let st = app.state::<AppState>();
+        let guard = st.db.lock();
+        let conn = guard.map_err(|e| e.to_string())?;
+        let mut stmt = conn.prepare("SELECT id FROM accounts WHERE persona_id=?1 ORDER BY platform").map_err(|e| e.to_string())?;
+        let it = stmt.query_map(params![persona_id], |r| r.get::<_, String>(0)).map_err(|e| e.to_string())?;
+        it.flatten().collect()
+    };
+    if accts.is_empty() { return Err("这个身份下没有账号".into()); }
+    let (mut ok, mut need, mut fail) = (0, 0, 0);
+    let mut notes: Vec<String> = Vec::new();
+    for aid in &accts {
+        match account_auto_login(app.clone(), aid.clone()).await {
+            Ok(m) if m.starts_with("MANUAL::") => need += 1, // 已打开登录页，待用户点一下
+            Ok(_) => ok += 1,
+            Err(e) => { fail += 1; notes.push(e); }
+        }
+    }
+    Ok(format!("✓ 自动登录成功 {} · 需你点一下 {} · 失败 {}（已为需手动的逐个打开登录页）{}", ok, need, fail,
+        if notes.is_empty() { String::new() } else { format!("\n{}", notes.join("\n")) }))
+}
+
+/// 一个邮箱默认要"开通"的平台（都支持 Google 登录/注册）。
+const PROVISION_PLATFORMS: &[&str] = &[
+    "reddit", "producthunt", "devto", "medium", "hashnode", "indiehackers",
+    "betalist", "alternativeto", "hackernews", "github", "linkedin", "twitter",
+];
+
+/// 以邮箱为单位「检查并开通账号」：逐平台 有就登录、没有就注册，账号自动挂到这个邮箱名下。
+/// 这才是设计的核心流——登录一个 Gmail 后，一键把名下各平台账号开出来。
+#[tauri::command]
+async fn persona_provision_all(app: AppHandle, persona_id: String) -> Result<String, String> {
+    let email: String = {
+        let st = app.state::<AppState>();
+        let guard = st.db.lock();
+        let conn = guard.map_err(|e| e.to_string())?;
+        conn.query_row("SELECT email FROM personas WHERE id=?1", params![persona_id], |r| r.get(0))
+            .map_err(|_| "身份不存在".to_string())?
+    };
+    let (mut ok, mut need, mut fail) = (0, 0, 0);
+    let mut notes: Vec<String> = Vec::new();
+    for plat in PROVISION_PLATFORMS {
+        // get-or-create 这个邮箱在该平台的账号行（没有就建一行，归属到这个 persona）
+        let aid: String = {
+            let st = app.state::<AppState>();
+            let guard = st.db.lock();
+            let conn = match guard { Ok(c) => c, Err(_) => continue };
+            match conn.query_row("SELECT id FROM accounts WHERE persona_id=?1 AND platform=?2",
+                params![persona_id, plat], |r| r.get::<_, String>(0)) {
+                Ok(id) => id,
+                Err(_) => {
+                    let id = Uuid::new_v4().to_string();
+                    let _ = conn.execute(
+                        "INSERT INTO accounts (id, platform, username, persona_id, status, created_at) \
+                         VALUES (?1,?2,?3,?4,'active',datetime('now'))",
+                        params![id, plat, email, persona_id]);
+                    id
+                }
+            }
+        };
+        // 检查→有就登录、没有就注册（友好平台全自动；X/Reddit 打开登录页让你点一下）
+        match account_auto_login(app.clone(), aid).await {
+            Ok(m) if m.starts_with("MANUAL::") => need += 1,
+            Ok(_) => ok += 1,
+            Err(e) => { fail += 1; notes.push(format!("{}: {}", plat, e)); }
+        }
+    }
+    Ok(format!("邮箱 {} 开通完成：✓ 已登录/注册 {} · 需你点一下 {} · 失败 {}{}",
+        email, ok, need, fail,
+        if notes.is_empty() { String::new() } else { format!("\n{}", notes.join("\n")) }))
 }
 
 // Sync login status for all supported platforms
@@ -11865,17 +12053,31 @@ fn sanitize_profile_name(email: &str) -> String {
 /// 直接调 /profiles/create，返回 (profile_id=path末段, 完整 path)。
 async fn create_profile_raw(name: &str) -> Result<(String, String), String> {
     let client = get_http_client();
-    let resp = client.post(format!("{}/profiles/create", UNZOO_API_BASE))
-        .json(&serde_json::json!({"name": name, "group": "persona", "tags": ["unmarket-persona"]}))
-        .send().await.map_err(|e| format!("建 profile 失败: {}", e))?;
-    if !resp.status().is_success() { return Err(format!("建 profile 失败: HTTP {}", resp.status())); }
-    let data: serde_json::Value = resp.json().await.map_err(|e| e.to_string())?;
-    let path = data.get("data").and_then(|d| d.get("path")).and_then(|p| p.as_str())
-        .or_else(|| data.get("path").and_then(|p| p.as_str()))
-        .ok_or("建 profile 成功但无 path")?.to_string();
-    let id = path.replace('/', "\\").rsplit('\\').next().filter(|s| !s.is_empty())
-        .unwrap_or(name).to_string();
-    Ok((id, path))
+    // 先用干净名；失败再加唯一后缀重试——Unzoo 删过的名字会残留注册项，导致同名"failed to create"。
+    let mut last_err = String::new();
+    for attempt in 0..3 {
+        let try_name = if attempt == 0 { name.to_string() }
+            else { format!("{}_{}", name, &Uuid::new_v4().to_string()[..6]) };
+        let resp = match client.post(format!("{}/profiles/create", UNZOO_API_BASE))
+            .json(&serde_json::json!({"name": try_name, "group": "persona", "tags": ["unmarket-persona"]}))
+            .send().await {
+            Ok(r) => r, Err(e) => { last_err = format!("请求失败: {}", e); continue; }
+        };
+        let ok = resp.status().is_success();
+        let data: serde_json::Value = resp.json().await.unwrap_or_default();
+        let path = data.get("data").and_then(|d| d.get("path")).and_then(|p| p.as_str())
+            .or_else(|| data.get("path").and_then(|p| p.as_str())).map(|s| s.to_string());
+        if ok {
+            if let Some(path) = path {
+                let id = path.replace('/', "\\").rsplit('\\').next().filter(|s| !s.is_empty())
+                    .unwrap_or(&try_name).to_string();
+                return Ok((id, path));
+            }
+        }
+        last_err = data.get("error").and_then(|e| e.as_str()).unwrap_or("failed to create profile").to_string();
+        log::warn!("[PERSONA] 建 profile '{}' 失败({})，换名重试", try_name, last_err);
+    }
+    Err(format!("建 profile 失败: {}", last_err))
 }
 
 /// 设置 profile 代理（当前 Unzoo 要求 profile_path + proxy_server，实测验证）。
@@ -12003,9 +12205,49 @@ async fn persona_create(app: AppHandle, email: String) -> Result<PersonaDto, Str
     // profile 绑这个 persona 专属的本地 socks5 端口（= 专属节点 = 专属出口 IP）
     unzoo_set_profile_proxy2(&profile_path, &format!("socks5://127.0.0.1:{}", port)).await?;
 
+    // 关键 UX：建好身份后，立刻打开这套浏览器并定位到 Google 登录页，引导用户把这个 Gmail 登进去
+    // （这是基础登录，登一次之后，名下平台账号才能自动 Google 注册/登录）
+    let pp = profile_path.clone();
+    let _ = tauri::async_runtime::spawn_blocking(move || open_profile_window(&pp, "https://accounts.google.com/signin/v2/identifier?flowName=GlifWebSignIn")).await;
+
     let state = app.state::<AppState>();
     let conn = state.db.lock().map_err(|_| "db".to_string())?;
     Ok(persona_row_to_dto(&conn, &id, &email, Some(profile_id), Some(node), Some(port as i64), "active".into(), None))
+}
+
+/// 打开某 profile 的窗口并导航到 url（用于引导用户在新身份里登录 Gmail）。阻塞，spawn_blocking 调用。
+fn open_profile_window(profile_path: &str, url: &str) -> Result<(), String> {
+    let client = get_blocking_client();
+    let resp = client.post(format!("{}/profiles/launch", UNZOO_API_BASE))
+        .json(&serde_json::json!({"profile_path": profile_path})).send()
+        .map_err(|e| format!("打开 profile 失败: {}", e))?;
+    let v: serde_json::Value = resp.json().unwrap_or_default();
+    let tab = v.get("data").and_then(|d| d.get("tab_id"))
+        .map(|t| if let Some(n)=t.as_i64(){n.to_string()} else if let Some(s)=t.as_str(){s.to_string()} else {String::new()})
+        .unwrap_or_default();
+    if tab.is_empty() { return Err("打开 profile 后无 tab".into()); }
+    std::thread::sleep(std::time::Duration::from_millis(600));
+    let _ = client.post(format!("{}/navigate", UNZOO_API_BASE))
+        .json(&serde_json::json!({"tab_id": tab, "url": url})).send();
+    Ok(())
+}
+
+/// 打开某个身份的浏览器到 Google 登录页（让用户补登/重登该身份的 Gmail）。
+#[tauri::command]
+async fn persona_open_gmail_login(app: AppHandle, persona_id: String) -> Result<String, String> {
+    let (email, profile_id): (String, Option<String>) = {
+        let st = app.state::<AppState>();
+        let guard = st.db.lock();
+        let conn = guard.map_err(|e| e.to_string())?;
+        conn.query_row("SELECT email, profile_id FROM personas WHERE id=?1", params![persona_id],
+            |r| Ok((r.get::<_,String>(0)?, r.get::<_,Option<String>>(1)?)))
+            .map_err(|_| "身份不存在".to_string())?
+    };
+    let pid = profile_id.ok_or("该身份没有 profile")?;
+    let path = resolve_profile_path(&pid).await.ok_or("找不到该身份的 profile 路径")?;
+    tauri::async_runtime::spawn_blocking(move || open_profile_window(&path, "https://accounts.google.com/signin/v2/identifier?flowName=GlifWebSignIn"))
+        .await.map_err(|e| e.to_string())??;
+    Ok(format!("已打开 {} 的浏览器到 Google 登录页，请在窗口里登录这个 Gmail", email))
 }
 
 #[tauri::command]
@@ -12434,7 +12676,15 @@ fn health_schedule_tick(conn: &Connection) {
 /// 解析账号实际使用的 profile：账号自身绑定 → 该平台任一已绑定账号 → 全局默认 profile。
 /// 这让"未单独绑定的账号继承全局默认 profile"成立。
 fn resolve_account_profile(conn: &Connection, account_id: &Option<String>, platform: &str) -> Option<String> {
-    // 1) 账号自身绑定
+    // 0) 账号所属身份(persona)的 profile —— 同一 Gmail 下所有账号共用这一个 profile/IP/指纹（最高优先级）
+    if let Some(aid) = account_id.as_ref().filter(|s| !s.is_empty()) {
+        if let Ok(p) = conn.query_row(
+            "SELECT pe.profile_id FROM accounts a JOIN personas pe ON pe.id = a.persona_id WHERE a.id=?1",
+            params![aid], |r| r.get::<_, Option<String>>(0)) {
+            if let Some(p) = p { if !p.is_empty() { return Some(p); } }
+        }
+    }
+    // 1) 账号自身绑定（旧模型，未归属身份时）
     if let Some(aid) = account_id.as_ref().filter(|s| !s.is_empty()) {
         if let Ok(Some(p)) = conn.query_row(
             "SELECT profile_id FROM accounts WHERE id=?1", params![aid],
@@ -14377,8 +14627,13 @@ pub fn run() {
             metrics_get_settings,
             metrics_set_trends,
             metrics_collect_now,
+            set_account_persona,
+            account_auto_login,
+            persona_login_all,
+            persona_provision_all,
             persona_list,
             persona_create,
+            persona_open_gmail_login,
             persona_delete,
             persona_test_ip,
             airport_set_subscription,

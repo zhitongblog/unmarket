@@ -1694,6 +1694,8 @@ async function analyzeUrl() {
 async function loadAccounts() {
   try {
     accounts = await invoke('list_accounts');
+    // 加载身份(persona)列表，用于按 Gmail 分组 + 归属下拉
+    try { personasCache = (await invoke('persona_list')) || []; } catch { personasCache = []; }
     // Also load browser profiles to show profile info for each account
     await loadBrowserProfiles();
     // Load available profiles for the binding dropdown
@@ -1788,26 +1790,115 @@ async function loadAccountLifecycles() {
   }
 }
 
+let personasCache: any[] = [];
+
+// 账号管理 = 多 Gmail 身份管理台：每个 Gmail 一组（含 0 账号的也显示），名下账号共用该身份的 profile/IP/指纹。
 function renderAccounts() {
   const list = document.getElementById('accountsList');
   const empty = document.getElementById('emptyAccounts');
-
   if (!list || !empty) return;
 
-  if (accounts.length === 0) {
-    list.style.display = 'none';
-    empty.style.display = 'block';
-    return;
+  const topBar = `<div class="card" style="margin:0 0 12px;padding:12px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+    <span style="font-weight:700;">🧑‍🤝‍🧑 身份(Gmail)管理</span>
+    <span class="text-muted" style="font-size:12px;">一个 Gmail = 一套独立浏览器+IP+指纹；名下账号全共用它。当前 ${personasCache.length} 个身份。</span>
+    <button class="btn btn-small btn-primary" style="margin-left:auto;" onclick="createPersonaPrompt()" title="用一个真实 Gmail 新建一套独立身份">+ 新建 Gmail 身份</button>
+  </div>`;
+
+  const groups = new Map<string, any[]>();
+  for (const a of accounts) {
+    const key = a.persona_id || '__none__';
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key)!.push(a);
   }
 
-  list.style.display = 'block';
-  empty.style.display = 'none';
+  if (personasCache.length === 0 && accounts.length === 0) {
+    list.style.display = 'block'; empty.style.display = 'none';
+    list.innerHTML = topBar + `<div class="card" style="padding:18px;text-align:center;"><div class="text-muted">还没有身份。点上面「+ 新建 Gmail 身份」用一个 Gmail 开始——之后在它下面加各平台账号。</div></div>`;
+    return;
+  }
+  list.style.display = 'block'; empty.style.display = 'none';
 
-  // Find matching profiles for each account
-  const getProfileForAccount = (accountId: string) =>
-    browserProfiles.find(p => p.account_id === accountId);
+  let html = topBar;
+  // 每个 Gmail 身份一组（含 0 账号的也显示）
+  for (const p of personasCache) {
+    const accts = groups.get(p.id) || [];
+    html += `<div class="card" style="margin:14px 0 4px;padding:10px 14px;border-left:4px solid #4a8cff;">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span style="font-weight:700;">🧑‍🤝‍🧑 ${escapeHtml(p.email || '身份')}</span>
+        <span class="text-muted" style="font-size:12px;">${p.region ? escapeHtml(p.region) : '🌐 节点未分配'}${p.profile_id ? ' · 共用 ' + escapeHtml(p.profile_id) : ''} · ${accts.length} 个账号</span>
+        <button class="btn btn-small btn-secondary" style="margin-left:auto;" onclick="personaGmailLogin('${p.id}')" title="打开这个身份的浏览器去登录它的 Gmail（基础登录，先做这步）">📧 登录Gmail</button>
+        <button class="btn btn-small btn-success" onclick="personaProvisionAll('${p.id}','${escapeHtml(p.email||'')}')" title="逐平台检查：有就登录、没有就注册，账号自动挂到这个邮箱名下">🚀 检查并开通账号</button>
+        <button class="btn btn-small btn-primary" onclick="window.__addAccountPersona='${p.id}';openModal('modalAddAccount');">+ 加账号</button>
+        <button class="btn btn-small btn-secondary" style="color:#e55;" onclick="deletePersonaAcct('${p.id}','${escapeHtml(p.email || '')}')" title="删除这个身份">删身份</button>
+      </div>
+    </div>`;
+    if (accts.length) html += accts.map((a: any) => renderAccountCard(a)).join('');
+    else html += `<div class="text-muted" style="font-size:12px;margin:2px 0 6px 8px;">还没有账号 —— 点上面「+ 加账号」给这个 Gmail 加平台账号。</div>`;
+  }
+  // 未归属身份的账号
+  if (groups.has('__none__')) {
+    const accts = groups.get('__none__')!;
+    html += `<div class="card" style="margin:14px 0 4px;padding:10px 14px;border-left:4px solid #d97706;">
+      <div style="font-weight:600;">🧩 未归属身份 · ${accts.length} 个账号</div>
+      <div class="text-muted" style="font-size:12px;">还没挂到某个 Gmail 身份下。在账号上选「归属身份」归类即可。</div>
+    </div>`;
+    html += accts.map((a: any) => renderAccountCard(a)).join('');
+  }
+  list.innerHTML = html;
+}
 
-  list.innerHTML = accounts.map(account => {
+// 在账号管理页直接新建一个 Gmail 身份（自动建 profile+指纹+分配节点）
+(window as any).createPersonaPrompt = async function() {
+  const email = (prompt('输入一个真实 Gmail（这个邮箱会成为一套独立身份：独立浏览器+IP+指纹）：') || '').trim();
+  if (!email) return;
+  if (!email.includes('@')) { showToast('请输入有效的 Gmail 地址', 'error'); return; }
+  showToast('正在创建身份…（建浏览器+随机指纹+分配出口节点，约 5-10 秒）', 'info');
+  try {
+    await invoke('persona_create', { email });
+    showToast(`身份已建好 ✓ 已打开 Google 登录页 → 请在弹出的浏览器窗口登录 ${email}（基础登录，只需一次；登好后名下账号才能自动注册/登录）`, 'info');
+    await loadAccounts();
+  } catch (e) { showToast('创建失败：' + e, 'error'); }
+};
+
+// 以邮箱为单位：逐平台「有就登录、没有就注册」，账号自动开通到这个邮箱名下
+(window as any).personaProvisionAll = async function(id: string, email: string) {
+  if (!confirm(`用 ${email} 检查并开通各平台账号？\n会逐个平台：有就登录、没有就注册（友好平台全自动；X/Reddit 会打开登录页让你点一下）。\n前提：这个邮箱的 Gmail 已在它的浏览器里登录。`)) return;
+  showToast(`正在用 ${email} 开通各平台账号…（逐个平台跑，可能要几分钟，请耐心等）`, 'info');
+  try {
+    const msg = await invoke<string>('persona_provision_all', { personaId: id });
+    showToast('' + msg, 'success');
+    await loadAccounts();
+  } catch (e) { showToast('' + e, 'error'); }
+};
+
+// 打开某身份的浏览器到 Google 登录页（补登/重登该 Gmail）
+(window as any).personaGmailLogin = async function(id: string) {
+  try {
+    const msg = await invoke<string>('persona_open_gmail_login', { personaId: id });
+    showToast('' + msg, 'info');
+  } catch (e) { showToast('' + e, 'error'); }
+};
+
+// 删除一个 Gmail 身份（连带其独立浏览器，释放节点）
+(window as any).deletePersonaAcct = async function(id: string, email: string) {
+  if (!confirm(`删除身份 ${email}？\n会删掉它的独立浏览器并释放出口节点；名下账号会变成「未归属」。`)) return;
+  try {
+    await invoke('persona_delete', { id });
+    showToast('身份已删除', 'success');
+    await loadAccounts();
+  } catch (e) { showToast('删除失败：' + e, 'error'); }
+};
+
+function personaSelectOptions(selectedId?: string | null): string {
+  const opts = personasCache.map((p: any) =>
+    `<option value="${p.id}" ${p.id === selectedId ? 'selected' : ''}>${escapeHtml(p.email)}</option>`).join('');
+  return `<option value="">未归属（用全局 Profile）</option>${opts}`;
+}
+
+function renderAccountCard(account: any): string {
+  {
+    const getProfileForAccount = (accountId: string) =>
+      browserProfiles.find(p => p.account_id === accountId);
     const profile = getProfileForAccount(account.id);
     const hasProfile = !!profile;
     const stealthBadge = profile?.stealth_enabled
@@ -1863,9 +1954,9 @@ function renderAccounts() {
       `<option value="${escapeHtml(p.id)}" ${account.profile_id === p.id ? 'selected' : ''}>${escapeHtml(p.name)} (${escapeHtml(p.id)})</option>`
     ).join('');
 
-    const boundProfileBadge = account.profile_id
-      ? `<span class="badge badge-profile" title="绑定 Profile: ${escapeHtml(account.profile_id)}">🔗 ${escapeHtml(account.profile_id.substring(0, 15))}...</span>`
-      : '<span class="badge badge-no-profile" title="使用全局 Profile">📌 全局</span>';
+    const personaBadge = account.persona_email
+      ? `<span class="badge badge-profile" title="身份: ${escapeHtml(account.persona_email)}（共用其浏览器+IP）">🧑‍🤝‍🧑 ${escapeHtml(account.persona_email)}</span>`
+      : '<span class="badge badge-no-profile" title="未归属身份">🧩 未归属</span>';
 
     return `
       <div class="account-item ${hasProfile ? 'has-profile' : ''}">
@@ -1874,14 +1965,14 @@ function renderAccounts() {
           <span class="account-username">${escapeHtml(account.username || account.email || 'N/A')}</span>
           ${stageBadge}
           ${healthBadge}
-          ${boundProfileBadge}
+          ${personaBadge}
           <span class="account-badges">${stealthBadge}${fingerprintBadge}${proxyBadge}</span>
         </div>
         ${todayProgress}
         <div class="account-profile-binding" style="margin: 8px 0;">
-          <select class="select select-small" onchange="bindProfileToAccount('${account.id}', this.value)" style="width: auto; min-width: 200px;">
-            <option value="">-- 使用全局 Profile --</option>
-            ${profileOptions}
+          <label class="text-muted" style="font-size:12px;">归属身份：</label>
+          <select class="select select-small" onchange="setAccountPersona('${account.id}', this.value)" style="width: auto; min-width: 220px;">
+            ${personaSelectOptions(account.persona_id)}
           </select>
         </div>
         <div class="account-nurture-stats" style="margin: 5px 0; font-size: 12px; color: var(--text-muted);">
@@ -1889,6 +1980,7 @@ function renderAccounts() {
           ${account.last_nurture_at ? ` • ${t('nurture.lastNurture')}: ${formatTimeAgo(account.last_nurture_at)}` : ''}
         </div>
         <div class="account-actions">
+          <button class="btn btn-small btn-primary" onclick="autoLoginAccount('${account.id}','${escapeHtml(account.platform)}')" title="自动登录：查登录→Google登录→否则注册">🔑 自动登录</button>
           <button class="btn btn-small btn-success" data-nurture-account="${account.id}" onclick="openNurtureModal('${account.id}', '${escapeHtml(account.platform)}', '${escapeHtml(account.username || account.email || 'N/A')}')" title="${t('nurture.quickNurture')}">🌱 ${t('nurture.quickNurture')}</button>
           ${stage === 'new' ? `<button class="btn btn-small btn-warning" onclick="startWarmup('${account.id}')" title="开始养号">🔥 开始养号</button>` : ''}
           ${!hasProfile ? `<button class="btn btn-small btn-secondary" onclick="createProfileForAccount('${account.id}', '${escapeHtml(account.platform)}')">${t('accounts.createProfile')}</button>` : ''}
@@ -1899,8 +1991,46 @@ function renderAccounts() {
         </div>
       </div>
     `;
-  }).join('');
+  }
 }
+
+// 自动登录单个账号（查登录→Google登录→否则注册），在其身份的浏览器里跑
+(window as any).autoLoginAccount = async function(accountId: string, platform: string) {
+  showToast(`正在处理 ${platform}…（查登录→自动登录，可能需要几十秒）`, 'info');
+  try {
+    const msg = await invoke<string>('account_auto_login', { accountId });
+    if (('' + msg).startsWith('MANUAL::')) {
+      showToast(('' + msg).replace('MANUAL::', ''), 'info'); // 已打开登录页，待你点一下
+    } else {
+      showToast('' + msg, 'success');
+    }
+    await loadAccounts();
+  } catch (error) {
+    showToast('' + error, 'error');
+  }
+};
+
+// 一键登录某身份下的所有账号
+(window as any).personaLoginAll = async function(personaId: string) {
+  if (!confirm('自动登录这个身份下的所有账号？\n会逐个尝试：查登录→Google登录→否则注册。遇到需手机/验证码的会停下提示你。')) return;
+  showToast('开始批量自动登录…（每个账号几十秒，请耐心等）', 'info');
+  try {
+    const msg = await invoke<string>('persona_login_all', { personaId });
+    showToast('' + msg, 'success');
+    await loadAccounts();
+  } catch (error) {
+    showToast('' + error, 'error');
+  }
+};
+
+// 把账号归属到某个 Gmail 身份（之后自动共用该身份的 profile/IP/指纹）
+(window as any).setAccountPersona = async function(accountId: string, personaId: string) {
+  try {
+    await invoke('set_account_persona', { accountId, personaId: personaId || null });
+    showToast(personaId ? '已归属到该身份（自动共用其浏览器+IP）' : '已解除归属', 'success');
+    await loadAccounts();
+  } catch (error) { showToast('' + error, 'error'); }
+};
 
 // Start warmup for a new account
 (window as any).startWarmup = async function(accountId: string) {
@@ -2098,7 +2228,13 @@ async function saveAccount() {
   }
 
   try {
-    await invoke('add_account', { platform, username, password: password || '' });
+    const created: any = await invoke('add_account', { platform, username, password: password || '' });
+    // 若是从某个身份卡片点的「+给这个身份加账号」，自动归属到该身份
+    const personaId = (window as any).__addAccountPersona;
+    if (personaId && created?.id) {
+      try { await invoke('set_account_persona', { accountId: created.id, personaId }); } catch {}
+    }
+    (window as any).__addAccountPersona = undefined;
     closeModal('modalAddAccount');
     await loadAccounts();
     showToast(t('msg.accountAdded'), 'success');
