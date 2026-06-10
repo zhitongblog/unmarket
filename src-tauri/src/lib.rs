@@ -4741,16 +4741,11 @@ async fn persona_login_all(app: AppHandle, persona_id: String) -> Result<String,
         if notes.is_empty() { String::new() } else { format!("\n{}", notes.join("\n")) }))
 }
 
-/// 一个邮箱默认要"开通"的平台（都支持 Google 登录/注册）。
-const PROVISION_PLATFORMS: &[&str] = &[
-    "reddit", "producthunt", "devto", "medium", "hashnode", "indiehackers",
-    "betalist", "alternativeto", "hackernews", "github", "linkedin", "twitter",
-];
-
 /// 以邮箱为单位「检查并开通账号」：逐平台 有就登录、没有就注册，账号自动挂到这个邮箱名下。
-/// 这才是设计的核心流——登录一个 Gmail 后，一键把名下各平台账号开出来。
+/// 这才是设计的核心流——登录一个 Gmail 后，把选中的各平台账号开出来。
+/// platforms：前端选择器里用户新勾选的平台 key 列表。
 #[tauri::command]
-async fn persona_provision_all(app: AppHandle, persona_id: String) -> Result<String, String> {
+async fn persona_provision_all(app: AppHandle, persona_id: String, platforms: Vec<String>) -> Result<String, String> {
     let email: String = {
         let st = app.state::<AppState>();
         let guard = st.db.lock();
@@ -4760,7 +4755,8 @@ async fn persona_provision_all(app: AppHandle, persona_id: String) -> Result<Str
     };
     let (mut ok, mut need, mut fail) = (0, 0, 0);
     let mut notes: Vec<String> = Vec::new();
-    for plat in PROVISION_PLATFORMS {
+    for plat in &platforms {
+        let plat = plat.as_str();
         // get-or-create 这个邮箱在该平台的账号行（没有就建一行，归属到这个 persona）
         let aid: String = {
             let st = app.state::<AppState>();
