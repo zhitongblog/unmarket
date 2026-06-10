@@ -983,8 +983,9 @@ fn persona_platform_catalog(state: State<AppState>, persona_id: String) -> Resul
     for &p in PLATFORM_KEYS {
         let meta = match platform_meta(p) { Some(m) => m, None => continue };
         let name = get_platform_config(p).map(|c| c.name.to_string()).unwrap_or_else(|| p.to_string());
+        // 已开通 = 该身份下已存在这个平台的账号行（不要求 health_status，用户选定）
         let provisioned: bool = conn.query_row(
-            "SELECT 1 FROM accounts WHERE persona_id=?1 AND platform=?2 AND health_status='healthy' LIMIT 1",
+            "SELECT 1 FROM accounts WHERE persona_id=?1 AND platform=?2 LIMIT 1",
             params![persona_id, p],
             |_| Ok(true),
         ).unwrap_or(false);
