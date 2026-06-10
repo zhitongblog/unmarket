@@ -1001,6 +1001,20 @@ fn persona_platform_catalog(state: State<AppState>, persona_id: String) -> Resul
     Ok(out)
 }
 
+/// 移除某身份下指定平台的账号（选择器里取消勾选已开通项 = 减项）。返回删除条数。
+#[tauri::command]
+fn persona_remove_platforms(state: State<AppState>, persona_id: String, platforms: Vec<String>) -> Result<usize, String> {
+    let conn = state.db.lock().map_err(|e| e.to_string())?;
+    let mut n = 0usize;
+    for p in &platforms {
+        n += conn.execute(
+            "DELETE FROM accounts WHERE persona_id=?1 AND platform=?2",
+            params![persona_id, p],
+        ).map_err(|e| e.to_string())?;
+    }
+    Ok(n)
+}
+
 // Platform reply configs - 回复策略（更自然的推广方式）
 #[derive(Clone)]
 struct ReplyConfig {
@@ -15676,6 +15690,7 @@ pub fn run() {
             persona_delete,
             persona_test_ip,
             persona_platform_catalog,
+            persona_remove_platforms,
             airport_set_subscription,
             airport_status,
             list_pending_replies,

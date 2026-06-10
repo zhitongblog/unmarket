@@ -1022,33 +1022,37 @@
       overlay.className = "modal active";
       const groups = SCENE_ORDER.map((s) => ({ s, items: catalog.filter((c) => c.scene === s) })).filter((g) => g.items.length);
       const groupHtml = groups.map((g) => `
-      <div style="margin:12px 0 6px;font-weight:700;">${SCENE_LABELS[g.s] || g.s}</div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <div style="margin:14px 0 8px;font-weight:700;font-size:13px;color:var(--text-muted);">${SCENE_LABELS[g.s] || g.s}</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;">
         ${g.items.map((c) => {
         const flag = REGION_FLAGS[c.region] || "\u{1F310}";
-        const badge = c.provisioned ? '<span style="color:#16a34a;">\u5DF2\u5F00\u901A\xB7\u9501\u5B9A</span>' : c.mode === "auto" ? '<span style="color:#16a34a;">\u{1F7E2}\u81EA\u52A8</span>' : '<span style="color:#d97706;">\u{1F7E1}\u9700\u624B\u52A8</span>';
-        return `<label style="display:flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:8px;padding:6px 10px;${c.provisioned ? "opacity:.6;" : "cursor:pointer;"}">
-            <input type="checkbox" data-plat="${escapeHtml(c.platform)}" ${c.provisioned ? "checked disabled" : ""}>
-            <span>${escapeHtml(c.name)} ${flag} ${badge}</span>
+        const badge = c.provisioned ? '<span style="color:#16a34a;font-size:12px;">\u5DF2\u5F00\u901A</span>' : c.mode === "auto" ? '<span style="color:#16a34a;font-size:12px;">\u{1F7E2}\u81EA\u52A8</span>' : '<span style="color:#d97706;font-size:12px;">\u{1F7E1}\u9700\u624B\u52A8</span>';
+        return `<label style="display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:8px;padding:8px 10px;cursor:pointer;">
+            <input type="checkbox" data-plat="${escapeHtml(c.platform)}" data-prov="${c.provisioned ? 1 : 0}" ${c.provisioned ? "checked" : ""}>
+            <span style="display:flex;align-items:center;gap:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(c.name)} ${flag} ${badge}</span>
           </label>`;
       }).join("")}
       </div>`).join("");
       overlay.innerHTML = `
-      <div class="modal-content" style="max-width:700px;max-height:82vh;display:flex;flex-direction:column;">
+      <div class="modal-content" style="max-width:760px;max-height:84vh;display:flex;flex-direction:column;">
         <div class="modal-header"><h3>\u7528 ${escapeHtml(email)} \u5F00\u901A\u5E73\u53F0</h3><button class="modal-close" data-cancel>&times;</button></div>
-        <div class="modal-body" style="overflow:auto;">${groupHtml}</div>
+        <div class="modal-body" style="overflow:auto;">
+          <div class="text-muted" style="font-size:12px;margin-bottom:4px;">\u52FE\u9009\u8981\u5F00\u901A\u7684\u5E73\u53F0\uFF1B\u53D6\u6D88\u52FE\u9009\u300C\u5DF2\u5F00\u901A\u300D\u7684\u4F1A\u5220\u9664\u8BE5\u8D26\u53F7\u3002</div>
+          ${groupHtml}
+        </div>
         <div class="modal-footer" style="display:flex;align-items:center;gap:8px;">
           <button class="btn btn-secondary btn-small" data-selauto>\u5168\u9009\u53EF\u5F00\u901A\u7684</button>
           <span style="flex:1;"></span>
           <button class="btn btn-secondary" data-cancel>\u53D6\u6D88</button>
-          <button class="btn btn-primary" data-ok>\u5F00\u59CB\u5F00\u901A (0)</button>
+          <button class="btn btn-primary" data-ok>\u5E94\u7528\u66F4\u6539 (0)</button>
         </div>
       </div>`;
       const boxes = () => Array.from(overlay.querySelectorAll("input[type=checkbox]"));
-      const picked = () => boxes().filter((b) => b.checked && !b.disabled).map((b) => b.getAttribute("data-plat"));
+      const picked = () => boxes().filter((b) => b.checked).map((b) => b.getAttribute("data-plat"));
+      const changeCount = () => boxes().filter((b) => b.checked !== (b.getAttribute("data-prov") === "1")).length;
       const okBtn = overlay.querySelector("[data-ok]");
       const refresh = () => {
-        okBtn.textContent = `\u5F00\u59CB\u5F00\u901A (${picked().length})`;
+        okBtn.textContent = `\u5E94\u7528\u66F4\u6539 (${changeCount()})`;
       };
       let done = false;
       const finish = (val) => {
@@ -1060,9 +1064,9 @@
       overlay.querySelectorAll("[data-cancel]").forEach((el) => el.addEventListener("click", () => finish(null)));
       okBtn.addEventListener("click", () => finish(picked()));
       overlay.querySelector("[data-selauto]")?.addEventListener("click", () => {
-        catalog.filter((c) => c.mode === "auto" && !c.provisioned).forEach((c) => {
+        catalog.filter((c) => c.mode === "auto").forEach((c) => {
           const b = overlay.querySelector(`input[data-plat="${c.platform}"]`);
-          if (b && !b.disabled) b.checked = true;
+          if (b) b.checked = true;
         });
         refresh();
       });
@@ -1845,16 +1849,27 @@
       showToast("\u52A0\u8F7D\u5E73\u53F0\u5217\u8868\u5931\u8D25\uFF1A" + e, "error");
       return;
     }
-    const platforms = await pickProvisionPlatforms(email, catalog);
-    if (!platforms) return;
-    if (!platforms.length) {
-      showToast("\u6CA1\u6709\u65B0\u9009\u62E9\u7684\u5E73\u53F0", "info");
+    const checkedArr = await pickProvisionPlatforms(email, catalog);
+    if (!checkedArr) return;
+    const checked = new Set(checkedArr);
+    const provisioned = new Set(catalog.filter((c) => c.provisioned).map((c) => c.platform));
+    const toAdd = [...checked].filter((p) => !provisioned.has(p));
+    const toRemove = [...provisioned].filter((p) => !checked.has(p));
+    if (!toAdd.length && !toRemove.length) {
+      showToast("\u6CA1\u6709\u53D8\u66F4", "info");
       return;
     }
-    showToast(`\u6B63\u5728\u7528 ${email} \u5F00\u901A ${platforms.length} \u4E2A\u5E73\u53F0\u2026\uFF08\u9010\u4E2A\u8DD1\uFF0C\u8BF7\u8010\u5FC3\u7B49\uFF09`, "info");
     try {
-      const msg = await invoke2("persona_provision_all", { personaId: id, platforms });
-      showToast("" + msg, "success");
+      if (toRemove.length) {
+        await invoke2("persona_remove_platforms", { personaId: id, platforms: toRemove });
+      }
+      if (toAdd.length) {
+        showToast(`\u6B63\u5728\u7528 ${email} \u5F00\u901A ${toAdd.length} \u4E2A\u5E73\u53F0\u2026\uFF08\u9010\u4E2A\u8DD1\uFF0C\u8BF7\u8010\u5FC3\u7B49\uFF09`, "info");
+        const msg = await invoke2("persona_provision_all", { personaId: id, platforms: toAdd });
+        showToast("" + msg, "success");
+      } else {
+        showToast(`\u5DF2\u79FB\u9664 ${toRemove.length} \u4E2A\u5E73\u53F0\u8D26\u53F7`, "success");
+      }
       await loadAccounts();
     } catch (e) {
       showToast("" + e, "error");
@@ -1927,27 +1942,28 @@
         (p) => `<option value="${escapeHtml(p.id)}" ${account.profile_id === p.id ? "selected" : ""}>${escapeHtml(p.name)} (${escapeHtml(p.id)})</option>`
       ).join("");
       const personaBadge = account.persona_email ? `<span class="badge badge-profile" title="\u8EAB\u4EFD: ${escapeHtml(account.persona_email)}\uFF08\u5171\u7528\u5176\u6D4F\u89C8\u5668+IP\uFF09">\u{1F9D1}\u200D\u{1F91D}\u200D\u{1F9D1} ${escapeHtml(account.persona_email)}</span>` : '<span class="badge badge-no-profile" title="\u672A\u5F52\u5C5E\u8EAB\u4EFD">\u{1F9E9} \u672A\u5F52\u5C5E</span>';
+      const nurtureStats = account.total_nurture_seconds > 0 || account.last_nurture_at ? `<span class="text-muted" style="font-size:12px;">${account.total_nurture_seconds > 0 ? `\u{1F331} \u7D2F\u8BA1 ${formatNurtureTime(account.total_nurture_seconds)}` : ""}${account.last_nurture_at ? ` \xB7 ${t("nurture.lastNurture")} ${formatTimeAgo(account.last_nurture_at)}` : ""}</span>` : "";
       return `
       <div class="account-item ${hasProfile ? "has-profile" : ""}">
-        <div class="account-info">
-          <span class="account-platform">${escapeHtml(account.platform)}</span>
-          <span class="account-username">${escapeHtml(account.username || account.email || "N/A")}</span>
-          ${stageBadge}
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <span class="account-platform" style="font-weight:700;">${escapeHtml(account.platform)}</span>
           ${healthBadge}
-          ${personaBadge}
-          <span class="account-badges">${stealthBadge}${fingerprintBadge}${proxyBadge}</span>
+          ${stageBadge}
+          <span style="margin-left:auto;display:flex;align-items:center;gap:6px;">
+            ${stealthBadge}${fingerprintBadge}${proxyBadge}
+            <button class="btn btn-small btn-danger" onclick="deleteAccount('${account.id}')" title="\u5220\u9664\u8D26\u53F7">\u{1F5D1}</button>
+          </span>
         </div>
-        ${todayProgress}
-        <div class="account-profile-binding" style="margin: 8px 0;">
-          <label class="text-muted" style="font-size:12px;">\u5F52\u5C5E\u8EAB\u4EFD\uFF1A</label>
-          <select class="select select-small" onchange="setAccountPersona('${account.id}', this.value)" style="width: auto; min-width: 220px;">
+        <div class="account-username text-muted" style="font-size:13px;">${escapeHtml(account.username || account.email || "N/A")}</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <label class="text-muted" style="font-size:12px;">\u5F52\u5C5E\u8EAB\u4EFD</label>
+          <select class="select select-small" onchange="setAccountPersona('${account.id}', this.value)" style="width:auto;min-width:200px;">
             ${personaSelectOptions(account.persona_id)}
           </select>
+          ${personaBadge}
+          ${nurtureStats}
         </div>
-        <div class="account-nurture-stats" style="margin: 5px 0; font-size: 12px; color: var(--text-muted);">
-          ${account.total_nurture_seconds > 0 ? `\u{1F331} \u7D2F\u8BA1: ${formatNurtureTime(account.total_nurture_seconds)}` : ""}
-          ${account.last_nurture_at ? ` \u2022 ${t("nurture.lastNurture")}: ${formatTimeAgo(account.last_nurture_at)}` : ""}
-        </div>
+        ${todayProgress}
         <div class="account-actions">
           <button class="btn btn-small btn-primary" onclick="autoLoginAccount('${account.id}','${escapeHtml(account.platform)}')" title="\u81EA\u52A8\u767B\u5F55\uFF1A\u67E5\u767B\u5F55\u2192Google\u767B\u5F55\u2192\u5426\u5219\u6CE8\u518C">\u{1F511} \u81EA\u52A8\u767B\u5F55</button>
           <button class="btn btn-small btn-success" data-nurture-account="${account.id}" onclick="openNurtureModal('${account.id}', '${escapeHtml(account.platform)}', '${escapeHtml(account.username || account.email || "N/A")}')" title="${t("nurture.quickNurture")}">\u{1F331} ${t("nurture.quickNurture")}</button>
@@ -1956,7 +1972,6 @@
           ${hasProfile ? `<button class="btn btn-small btn-secondary" onclick="toggleStealth('${profile.id}', ${!profile.stealth_enabled})" title="${profile.stealth_enabled ? "Disable" : "Enable"} Stealth">${profile.stealth_enabled ? "\u{1F6E1}\uFE0F" : "\u26A1"}</button>` : ""}
           ${hasProfile ? `<button class="btn btn-small btn-secondary" onclick="randomizeFingerprint('${profile.id}')" title="Randomize Fingerprint">\u{1F3AD}</button>` : ""}
           ${hasProfile ? `<button class="btn btn-small btn-secondary" onclick="showProxyModal('${profile.id}')" title="Set Proxy">\u{1F310}</button>` : ""}
-          <button class="btn btn-small btn-danger" onclick="deleteAccount('${account.id}')">${t("accounts.delete")}</button>
         </div>
       </div>
     `;

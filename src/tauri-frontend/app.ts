@@ -1046,52 +1046,57 @@ const REGION_FLAGS: Record<string, string> = { us: '🇺🇸', jp: '🇯🇵', k
 
 interface CatalogItem { platform: string; name: string; scene: string; region: string; mode: string; provisioned: boolean; }
 
-// 弹出分组复选框，返回用户【新勾选】的平台 key（已开通的锁定不计入）；取消返回 null
+// 弹出分组复选框（已开通项预勾、可取消）。返回用户【最终勾选】的全部平台 key；取消返回 null。
+// 由调用方对比 catalog.provisioned 算出 新增/移除。
 function pickProvisionPlatforms(email: string, catalog: CatalogItem[]): Promise<string[] | null> {
   return new Promise((resolve) => {
     const overlay = document.createElement('div');
     overlay.className = 'modal active';
     const groups = SCENE_ORDER.map(s => ({ s, items: catalog.filter(c => c.scene === s) })).filter(g => g.items.length);
     const groupHtml = groups.map(g => `
-      <div style="margin:12px 0 6px;font-weight:700;">${SCENE_LABELS[g.s] || g.s}</div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <div style="margin:14px 0 8px;font-weight:700;font-size:13px;color:var(--text-muted);">${SCENE_LABELS[g.s] || g.s}</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;">
         ${g.items.map(c => {
           const flag = REGION_FLAGS[c.region] || '🌐';
           const badge = c.provisioned
-            ? '<span style="color:#16a34a;">已开通·锁定</span>'
-            : (c.mode === 'auto' ? '<span style="color:#16a34a;">🟢自动</span>' : '<span style="color:#d97706;">🟡需手动</span>');
-          return `<label style="display:flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:8px;padding:6px 10px;${c.provisioned ? 'opacity:.6;' : 'cursor:pointer;'}">
-            <input type="checkbox" data-plat="${escapeHtml(c.platform)}" ${c.provisioned ? 'checked disabled' : ''}>
-            <span>${escapeHtml(c.name)} ${flag} ${badge}</span>
+            ? '<span style="color:#16a34a;font-size:12px;">已开通</span>'
+            : (c.mode === 'auto' ? '<span style="color:#16a34a;font-size:12px;">🟢自动</span>' : '<span style="color:#d97706;font-size:12px;">🟡需手动</span>');
+          return `<label style="display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:8px;padding:8px 10px;cursor:pointer;">
+            <input type="checkbox" data-plat="${escapeHtml(c.platform)}" data-prov="${c.provisioned ? 1 : 0}" ${c.provisioned ? 'checked' : ''}>
+            <span style="display:flex;align-items:center;gap:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(c.name)} ${flag} ${badge}</span>
           </label>`;
         }).join('')}
       </div>`).join('');
 
     overlay.innerHTML = `
-      <div class="modal-content" style="max-width:700px;max-height:82vh;display:flex;flex-direction:column;">
+      <div class="modal-content" style="max-width:760px;max-height:84vh;display:flex;flex-direction:column;">
         <div class="modal-header"><h3>用 ${escapeHtml(email)} 开通平台</h3><button class="modal-close" data-cancel>&times;</button></div>
-        <div class="modal-body" style="overflow:auto;">${groupHtml}</div>
+        <div class="modal-body" style="overflow:auto;">
+          <div class="text-muted" style="font-size:12px;margin-bottom:4px;">勾选要开通的平台；取消勾选「已开通」的会删除该账号。</div>
+          ${groupHtml}
+        </div>
         <div class="modal-footer" style="display:flex;align-items:center;gap:8px;">
           <button class="btn btn-secondary btn-small" data-selauto>全选可开通的</button>
           <span style="flex:1;"></span>
           <button class="btn btn-secondary" data-cancel>取消</button>
-          <button class="btn btn-primary" data-ok>开始开通 (0)</button>
+          <button class="btn btn-primary" data-ok>应用更改 (0)</button>
         </div>
       </div>`;
 
     const boxes = (): HTMLInputElement[] => Array.from(overlay.querySelectorAll('input[type=checkbox]'));
-    const picked = (): string[] => boxes().filter(b => b.checked && !b.disabled).map(b => b.getAttribute('data-plat') as string);
+    const picked = (): string[] => boxes().filter(b => b.checked).map(b => b.getAttribute('data-plat') as string);
+    const changeCount = (): number => boxes().filter(b => b.checked !== (b.getAttribute('data-prov') === '1')).length;
     const okBtn = overlay.querySelector('[data-ok]') as HTMLElement;
-    const refresh = () => { okBtn.textContent = `开始开通 (${picked().length})`; };
+    const refresh = () => { okBtn.textContent = `应用更改 (${changeCount()})`; };
 
     let done = false;
     const finish = (val: string[] | null) => { if (done) return; done = true; overlay.remove(); resolve(val); };
     overlay.querySelectorAll('[data-cancel]').forEach(el => el.addEventListener('click', () => finish(null)));
     okBtn.addEventListener('click', () => finish(picked()));
     overlay.querySelector('[data-selauto]')?.addEventListener('click', () => {
-      catalog.filter(c => c.mode === 'auto' && !c.provisioned).forEach(c => {
+      catalog.filter(c => c.mode === 'auto').forEach(c => {
         const b = overlay.querySelector(`input[data-plat="${c.platform}"]`) as HTMLInputElement | null;
-        if (b && !b.disabled) b.checked = true;
+        if (b) b.checked = true;
       });
       refresh();
     });
@@ -2053,14 +2058,25 @@ function renderAccounts() {
   try {
     catalog = await invoke<CatalogItem[]>('persona_platform_catalog', { personaId: id });
   } catch (e) { showToast('加载平台列表失败：' + e, 'error'); return; }
-  const platforms = await pickProvisionPlatforms(email, catalog);
-  if (!platforms) return;                       // 取消
-  if (!platforms.length) { showToast('没有新选择的平台', 'info'); return; }
-  showToast(`正在用 ${email} 开通 ${platforms.length} 个平台…（逐个跑，请耐心等）`, 'info');
+  const checkedArr = await pickProvisionPlatforms(email, catalog);
+  if (!checkedArr) return;                       // 取消
+  const checked = new Set(checkedArr);
+  const provisioned = new Set(catalog.filter(c => c.provisioned).map(c => c.platform));
+  const toAdd = [...checked].filter(p => !provisioned.has(p));        // 新勾选 = 新增开通
+  const toRemove = [...provisioned].filter(p => !checked.has(p));     // 取消已开通 = 删账号
+  if (!toAdd.length && !toRemove.length) { showToast('没有变更', 'info'); return; }
   try {
-    const msg = await invoke<string>('persona_provision_all', { personaId: id, platforms });
-    showToast('' + msg, 'success');
-    await loadAccounts();
+    if (toRemove.length) {
+      await invoke('persona_remove_platforms', { personaId: id, platforms: toRemove });
+    }
+    if (toAdd.length) {
+      showToast(`正在用 ${email} 开通 ${toAdd.length} 个平台…（逐个跑，请耐心等）`, 'info');
+      const msg = await invoke<string>('persona_provision_all', { personaId: id, platforms: toAdd });
+      showToast('' + msg, 'success');
+    } else {
+      showToast(`已移除 ${toRemove.length} 个平台账号`, 'success');
+    }
+    await loadAccounts();                          // 开通/移除后列表直接刷新
   } catch (e) { showToast('' + e, 'error'); }
 };
 
@@ -2151,27 +2167,31 @@ function renderAccountCard(account: any): string {
       ? `<span class="badge badge-profile" title="身份: ${escapeHtml(account.persona_email)}（共用其浏览器+IP）">🧑‍🤝‍🧑 ${escapeHtml(account.persona_email)}</span>`
       : '<span class="badge badge-no-profile" title="未归属身份">🧩 未归属</span>';
 
+    const nurtureStats = (account.total_nurture_seconds > 0 || account.last_nurture_at)
+      ? `<span class="text-muted" style="font-size:12px;">${account.total_nurture_seconds > 0 ? `🌱 累计 ${formatNurtureTime(account.total_nurture_seconds)}` : ''}${account.last_nurture_at ? ` · ${t('nurture.lastNurture')} ${formatTimeAgo(account.last_nurture_at)}` : ''}</span>`
+      : '';
+
     return `
       <div class="account-item ${hasProfile ? 'has-profile' : ''}">
-        <div class="account-info">
-          <span class="account-platform">${escapeHtml(account.platform)}</span>
-          <span class="account-username">${escapeHtml(account.username || account.email || 'N/A')}</span>
-          ${stageBadge}
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <span class="account-platform" style="font-weight:700;">${escapeHtml(account.platform)}</span>
           ${healthBadge}
-          ${personaBadge}
-          <span class="account-badges">${stealthBadge}${fingerprintBadge}${proxyBadge}</span>
+          ${stageBadge}
+          <span style="margin-left:auto;display:flex;align-items:center;gap:6px;">
+            ${stealthBadge}${fingerprintBadge}${proxyBadge}
+            <button class="btn btn-small btn-danger" onclick="deleteAccount('${account.id}')" title="删除账号">🗑</button>
+          </span>
         </div>
-        ${todayProgress}
-        <div class="account-profile-binding" style="margin: 8px 0;">
-          <label class="text-muted" style="font-size:12px;">归属身份：</label>
-          <select class="select select-small" onchange="setAccountPersona('${account.id}', this.value)" style="width: auto; min-width: 220px;">
+        <div class="account-username text-muted" style="font-size:13px;">${escapeHtml(account.username || account.email || 'N/A')}</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <label class="text-muted" style="font-size:12px;">归属身份</label>
+          <select class="select select-small" onchange="setAccountPersona('${account.id}', this.value)" style="width:auto;min-width:200px;">
             ${personaSelectOptions(account.persona_id)}
           </select>
+          ${personaBadge}
+          ${nurtureStats}
         </div>
-        <div class="account-nurture-stats" style="margin: 5px 0; font-size: 12px; color: var(--text-muted);">
-          ${account.total_nurture_seconds > 0 ? `🌱 累计: ${formatNurtureTime(account.total_nurture_seconds)}` : ''}
-          ${account.last_nurture_at ? ` • ${t('nurture.lastNurture')}: ${formatTimeAgo(account.last_nurture_at)}` : ''}
-        </div>
+        ${todayProgress}
         <div class="account-actions">
           <button class="btn btn-small btn-primary" onclick="autoLoginAccount('${account.id}','${escapeHtml(account.platform)}')" title="自动登录：查登录→Google登录→否则注册">🔑 自动登录</button>
           <button class="btn btn-small btn-success" data-nurture-account="${account.id}" onclick="openNurtureModal('${account.id}', '${escapeHtml(account.platform)}', '${escapeHtml(account.username || account.email || 'N/A')}')" title="${t('nurture.quickNurture')}">🌱 ${t('nurture.quickNurture')}</button>
@@ -2180,7 +2200,6 @@ function renderAccountCard(account: any): string {
           ${hasProfile ? `<button class="btn btn-small btn-secondary" onclick="toggleStealth('${profile!.id}', ${!profile!.stealth_enabled})" title="${profile!.stealth_enabled ? 'Disable' : 'Enable'} Stealth">${profile!.stealth_enabled ? '🛡️' : '⚡'}</button>` : ''}
           ${hasProfile ? `<button class="btn btn-small btn-secondary" onclick="randomizeFingerprint('${profile!.id}')" title="Randomize Fingerprint">🎭</button>` : ''}
           ${hasProfile ? `<button class="btn btn-small btn-secondary" onclick="showProxyModal('${profile!.id}')" title="Set Proxy">🌐</button>` : ''}
-          <button class="btn btn-small btn-danger" onclick="deleteAccount('${account.id}')">${t('accounts.delete')}</button>
         </div>
       </div>
     `;
