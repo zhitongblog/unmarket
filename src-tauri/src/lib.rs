@@ -974,6 +974,9 @@ struct PlatformCatalogItem {
     /// 登录方式：google(Gmail/Google 一键) | phone(手机号验证码) | password(账号密码)。
     /// 用于区分开通/登录流程：google 可自动；phone/password 多需手动。
     login_method: String,
+    /// #13 IP 策略：shared_overseas(海外机场共享可) | residential_cn(需国内住宅固定) | static_overseas(需海外固定)。
+    /// 用于把平台路由到对应「IP 来源类型」的身份。
+    ip_policy: String,
     provisioned: bool,
 }
 
@@ -992,6 +995,22 @@ fn platform_login_method(platform: &str, google_oauth: bool) -> &'static str {
     }
 }
 
+/// #13 平台 IP 策略（按各平台真实风控严格度逐个标注，单一事实来源）：
+/// - residential_cn：国内社交/生活/内容，风控严、查异地登录、IDC IP 被标记 → 需国内住宅/4G 固定 IP、不可轮换
+/// - static_overseas：海外高价值账号、对数据中心 IP 与 IP 轮换敏感 → 需稳定独享固定 IP、不可轮换
+/// - shared_overseas：海外开发者/产品/内容社区 + Google 登录的国内开发社区 → 对 IP 宽松，机场共享轮换即可
+fn platform_ip_policy(platform: &str) -> &'static str {
+    match platform.to_lowercase().as_str() {
+        // 国内固定 IP：只留「确定需要」国内住宅/4G 固定 IP 的强风控平台（小红书、微博）
+        "weibo" | "xiaohongshu" | "redbook" => "residential_cn",
+        // 国外固定 IP
+        "twitter" | "x" | "reddit" | "linkedin" | "facebook" | "vk" | "naver_blog" => "static_overseas",
+        // 其余：机场共享轮换即可。含较宽松的国内站（知乎/即刻/CSDN/少数派/开源中国——
+        //   手机号登录≠IP严，挂 Gmail 身份、走机场 IP 即可），以及海外开发者/产品/内容社区。
+        _ => "shared_overseas",
+    }
+}
+
 /// 返回某身份的平台开通目录：全部 29 个平台 + 该身份是否已开通(登录态 healthy)。
 /// 供前端「开通账号」选择器分组渲染、决定哪些预选锁定。
 #[tauri::command]
@@ -1004,6 +1023,7 @@ fn persona_platform_catalog(state: State<AppState>, persona_id: String) -> Resul
         let name = cfg.as_ref().map(|c| c.name.to_string()).unwrap_or_else(|| p.to_string());
         let google_oauth = cfg.as_ref().map(|c| c.google_oauth).unwrap_or(false);
         let login_method = platform_login_method(p, google_oauth).to_string();
+        let ip_policy = platform_ip_policy(p).to_string();
         // 已开通 = 该身份下已存在这个平台的账号行（不要求 health_status，用户选定）
         let provisioned: bool = conn.query_row(
             "SELECT 1 FROM accounts WHERE persona_id=?1 AND platform=?2 LIMIT 1",
@@ -1017,6 +1037,7 @@ fn persona_platform_catalog(state: State<AppState>, persona_id: String) -> Resul
             region: meta.region.to_string(),
             mode: meta.mode.to_string(),
             login_method,
+            ip_policy,
             provisioned,
         });
     }
@@ -3441,6 +3462,16 @@ fn run_migrations(conn: &Connection) -> rusqlite::Result<()> {
     let has_persona_col: bool = conn.prepare("SELECT persona_id FROM accounts LIMIT 1").is_ok();
     if !has_persona_col {
         let _ = conn.execute("ALTER TABLE accounts ADD COLUMN persona_id TEXT", []);
+    }
+    // #13 personas 增加「IP 来源类型」维度：ip_mode(airport 机场轮换 / fixed 固定IP) + 固定代理 + 地区
+    for (col, ddl) in [
+        ("ip_mode",     "ALTER TABLE personas ADD COLUMN ip_mode TEXT DEFAULT 'airport'"),
+        ("fixed_proxy", "ALTER TABLE personas ADD COLUMN fixed_proxy TEXT"),
+        ("region",      "ALTER TABLE personas ADD COLUMN region TEXT"),
+    ] {
+        if conn.prepare(&format!("SELECT {} FROM personas LIMIT 1", col)).is_err() {
+            let _ = conn.execute(ddl, []);
+        }
     }
     // 一次性清理历史误报：没绑 profile/persona 却被标 logged_out 的账号，复位为 unknown（"待配置"而非"被封"）
     let _ = conn.execute(
@@ -12519,25 +12550,33 @@ pub struct PersonaDto {
     pub node_name: Option<String>, pub region: Option<String>,
     pub local_port: Option<i64>, pub status: String, pub created_at: Option<String>,
     pub account_count: i64,
+    /// #13 IP 来源类型：airport(机场轮换) | fixed(固定IP)
+    pub ip_mode: String,
+    pub fixed_proxy: Option<String>,
 }
 
+#[allow(clippy::too_many_arguments)]
 fn persona_row_to_dto(conn: &Connection, id: &str, email: &str, profile_id: Option<String>,
-        node_name: Option<String>, local_port: Option<i64>, status: String, created_at: Option<String>) -> PersonaDto {
-    let region = node_name.as_ref().map(|n| node_region(n));
+        node_name: Option<String>, local_port: Option<i64>, status: String, created_at: Option<String>,
+        ip_mode: String, fixed_proxy: Option<String>, stored_region: Option<String>) -> PersonaDto {
+    // 固定IP身份用存库的 region；机场身份从节点名推导
+    let region = if ip_mode == "fixed" { stored_region } else { node_name.as_ref().map(|n| node_region(n)) };
     let account_count: i64 = conn.query_row("SELECT COUNT(*) FROM accounts WHERE persona_id=?1", params![id], |r| r.get(0)).unwrap_or(0);
-    PersonaDto { id: id.to_string(), email: email.to_string(), profile_id, node_name, region, local_port, status, created_at, account_count }
+    PersonaDto { id: id.to_string(), email: email.to_string(), profile_id, node_name, region, local_port, status, created_at, account_count, ip_mode, fixed_proxy }
 }
 
 #[tauri::command]
 fn persona_list(state: State<AppState>) -> Result<Vec<PersonaDto>, String> {
     let conn = state.db.lock().map_err(|_| "db".to_string())?;
     let mut stmt = conn.prepare(
-        "SELECT id, email, profile_id, node_name, local_port, status, created_at FROM personas ORDER BY created_at"
+        "SELECT id, email, profile_id, node_name, local_port, status, created_at, \
+                COALESCE(ip_mode,'airport'), fixed_proxy, region FROM personas ORDER BY created_at"
     ).map_err(|e| e.to_string())?;
-    let rows: Vec<(String,String,Option<String>,Option<String>,Option<i64>,String,Option<String>)> =
-        stmt.query_map([], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?, r.get(5)?, r.get(6)?)))
+    let rows: Vec<(String,String,Option<String>,Option<String>,Option<i64>,String,Option<String>,String,Option<String>,Option<String>)> =
+        stmt.query_map([], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?, r.get(5)?, r.get(6)?, r.get(7)?, r.get(8)?, r.get(9)?)))
         .map_err(|e| e.to_string())?.flatten().collect();
-    Ok(rows.into_iter().map(|(id,email,pid,node,port,status,ca)| persona_row_to_dto(&conn,&id,&email,pid,node,port,status,ca)).collect())
+    Ok(rows.into_iter().map(|(id,email,pid,node,port,status,ca,ip_mode,fp,region)|
+        persona_row_to_dto(&conn,&id,&email,pid,node,port,status,ca,ip_mode,fp,region)).collect())
 }
 
 /// 创建 persona：分配节点+端口 → 建 profile → 随机指纹 → 加 listener+reload → profile 绑代理。
@@ -12604,7 +12643,55 @@ async fn persona_create(app: AppHandle, email: String) -> Result<PersonaDto, Str
 
     let state = app.state::<AppState>();
     let conn = state.db.lock().map_err(|_| "db".to_string())?;
-    Ok(persona_row_to_dto(&conn, &id, &email, Some(profile_id), Some(node), Some(port as i64), "active".into(), None))
+    Ok(persona_row_to_dto(&conn, &id, &email, Some(profile_id), Some(node), Some(port as i64), "active".into(), None, "airport".into(), None, None))
+}
+
+/// #13 创建「固定 IP 身份」：不分配机场节点、不走 mihomo，直接给独立 profile 绑用户填的固定代理。
+/// label = 身份标识（手机号/任意名，唯一）；region = cn(国内) / 其他(海外)；proxy = socks5://.. 或 http://.. 或 host:port。
+/// 天然不进 #11 自动轮换（node_name 为空）。一身份 = 一固定 IP（建议一身份一号，由前端约束）。
+#[tauri::command]
+async fn persona_create_fixed(app: AppHandle, label: String, region: String, proxy: String) -> Result<PersonaDto, String> {
+    let label = label.trim().to_string();
+    let region = region.trim().to_string();
+    let mut proxy = proxy.trim().to_string();
+    if label.is_empty() { return Err("请填写身份标识（名称/手机号）".into()); }
+    if proxy.is_empty() { return Err("请填写固定代理地址".into()); }
+    // 规范化代理：没带协议前缀的按 socks5 处理
+    if !proxy.contains("://") { proxy = format!("socks5://{}", proxy); }
+    if !(proxy.starts_with("socks5://") || proxy.starts_with("http://") || proxy.starts_with("https://")) {
+        return Err("代理需为 socks5:// / http:// / https:// 或 host:port".into());
+    }
+
+    let id = {
+        let state = app.state::<AppState>();
+        let conn = state.db.lock().map_err(|_| "db".to_string())?;
+        let exists: bool = conn.query_row("SELECT 1 FROM personas WHERE email=?1", params![label], |_| Ok(true)).unwrap_or(false);
+        if exists { return Err("这个标识已经创建过身份了".into()); }
+        Uuid::new_v4().to_string()
+    };
+
+    // 建独立 profile + 随机指纹
+    let pname = sanitize_profile_name(&label);
+    let (profile_id, profile_path) = create_profile_raw(&pname).await?;
+    // 固定身份：把 Unzoo profile 显示名设成与身份标识一致（覆盖 create_profile_raw 里的 sanitize 名）
+    let _ = unzoo_set_profile_name(&profile_id, &label).await;
+    let _ = unzoo_randomize_fingerprint2(&profile_path).await;
+
+    // 直接给 profile 绑用户的固定代理（不经机场/mihomo）
+    unzoo_set_profile_proxy2(&profile_path, &proxy).await?;
+
+    {
+        let state = app.state::<AppState>();
+        let conn = state.db.lock().map_err(|_| "db".to_string())?;
+        conn.execute(
+            "INSERT INTO personas (id, email, profile_id, node_name, local_port, status, created_at, ip_mode, fixed_proxy, region) \
+             VALUES (?1,?2,?3,NULL,NULL,'active',datetime('now'),'fixed',?4,?5)",
+            params![id, label, profile_id, proxy, region]).map_err(|e| e.to_string())?;
+    }
+
+    let state = app.state::<AppState>();
+    let conn = state.db.lock().map_err(|_| "db".to_string())?;
+    Ok(persona_row_to_dto(&conn, &id, &label, Some(profile_id), None, None, "active".into(), None, "fixed".into(), Some(proxy), Some(region)))
 }
 
 /// 打开某 profile 的窗口并导航到 url（用于引导用户在新身份里登录 Gmail）。阻塞，spawn_blocking 调用。
@@ -12679,6 +12766,30 @@ async fn persona_open_gmail_login(app: AppHandle, persona_id: String) -> Result<
     tauri::async_runtime::spawn_blocking(move || open_profile_window(&path, GMAIL_LOGIN_URL))
         .await.map_err(|e| e.to_string())??;
     Ok(format!("已打开 {} 的浏览器到 Google 登录页，请在窗口里登录这个 Gmail", email))
+}
+
+/// #13 打开某身份的浏览器（通用，固定 IP 身份用：没有 Gmail 登录步骤，直接开窗让用户操作平台）。
+/// 优先复用已打开的窗口；没开过才新开一套。
+#[tauri::command]
+async fn persona_open_browser(app: AppHandle, persona_id: String) -> Result<String, String> {
+    let (label, profile_id): (String, Option<String>) = {
+        let st = app.state::<AppState>();
+        let conn = st.db.lock().map_err(|e| e.to_string())?;
+        conn.query_row("SELECT email, profile_id FROM personas WHERE id=?1", params![persona_id],
+            |r| Ok((r.get::<_,String>(0)?, r.get::<_,Option<String>>(1)?)))
+            .map_err(|_| "身份不存在".to_string())?
+    };
+    let pid = profile_id.ok_or("该身份没有 profile")?;
+    let path = resolve_profile_path(&pid).await.ok_or("找不到该身份的 profile 路径")?;
+    let reuse_path = path.clone();
+    let reused = tauri::async_runtime::spawn_blocking(move || navigate_existing_profile_tab(&reuse_path, "about:blank"))
+        .await.map_err(|e| e.to_string())?;
+    if reused.is_ok() {
+        return Ok(format!("已聚焦 {} 已打开的浏览器", label));
+    }
+    tauri::async_runtime::spawn_blocking(move || open_profile_window(&path, "about:blank"))
+        .await.map_err(|e| e.to_string())??;
+    Ok(format!("已打开 {} 的浏览器", label))
 }
 
 #[tauri::command]
@@ -15829,7 +15940,9 @@ pub fn run() {
             persona_provision_all,
             persona_list,
             persona_create,
+            persona_create_fixed,
             persona_open_gmail_login,
+            persona_open_browser,
             persona_delete,
             persona_test_ip,
             persona_platform_catalog,

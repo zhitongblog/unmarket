@@ -45,6 +45,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Accounts
     'accounts.title': '平台账号',
+    'accounts.pageTitle': '👤 身份管理',
     'accounts.addAccount': '+ 添加账号',
     'accounts.overallHealth': '整体健康',
     'accounts.active': '活跃',
@@ -82,6 +83,17 @@ const translations: Record<Language, Record<string, string>> = {
     'accounts.deleteFailed': '删除账号失败',
     // 邮箱中心页布局
     'accounts.newGmail': '+ 新建 Gmail',
+    'accounts.newIdentity': '+ 新建身份',
+    'accounts.newFixedCn': '+ 新建国内固定身份',
+    'accounts.newFixedOverseas': '+ 新建国外固定身份',
+    // #13 身份分类 tab
+    'idcat.gmail': '📧 Gmail 身份',
+    'idcat.fixedCn': '🇨🇳 国内固定IP',
+    'idcat.fixedOverseas': '🌍 国外固定IP',
+    'idcat.unassigned': '🧩 未归属',
+    'idcat.emptyGmail': '还没有 Gmail 身份 —— 点上面「+ 新建 Gmail」用一个真实 Gmail 建第一个。',
+    'idcat.emptyFixedCn': '还没有国内固定 IP 身份 —— 点「+ 新建国内固定身份」，填标识 + 国内住宅/4G 代理。',
+    'idcat.emptyFixedOverseas': '还没有国外固定 IP 身份 —— 点「+ 新建国外固定身份」，填标识 + 海外静态代理。',
     'accounts.collapseAll': '收起全部平台',
     'accounts.expandAll': '展开全部平台',
     'accounts.collapse': '收起平台',
@@ -99,6 +111,14 @@ const translations: Record<Language, Record<string, string>> = {
     'accounts.unassignedTitle': '🧩 未归属邮箱 · {n} 个账号',
     'accounts.unassignedHint': '这些账号还没挂到某个 Gmail 下。在账号上选「归属身份」归类即可。',
     'accounts.emptyEmailHint': '这个邮箱还没有账号 —— 点上面「🚀 检查并开通账号」自动开通各平台，或「+ 加账号」手动加。',
+    // #13 身份 IP 类型
+    'accounts.ipAirport': '🛫 机场轮换',
+    'accounts.ipFixedCn': '🇨🇳 国内固定',
+    'accounts.ipFixedOverseas': '🌍 海外固定',
+    'accounts.openBrowser': '🌐 打开浏览器',
+    'accounts.proxy': '代理',
+    'accounts.fixedOneAccount': '固定 IP 身份建议「一身份一号」，这个身份已有账号了',
+    'accounts.fixedEmptyHint': '这个固定 IP 身份还没有账号 —— 点「+ 加账号」加 1 个（建议一身份一号）。',
 
     // Nurturing (养号)
     'nurture.title': '账号养护',
@@ -196,6 +216,23 @@ const translations: Record<Language, Record<string, string>> = {
     'persona.deleteConfirm': '删除身份 {email}？\n会删掉它的独立浏览器并释放出口节点；名下账号会变成「未归属」。',
     'persona.deleted': '身份已删除',
     'persona.deleteFailed': '删除失败：',
+    // #13 身份类型 / 固定 IP 身份
+    'persona.newTypeTitle': '新建身份',
+    'persona.newTypeHint': '按平台对出口 IP 的要求选择身份类型：',
+    'persona.newGmail': '📧 Gmail 身份',
+    'persona.newGmailDesc': '海外平台（Reddit/PH/Twitter…）· 机场节点自动轮换',
+    'persona.newFixedCn': '🇨🇳 国内固定 IP 身份',
+    'persona.newFixedCnDesc': '小红书/抖音/微博… · 自备国内住宅/4G 代理 · IP 钉死不轮换',
+    'persona.newFixedOverseas': '🌍 国外固定 IP 身份',
+    'persona.newFixedOverseasDesc': '需稳定海外 IP 的平台 · 自备海外静态代理 · IP 钉死不轮换',
+    'persona.fixedTitle': '新建固定 IP 身份',
+    'persona.fixedLabelLabel': '身份标识（名称或手机号，唯一）',
+    'persona.fixedLabelPlaceholder': '如：小红书-1 或 手机号',
+    'persona.fixedProxyLabel': '固定代理地址（住宅/4G，钉死给这个身份独用）',
+    'persona.fixedProxyPlaceholder': 'socks5://user:pass@host:port',
+    'persona.fixedOk': '创建',
+    'persona.creatingFixed': '正在创建固定 IP 身份…（建浏览器+随机指纹+绑定代理）',
+    'persona.fixedCreated': '固定 IP 身份「{label}」已建好 ✓ 出口 IP 已钉死、不会被自动轮换',
 
     // Settings
     'settings.title': '设置',
@@ -465,6 +502,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Accounts
     'accounts.title': 'Platform Accounts',
+    'accounts.pageTitle': '👤 Identities',
     'accounts.addAccount': '+ Add Account',
     'accounts.overallHealth': 'Overall Health',
     'accounts.active': 'Active',
@@ -495,6 +533,17 @@ const translations: Record<Language, Record<string, string>> = {
     'accounts.deleteFailed': 'Failed to delete account',
     // Email hub layout
     'accounts.newGmail': '+ New Gmail',
+    'accounts.newIdentity': '+ New identity',
+    'accounts.newFixedCn': '+ New CN fixed-IP identity',
+    'accounts.newFixedOverseas': '+ New overseas fixed-IP identity',
+    // #13 identity category tabs
+    'idcat.gmail': '📧 Gmail identities',
+    'idcat.fixedCn': '🇨🇳 CN fixed-IP',
+    'idcat.fixedOverseas': '🌍 Overseas fixed-IP',
+    'idcat.unassigned': '🧩 Unassigned',
+    'idcat.emptyGmail': 'No Gmail identity yet — click "+ New Gmail" to create one with a real Gmail.',
+    'idcat.emptyFixedCn': 'No CN fixed-IP identity yet — click "+ New CN fixed-IP identity", enter a label + a CN residential/4G proxy.',
+    'idcat.emptyFixedOverseas': 'No overseas fixed-IP identity yet — click "+ New overseas fixed-IP identity", enter a label + a static proxy.',
     'accounts.collapseAll': 'Collapse all',
     'accounts.expandAll': 'Expand all',
     'accounts.collapse': 'Collapse',
@@ -512,6 +561,14 @@ const translations: Record<Language, Record<string, string>> = {
     'accounts.unassignedTitle': '🧩 Unassigned · {n} account(s)',
     'accounts.unassignedHint': 'These accounts are not under any Gmail yet. Set "Identity" on an account to group it.',
     'accounts.emptyEmailHint': 'No accounts under this email yet — click "🚀 Check & provision" to auto-provision, or "+ Add account" to add manually.',
+    // #13 identity IP type
+    'accounts.ipAirport': '🛫 Airport rotation',
+    'accounts.ipFixedCn': '🇨🇳 CN fixed',
+    'accounts.ipFixedOverseas': '🌍 Overseas fixed',
+    'accounts.openBrowser': '🌐 Open browser',
+    'accounts.proxy': 'Proxy',
+    'accounts.fixedOneAccount': 'Fixed-IP identity is meant to hold one account; this identity already has one',
+    'accounts.fixedEmptyHint': 'No account under this fixed-IP identity yet — click "+ Add account" to add one (one account per identity recommended).',
     'accounts.existingAccounts': 'Existing Accounts',
     'accounts.delete': 'Delete',
     'accounts.useGlobalProfile': '-- Use Global Profile --',
@@ -615,6 +672,23 @@ const translations: Record<Language, Record<string, string>> = {
     'persona.deleteConfirm': 'Delete identity {email}?\nIts dedicated browser will be removed and exit node released; accounts under it become "unassigned".',
     'persona.deleted': 'Identity deleted',
     'persona.deleteFailed': 'Delete failed: ',
+    // #13 identity type / fixed-IP identity
+    'persona.newTypeTitle': 'New identity',
+    'persona.newTypeHint': 'Pick the identity type by the platform\'s exit-IP requirement:',
+    'persona.newGmail': '📧 Gmail identity',
+    'persona.newGmailDesc': 'Overseas platforms (Reddit/PH/Twitter…) · airport node auto-rotation',
+    'persona.newFixedCn': '🇨🇳 China fixed-IP identity',
+    'persona.newFixedCnDesc': 'Xiaohongshu/Douyin/Weibo… · your own CN residential/4G proxy · IP pinned',
+    'persona.newFixedOverseas': '🌍 Overseas fixed-IP identity',
+    'persona.newFixedOverseasDesc': 'Platforms needing a stable overseas IP · your own static proxy · IP pinned',
+    'persona.fixedTitle': 'New fixed-IP identity',
+    'persona.fixedLabelLabel': 'Identity label (name or phone, unique)',
+    'persona.fixedLabelPlaceholder': 'e.g. xhs-1 or phone number',
+    'persona.fixedProxyLabel': 'Fixed proxy (residential/4G, pinned & dedicated to this identity)',
+    'persona.fixedProxyPlaceholder': 'socks5://user:pass@host:port',
+    'persona.fixedOk': 'Create',
+    'persona.creatingFixed': 'Creating fixed-IP identity… (browser + fingerprint + proxy bind)',
+    'persona.fixedCreated': 'Fixed-IP identity "{label}" ready ✓ Exit IP pinned, will not be auto-rotated',
 
     // Settings
     'settings.title': 'Settings',
@@ -1272,7 +1346,7 @@ const REGION_FLAGS: Record<string, string> = { us: '🇺🇸', jp: '🇯🇵', k
 // 登录方式 → 图标（与 i18n 文案配合，单独成徽章，便于区分开通/登录流程）
 const LOGIN_ICONS: Record<string, string> = { google: '🔵', phone: '📱', password: '🔑' };
 
-interface CatalogItem { platform: string; name: string; scene: string; region: string; mode: string; login_method?: string; provisioned: boolean; }
+interface CatalogItem { platform: string; name: string; scene: string; region: string; mode: string; login_method?: string; ip_policy?: string; provisioned: boolean; }
 
 // 登录方式徽章：图标 + i18n 文案（google/phone/password），未知则不渲染。
 function loginMethodBadge(method?: string): string {
@@ -1366,19 +1440,21 @@ function pickAddAccounts(email: string, candidates: CatalogItem[]): Promise<AddA
       return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;flex-wrap:wrap;">${head}${inputs}</div>`;
     };
 
-    const block = (titleKey: string, method: string): string => {
-      const items = candidates.filter(c => c.login_method === method);
+    const block = (titleKey: string, items: CatalogItem[]): string => {
       if (!items.length) return '';
       return `<div style="margin:12px 0 4px;font-weight:700;font-size:13px;color:var(--text-muted);">${t(titleKey)}</div>${items.map(rowHtml).join('')}`;
     };
+    // 手机号一组；账号密码一组（含 Google 登录平台——在固定身份里用邮箱/密码直登，不走 Google）
+    const phoneItems = candidates.filter(c => c.login_method === 'phone');
+    const credItems = candidates.filter(c => c.login_method !== 'phone');
 
     overlay.innerHTML = `
       <div class="modal-content" style="max-width:640px;max-height:84vh;display:flex;flex-direction:column;">
         <div class="modal-header"><h3>${escapeHtml(tf('addacct.title', { email }))}</h3><button class="modal-close" data-cancel>&times;</button></div>
         <div class="modal-body" style="overflow:auto;">
           <div class="text-muted" style="font-size:12px;margin-bottom:4px;">${escapeHtml(t('addacct.hint'))}</div>
-          ${block('addacct.phoneGroup', 'phone')}
-          ${block('addacct.passwordGroup', 'password')}
+          ${block('addacct.phoneGroup', phoneItems)}
+          ${block('addacct.passwordGroup', credItems)}
         </div>
         <div class="modal-footer" style="display:flex;align-items:center;gap:8px;">
           <span style="flex:1;"></span>
@@ -2244,108 +2320,176 @@ let personasCache: any[] = [];
 let airportStatusCache: any = null;
 
 let selectedPersonaId: string | null = null;
+// #13 身份分类 tab：gmail(机场) / fixed_cn(国内固定) / fixed_overseas(国外固定) / __none__(未归属账号)
+type IdentityCategory = 'gmail' | 'fixed_cn' | 'fixed_overseas' | '__none__';
+let selectedIdentityCategory: IdentityCategory = 'gmail';
+const ID_CATEGORIES: { key: IdentityCategory; labelKey: string; match: (p: any) => boolean }[] = [
+  { key: 'gmail',          labelKey: 'idcat.gmail',          match: p => (p?.ip_mode || 'airport') === 'airport' },
+  { key: 'fixed_cn',       labelKey: 'idcat.fixedCn',        match: p => p?.ip_mode === 'fixed' && (p?.region || '') === 'cn' },
+  { key: 'fixed_overseas', labelKey: 'idcat.fixedOverseas',  match: p => p?.ip_mode === 'fixed' && (p?.region || '') !== 'cn' },
+];
+function personasInCategory(cat: IdentityCategory): any[] {
+  const c = ID_CATEGORIES.find(x => x.key === cat);
+  return c ? personasCache.filter(c.match) : [];
+}
+(window as any).selectIdentityCategory = function(cat: IdentityCategory) {
+  selectedIdentityCategory = cat;
+  selectedPersonaId = null;   // 切分类后重选该分类下第一个身份
+  renderAccounts();
+};
 
-// 邮箱账号 = 邮箱视角：顶部切换邮箱，下面只显示「当前选中那个邮箱」的账号/养号。切邮箱 → 整片切换。
+// 身份管理：顶部三类身份 tab（Gmail / 国内固定 / 国外固定），分类下再切具体身份。
 function renderAccounts() {
   const list = document.getElementById('accountsList');
   const empty = document.getElementById('emptyAccounts');
   if (!list || !empty) return;
+  list.style.display = 'block'; empty.style.display = 'none';
 
-  // 机场代理（出口 IP 池）
-  const a = airportStatusCache;
-  const configured = !!(a && a.configured);
-  const airportInfo = configured ? tf('airport.poolInfo', { total: a.total, free: a.free }) : t('airport.notConfigured');
-  const airportBar = `<div class="card" style="margin:0 0 10px;padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-left:4px solid ${configured ? '#1a9d4a' : '#d97706'};">
-    <span style="font-weight:700;">${escapeHtml(t('airport.title'))}</span>
-    <span class="text-muted" style="font-size:12px;">${escapeHtml(airportInfo)}</span>
-    <span style="margin-left:auto;display:flex;gap:6px;">
-      ${configured ? `<button class="btn btn-small btn-secondary" onclick="refreshAirport()" title="用已保存的订阅重新拉取、替换失效节点（同定时刷新）">🔄 ${escapeHtml(t('airport.refreshSub'))}</button>` : ''}
-      <button class="btn btn-small btn-secondary" onclick="setAirportPrompt()">${escapeHtml(t('airport.setSub'))}</button>
-    </span>
-  </div>`;
-
+  // 账号按身份分组 + 未归属
   const groups = new Map<string, any[]>();
   for (const acc of accounts) {
     const key = acc.persona_id || '__none__';
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key)!.push(acc);
   }
-  const hasUnassigned = groups.has('__none__');
-  const tabIds = [...personasCache.map((p: any) => p.id), ...(hasUnassigned ? ['__none__'] : [])];
+  const unassigned = groups.get('__none__') || [];
 
-  list.style.display = 'block'; empty.style.display = 'none';
+  // 校验当前分类（未归属仅在有未归属账号时可选）
+  if (selectedIdentityCategory === '__none__' && !unassigned.length) selectedIdentityCategory = 'gmail';
 
-  if (tabIds.length === 0) {
-    list.innerHTML = airportBar + `<div class="card" style="padding:18px;text-align:center;">
-      <div class="text-muted">${escapeHtml(t('accounts.noEmailYet'))}</div>
-      <button class="btn btn-primary" style="margin-top:10px;" onclick="createPersonaPrompt()">${escapeHtml(t('accounts.newGmail'))}</button></div>`;
+  // 分类 tab 行
+  const catTab = (key: string, label: string, count: number) =>
+    `<button class="email-tab ${selectedIdentityCategory === key ? 'active' : ''}" onclick="selectIdentityCategory('${key}')">${escapeHtml(label)}${count ? ` (${count})` : ''}</button>`;
+  let catTabsHtml = ID_CATEGORIES.map(c => catTab(c.key, t(c.labelKey), personasInCategory(c.key).length)).join('');
+  if (unassigned.length) catTabsHtml += catTab('__none__', t('idcat.unassigned'), unassigned.length);
+  const categoryBar = `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 12px;">${catTabsHtml}</div>`;
+
+  // 机场代理栏只在 Gmail 分类显示（固定身份不依赖机场）
+  let airportBar = '';
+  if (selectedIdentityCategory === 'gmail') {
+    const a = airportStatusCache;
+    const configured = !!(a && a.configured);
+    const airportInfo = configured ? tf('airport.poolInfo', { total: a.total, free: a.free }) : t('airport.notConfigured');
+    airportBar = `<div class="card" style="margin:0 0 10px;padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-left:4px solid ${configured ? '#1a9d4a' : '#d97706'};">
+      <span style="font-weight:700;">${escapeHtml(t('airport.title'))}</span>
+      <span class="text-muted" style="font-size:12px;">${escapeHtml(airportInfo)}</span>
+      <span style="margin-left:auto;display:flex;gap:6px;">
+        ${configured ? `<button class="btn btn-small btn-secondary" onclick="refreshAirport()" title="用已保存的订阅重新拉取、替换失效节点（同定时刷新）">🔄 ${escapeHtml(t('airport.refreshSub'))}</button>` : ''}
+        <button class="btn btn-small btn-secondary" onclick="setAirportPrompt()">${escapeHtml(t('airport.setSub'))}</button>
+      </span>
+    </div>`;
+  }
+
+  // ===== 未归属分类：直接列未归属账号 =====
+  if (selectedIdentityCategory === '__none__') {
+    const cards = unassigned.map((x: any) => renderAccountCard(x)).join('');
+    const panel = `<div class="email-group"><div class="email-group-body">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;border-left:4px solid #d97706;padding-left:10px;">
+        <span style="font-weight:600;">${escapeHtml(tf('accounts.unassignedTitle', { n: unassigned.length }))}</span>
+        <span class="text-muted" style="font-size:12px;">${escapeHtml(t('accounts.unassignedHint'))}</span>
+      </div>${cards}</div></div>`;
+    list.innerHTML = categoryBar + panel;
     return;
   }
-  // 默认选中：保持上次，或第一个
-  if (!selectedPersonaId || !tabIds.includes(selectedPersonaId)) selectedPersonaId = tabIds[0];
 
-  // #9 顶部工具条：只放全局动作（新建 Gmail 靠左 + 一键收起/展开全部平台）
-  const allCollapsed = tabIds.length > 0 && tabIds.every((id: string) => collapsedPersonas.has(id));
-  const toolbar = `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 12px;">
-    <button class="btn btn-small btn-primary" onclick="createPersonaPrompt()" title="用一个真实 Gmail 新建一套独立身份">${escapeHtml(t('accounts.newGmail'))}</button>
-    ${collapseBtnHtml('toggleCollapseAllPersonas()', allCollapsed, allCollapsed ? t('accounts.expandAll') : t('accounts.collapseAll'))}
-  </div>`;
+  // ===== 身份分类（gmail / fixed_cn / fixed_overseas）=====
+  const cat = selectedIdentityCategory;
+  const personas = personasInCategory(cat);
+  const newBtn = cat === 'gmail'
+    ? `<button class="btn btn-small btn-primary" onclick="createPersonaPrompt()" title="用一个真实 Gmail 新建一套独立身份">${escapeHtml(t('accounts.newGmail'))}</button>`
+    : cat === 'fixed_cn'
+      ? `<button class="btn btn-small btn-primary" onclick="createFixedPersonaPrompt('cn')" title="新建国内固定 IP 身份">${escapeHtml(t('accounts.newFixedCn'))}</button>`
+      : `<button class="btn btn-small btn-primary" onclick="createFixedPersonaPrompt('overseas')" title="新建国外固定 IP 身份">${escapeHtml(t('accounts.newFixedOverseas'))}</button>`;
 
-  // #9 邮箱编组：邮箱 tab 与「收起平台」同一行（group head），下面是该邮箱的平台列表（group body）
+  // 该分类下没有身份
+  if (!personas.length) {
+    const emptyKey = cat === 'gmail' ? 'idcat.emptyGmail' : cat === 'fixed_cn' ? 'idcat.emptyFixedCn' : 'idcat.emptyFixedOverseas';
+    list.innerHTML = categoryBar + airportBar + `<div class="card" style="padding:18px;text-align:center;">
+      <div class="text-muted" style="margin-bottom:10px;">${escapeHtml(t(emptyKey))}</div>${newBtn}</div>`;
+    return;
+  }
+
+  // 选中身份必须属于该分类
+  const ids = personas.map((p: any) => p.id);
+  if (!selectedPersonaId || !ids.includes(selectedPersonaId)) selectedPersonaId = ids[0];
   const sel = selectedPersonaId as string;
   const accts = groups.get(sel) || [];
   const collapsed = collapsedPersonas.has(sel);
 
-  const tabsHtml = tabIds.map((id: string) => {
-    const active = id === selectedPersonaId;
-    let label: string;
-    if (id === '__none__') label = `🧩 未归属(${groups.get('__none__')!.length})`;
-    else { const p = personasCache.find((x: any) => x.id === id); label = `📧 ${p?.email || '邮箱'}`; }
-    return `<button class="email-tab ${active ? 'active' : ''}" onclick="selectEmail('${id}')" title="${escapeHtml(label)}">${escapeHtml(label)}</button>`;
+  // 工具条：新建（该分类）+ 一键收起/展开（该分类的身份）
+  const allCollapsed = ids.length > 0 && ids.every((id: string) => collapsedPersonas.has(id));
+  const toolbar = `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 12px;">
+    ${newBtn}
+    ${collapseBtnHtml('toggleCollapseAllPersonas()', allCollapsed, allCollapsed ? t('accounts.expandAll') : t('accounts.collapseAll'))}
+  </div>`;
+
+  // 身份 sub-tabs（同分类）与「收起平台」同一行
+  const tabsHtml = personas.map((p: any) => {
+    const active = p.id === sel;
+    const label = `${personaIcon(p)} ${p?.email || '身份'}`;
+    return `<button class="email-tab ${active ? 'active' : ''}" onclick="selectEmail('${p.id}')" title="${escapeHtml(label)}">${escapeHtml(label)}</button>`;
   }).join('');
   const groupHead = `<div class="email-group-head">
     <div class="email-tabs">${tabsHtml}</div>
     ${collapseBtnHtml(`togglePersonaCollapse('${sel}')`, collapsed, collapsed ? t('accounts.expand') : t('accounts.collapse'))}
   </div>`;
 
+  const p = personasCache.find((x: any) => x.id === sel);
+  const isFixed = (p?.ip_mode || 'airport') === 'fixed';
+  const emptyHintKey = isFixed ? 'accounts.fixedEmptyHint' : 'accounts.emptyEmailHint';
   const cardsHtml = collapsed
     ? `<div class="text-muted" style="text-align:center;padding:6px 0;">${escapeHtml(tf('accounts.collapsedHint', { n: accts.length }))}</div>`
     : (accts.length ? accts.map((x: any) => renderAccountCard(x)).join('')
-        : `<div class="text-muted" style="text-align:center;padding:8px 0;">${escapeHtml(sel === '__none__' ? t('accounts.unassignedHint') : t('accounts.emptyEmailHint'))}</div>`);
+        : `<div class="text-muted" style="text-align:center;padding:8px 0;">${escapeHtml(t(emptyHintKey))}</div>`);
 
-  let infoBar = '';
-  if (sel === '__none__') {
-    infoBar = `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;border-left:4px solid #d97706;padding-left:10px;">
-      <span style="font-weight:600;">${escapeHtml(tf('accounts.unassignedTitle', { n: accts.length }))}</span>
-      <span class="text-muted" style="font-size:12px;">${escapeHtml(t('accounts.unassignedHint'))}</span>
-    </div>`;
-  } else {
-    const p = personasCache.find((x: any) => x.id === sel);
-    const pname = profileNameOf(p);                       // #6 可读 profile 名
-    const meta = [
-      p?.region ? escapeHtml(p.region) : t('accounts.noNode'),
-      pname ? `🖥️ ${t('accounts.browser')}: ${escapeHtml(pname)}` : '',
-      tf('accounts.accountCount', { n: accts.length }),
-    ].filter(Boolean).join(' · ');
-    infoBar = `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;border-left:4px solid #4a8cff;padding-left:10px;">
+  const pname = profileNameOf(p);                       // #6 可读 profile 名
+  const meta = [
+    personaIpBadge(p),                                  // #13 IP 类型徽章
+    isFixed
+      ? (p?.fixed_proxy ? `${t('accounts.proxy')}: ${escapeHtml(maskProxy(p.fixed_proxy))}` : '')
+      : (p?.region ? escapeHtml(p.region) : t('accounts.noNode')),
+    pname ? `🖥️ ${t('accounts.browser')}: ${escapeHtml(pname)}` : '',
+    tf('accounts.accountCount', { n: accts.length }),
+  ].filter(Boolean).join(' · ');
+  // #13 动作按钮按身份类型区分：固定身份没有 Gmail 登录 / Google 开通，只有「打开浏览器 + 加账号」
+  const actions = isFixed
+    ? `<button class="btn btn-small btn-secondary" onclick="personaOpenBrowser('${sel}')" title="打开这个身份的浏览器（手动操作平台）">${escapeHtml(t('accounts.openBrowser'))}</button>
+       <button class="btn btn-small btn-primary" onclick="personaAddAccounts('${sel}','${escapeHtml(p?.email||'')}')" title="加账号（固定 IP 身份建议一身份一号）">${escapeHtml(t('accounts.addAccountBtn'))}</button>`
+    : `<button class="btn btn-small btn-secondary" onclick="personaGmailLogin('${sel}')" title="打开这个邮箱的浏览器登录它的 Gmail（基础登录，先做这步）">${escapeHtml(t('accounts.loginGmail'))}</button>
+       <button class="btn btn-small btn-success" onclick="personaProvisionAll('${sel}','${escapeHtml(p?.email||'')}')" title="自动开通 Google 登录平台">${escapeHtml(t('accounts.provisionBtn'))}</button>
+       <button class="btn btn-small btn-primary" onclick="personaAddAccounts('${sel}','${escapeHtml(p?.email||'')}')" title="手机号 / 账号密码平台手动加账号">${escapeHtml(t('accounts.addAccountBtn'))}</button>`;
+  const infoBar = `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;border-left:4px solid ${isFixed ? '#16a34a' : '#4a8cff'};padding-left:10px;">
       <span class="text-muted" style="font-size:12px;">${meta}</span>
     </div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
-      <button class="btn btn-small btn-secondary" onclick="personaGmailLogin('${sel}')" title="打开这个邮箱的浏览器登录它的 Gmail（基础登录，先做这步）">${escapeHtml(t('accounts.loginGmail'))}</button>
-      <button class="btn btn-small btn-success" onclick="personaProvisionAll('${sel}','${escapeHtml(p?.email||'')}')" title="自动开通 Google 登录平台">${escapeHtml(t('accounts.provisionBtn'))}</button>
-      <button class="btn btn-small btn-primary" onclick="personaAddAccounts('${sel}','${escapeHtml(p?.email||'')}')" title="手机号 / 账号密码平台手动加账号">${escapeHtml(t('accounts.addAccountBtn'))}</button>
-      <button class="btn btn-small btn-secondary" style="margin-left:auto;color:#e55;" onclick="deletePersonaAcct('${sel}','${escapeHtml(p?.email || '')}')" title="删除这个邮箱身份">${escapeHtml(t('accounts.deleteEmail'))}</button>
+      ${actions}
+      <button class="btn btn-small btn-secondary" style="margin-left:auto;color:#e55;" onclick="deletePersonaAcct('${sel}','${escapeHtml(p?.email || '')}')" title="删除这个身份">${escapeHtml(t('accounts.deleteEmail'))}</button>
     </div>`;
-  }
 
   const emailGroup = `<div class="email-group">${groupHead}<div class="email-group-body">${infoBar}${cardsHtml}</div></div>`;
-
-  list.innerHTML = airportBar + toolbar + emailGroup;
+  list.innerHTML = categoryBar + airportBar + toolbar + emailGroup;
 }
 
 // #8 收起/展开按钮：胶囊 + 旋转 chevron，统一好看的样式
 function collapseBtnHtml(onclick: string, collapsed: boolean, label: string): string {
   return `<button class="collapse-btn ${collapsed ? 'is-collapsed' : ''}" onclick="${onclick}"><span class="chev">▾</span>${escapeHtml(label)}</button>`;
+}
+
+// #13 身份类型 → 图标 / 徽章文案 / 代理脱敏
+function personaIcon(persona: any): string {
+  if ((persona?.ip_mode || 'airport') !== 'fixed') return '📧';
+  return (persona?.region || '') === 'cn' ? '🇨🇳' : '🌍';
+}
+function personaIpBadge(persona: any): string {
+  if ((persona?.ip_mode || 'airport') !== 'fixed') return t('accounts.ipAirport');
+  return (persona?.region || '') === 'cn' ? t('accounts.ipFixedCn') : t('accounts.ipFixedOverseas');
+}
+// 代理脱敏：藏掉账号密码，只留协议+主机+端口
+function maskProxy(proxy: string): string {
+  try {
+    const m = String(proxy).match(/^([a-z0-9]+:\/\/)(?:[^@/]*@)?(.+)$/i);
+    return m ? `${m[1]}${m[2]}` : String(proxy);
+  } catch { return String(proxy); }
 }
 
 // #6 把 persona.profile_id（profile 文件夹名）映射为 Unzoo 里可读的 profile 名称
@@ -2366,12 +2510,11 @@ let collapsedPersonas: Set<string> = new Set();
   renderAccounts();
 };
 (window as any).toggleCollapseAllPersonas = function() {
-  const groups = new Map<string, any[]>();
-  for (const acc of accounts) groups.set(acc.persona_id || '__none__', []);
-  const tabIds = [...personasCache.map((p: any) => p.id), ...(groups.has('__none__') ? ['__none__'] : [])];
-  const allCollapsed = tabIds.length > 0 && tabIds.every((id: string) => collapsedPersonas.has(id));
-  if (allCollapsed) collapsedPersonas.clear();
-  else tabIds.forEach((id: string) => collapsedPersonas.add(id));
+  // 只对当前分类下的身份收起/展开
+  const ids = personasInCategory(selectedIdentityCategory).map((p: any) => p.id);
+  const allCollapsed = ids.length > 0 && ids.every((id: string) => collapsedPersonas.has(id));
+  if (allCollapsed) ids.forEach((id: string) => collapsedPersonas.delete(id));
+  else ids.forEach((id: string) => collapsedPersonas.add(id));
   renderAccounts();
 };
 
@@ -2427,10 +2570,102 @@ let collapsedPersonas: Set<string> = new Set();
   showToast(t('persona.creating'), 'info');
   try {
     const dto: any = await invoke('persona_create', { email });
+    selectedIdentityCategory = 'gmail';
     if (dto && dto.id) selectedPersonaId = dto.id; // 建好自动切到这个新邮箱
     showToast(tf('persona.created', { email }), 'info');
     await loadAccounts();
   } catch (e) { showToast(t('persona.createFailed') + e, 'error'); }
+};
+
+// #13 新建身份：先选类型（Gmail / 国内固定 / 国外固定）
+(window as any).newIdentityChooser = function() {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal active';
+  const opt = (onclick: string, title: string, desc: string) =>
+    `<button class="email-tab" style="width:100%;flex-direction:column;align-items:flex-start;gap:3px;max-width:none;padding:10px 12px;" data-act="${onclick}">
+       <span style="font-weight:700;">${escapeHtml(title)}</span>
+       <span class="text-muted" style="font-size:11px;font-weight:400;white-space:normal;">${escapeHtml(desc)}</span>
+     </button>`;
+  overlay.innerHTML = `
+    <div class="modal-content" style="max-width:460px;display:flex;flex-direction:column;">
+      <div class="modal-header"><h3>${escapeHtml(t('persona.newTypeTitle'))}</h3><button class="modal-close" data-cancel>&times;</button></div>
+      <div class="modal-body">
+        <div class="text-muted" style="font-size:12px;margin-bottom:8px;">${escapeHtml(t('persona.newTypeHint'))}</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          ${opt('gmail', t('persona.newGmail'), t('persona.newGmailDesc'))}
+          ${opt('cn', t('persona.newFixedCn'), t('persona.newFixedCnDesc'))}
+          ${opt('overseas', t('persona.newFixedOverseas'), t('persona.newFixedOverseasDesc'))}
+        </div>
+      </div>
+    </div>`;
+  let done = false;
+  const close = () => { if (done) return; done = true; overlay.remove(); };
+  overlay.querySelectorAll('[data-cancel]').forEach(el => el.addEventListener('click', close));
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+  overlay.querySelectorAll('button[data-act]').forEach(btn => btn.addEventListener('click', () => {
+    const act = btn.getAttribute('data-act');
+    close();
+    if (act === 'gmail') (window as any).createPersonaPrompt();
+    else (window as any).createFixedPersonaPrompt(act);   // 'cn' | 'overseas'
+  }));
+  document.body.appendChild(overlay);
+};
+
+// #13 新建固定 IP 身份（国内/国外）：标识 + 固定代理两栏录入
+(window as any).createFixedPersonaPrompt = async function(region: string) {
+  const fields = await promptFixedPersona();
+  if (!fields) return;
+  showToast(t('persona.creatingFixed'), 'info');
+  try {
+    const dto: any = await invoke('persona_create_fixed', { label: fields.label, region, proxy: fields.proxy });
+    selectedIdentityCategory = region === 'cn' ? 'fixed_cn' : 'fixed_overseas';
+    if (dto && dto.id) selectedPersonaId = dto.id;
+    showToast(tf('persona.fixedCreated', { label: fields.label }), 'success');
+    await loadAccounts();
+  } catch (e) { showToast(t('persona.createFailed') + e, 'error'); }
+};
+
+// 固定身份录入弹窗：返回 {label, proxy} 或 null
+function promptFixedPersona(): Promise<{ label: string; proxy: string } | null> {
+  return new Promise((resolve) => {
+    const overlay = document.createElement('div');
+    overlay.className = 'modal active';
+    overlay.innerHTML = `
+      <div class="modal-content" style="max-width:480px;">
+        <div class="modal-header"><h3>${escapeHtml(t('persona.fixedTitle'))}</h3><button class="modal-close" data-cancel>&times;</button></div>
+        <div class="modal-body">
+          <label style="display:block;margin-bottom:4px;font-size:13px;">${escapeHtml(t('persona.fixedLabelLabel'))}</label>
+          <input type="text" class="input" id="__fpLabel" placeholder="${escapeHtml(t('persona.fixedLabelPlaceholder'))}" style="width:100%;margin-bottom:12px;">
+          <label style="display:block;margin-bottom:4px;font-size:13px;">${escapeHtml(t('persona.fixedProxyLabel'))}</label>
+          <input type="text" class="input" id="__fpProxy" placeholder="${escapeHtml(t('persona.fixedProxyPlaceholder'))}" style="width:100%;">
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-cancel>${escapeHtml(t('provision.cancel'))}</button>
+          <button class="btn btn-primary" data-ok>${escapeHtml(t('persona.fixedOk'))}</button>
+        </div>
+      </div>`;
+    let done = false;
+    const finish = (v: { label: string; proxy: string } | null) => { if (done) return; done = true; overlay.remove(); resolve(v); };
+    const submit = () => {
+      const label = (overlay.querySelector('#__fpLabel') as HTMLInputElement).value.trim();
+      const proxy = (overlay.querySelector('#__fpProxy') as HTMLInputElement).value.trim();
+      if (!label || !proxy) return;   // 两栏都必填
+      finish({ label, proxy });
+    };
+    overlay.querySelectorAll('[data-cancel]').forEach(el => el.addEventListener('click', () => finish(null)));
+    overlay.querySelector('[data-ok]')?.addEventListener('click', submit);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) finish(null); });
+    document.body.appendChild(overlay);
+    setTimeout(() => (overlay.querySelector('#__fpLabel') as HTMLInputElement)?.focus(), 30);
+  });
+}
+
+// #13 打开固定 IP 身份的浏览器（无 Gmail 登录步骤）
+(window as any).personaOpenBrowser = async function(id: string) {
+  try {
+    const msg = await invoke<string>('persona_open_browser', { personaId: id });
+    showToast('' + msg, 'info');
+  } catch (e) { showToast('' + e, 'error'); }
 };
 
 // 以邮箱为单位：自动开通「Google 登录」平台（#5 选择器只列出尚未开通的）
@@ -2439,8 +2674,8 @@ let collapsedPersonas: Set<string> = new Set();
   try {
     catalog = await invoke<CatalogItem[]>('persona_platform_catalog', { personaId: id });
   } catch (e) { showToast(t('provision.loadFailed') + e, 'error'); return; }
-  // 只保留「Google 登录」且尚未开通的平台（手机号/帐密走「+ 加账号」）
-  const selectable = catalog.filter(c => c.login_method === 'google' && !c.provisioned);
+  // 只保留「Google 登录 + IP 宽松(shared_overseas)」且尚未开通的平台（其余走「+ 加账号」/固定身份）
+  const selectable = catalog.filter(c => c.login_method === 'google' && c.ip_policy === 'shared_overseas' && !c.provisioned);
   if (!selectable.length) { showToast(t('provision.allDone'), 'info'); return; }
   const checkedArr = await pickProvisionPlatforms(email, selectable);
   if (!checkedArr) return;                       // 取消
@@ -2454,16 +2689,33 @@ let collapsedPersonas: Set<string> = new Set();
   } catch (e) { showToast('' + e, 'error'); }
 };
 
-// #4 加账号：按「手机号 / 账号密码」分区，列出尚未开通的可手动平台，填凭据后逐个添加并归属到该邮箱
+// #4/#13 加账号：按身份的 IP 类型路由可加平台，按「手机号/账号密码」分区录凭据，逐个添加并归属
 (window as any).personaAddAccounts = async function(id: string, email: string) {
+  // #13 按身份 IP 类型决定能加哪些平台：
+  //   固定·国内 → residential_cn（小红书等）；固定·海外 → static_overseas（Twitter/Reddit/FB…）；
+  //   Gmail/机场 → 宽松海外平台里「非 Google 登录」的（Google 的走「开通账号」）
+  const persona = personasCache.find((p: any) => p.id === id);
+  const isFixed = (persona?.ip_mode || 'airport') === 'fixed';
+  // 固定 IP 身份建议一身份一号：已有账号则不让再加
+  if (isFixed && accounts.filter((a: any) => a.persona_id === id).length >= 1) {
+    showToast(t('accounts.fixedOneAccount'), 'info'); return;
+  }
   let catalog: CatalogItem[];
   try {
     catalog = await invoke<CatalogItem[]>('persona_platform_catalog', { personaId: id });
   } catch (e) { showToast(t('provision.loadFailed') + e, 'error'); return; }
-  const candidates = catalog.filter(c => (c.login_method === 'phone' || c.login_method === 'password') && !c.provisioned);
+  const candidates = catalog.filter(c => {
+    if (c.provisioned) return false;
+    if (isFixed) {
+      return c.ip_policy === ((persona?.region || '') === 'cn' ? 'residential_cn' : 'static_overseas');
+    }
+    return c.ip_policy === 'shared_overseas' && c.login_method !== 'google';
+  });
   if (!candidates.length) { showToast(t('addacct.none'), 'info'); return; }
-  const entries = await pickAddAccounts(email, candidates);
-  if (!entries) return;                           // 取消
+  const picked = await pickAddAccounts(email, candidates);
+  if (!picked) return;                            // 取消
+  // 固定身份一号：即便填了多个也只取第一个
+  const entries = isFixed ? picked.slice(0, 1) : picked;
   if (!entries.length) { showToast(t('addacct.nothing'), 'info'); return; }
   try {
     for (const e of entries) {

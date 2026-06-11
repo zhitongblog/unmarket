@@ -153,6 +153,7 @@
       "dashboard.startEngage": "\u5F00\u59CB\u4E92\u52A8",
       // Accounts
       "accounts.title": "\u5E73\u53F0\u8D26\u53F7",
+      "accounts.pageTitle": "\u{1F464} \u8EAB\u4EFD\u7BA1\u7406",
       "accounts.addAccount": "+ \u6DFB\u52A0\u8D26\u53F7",
       "accounts.overallHealth": "\u6574\u4F53\u5065\u5EB7",
       "accounts.active": "\u6D3B\u8DC3",
@@ -190,6 +191,17 @@
       "accounts.deleteFailed": "\u5220\u9664\u8D26\u53F7\u5931\u8D25",
       // 邮箱中心页布局
       "accounts.newGmail": "+ \u65B0\u5EFA Gmail",
+      "accounts.newIdentity": "+ \u65B0\u5EFA\u8EAB\u4EFD",
+      "accounts.newFixedCn": "+ \u65B0\u5EFA\u56FD\u5185\u56FA\u5B9A\u8EAB\u4EFD",
+      "accounts.newFixedOverseas": "+ \u65B0\u5EFA\u56FD\u5916\u56FA\u5B9A\u8EAB\u4EFD",
+      // #13 身份分类 tab
+      "idcat.gmail": "\u{1F4E7} Gmail \u8EAB\u4EFD",
+      "idcat.fixedCn": "\u{1F1E8}\u{1F1F3} \u56FD\u5185\u56FA\u5B9AIP",
+      "idcat.fixedOverseas": "\u{1F30D} \u56FD\u5916\u56FA\u5B9AIP",
+      "idcat.unassigned": "\u{1F9E9} \u672A\u5F52\u5C5E",
+      "idcat.emptyGmail": "\u8FD8\u6CA1\u6709 Gmail \u8EAB\u4EFD \u2014\u2014 \u70B9\u4E0A\u9762\u300C+ \u65B0\u5EFA Gmail\u300D\u7528\u4E00\u4E2A\u771F\u5B9E Gmail \u5EFA\u7B2C\u4E00\u4E2A\u3002",
+      "idcat.emptyFixedCn": "\u8FD8\u6CA1\u6709\u56FD\u5185\u56FA\u5B9A IP \u8EAB\u4EFD \u2014\u2014 \u70B9\u300C+ \u65B0\u5EFA\u56FD\u5185\u56FA\u5B9A\u8EAB\u4EFD\u300D\uFF0C\u586B\u6807\u8BC6 + \u56FD\u5185\u4F4F\u5B85/4G \u4EE3\u7406\u3002",
+      "idcat.emptyFixedOverseas": "\u8FD8\u6CA1\u6709\u56FD\u5916\u56FA\u5B9A IP \u8EAB\u4EFD \u2014\u2014 \u70B9\u300C+ \u65B0\u5EFA\u56FD\u5916\u56FA\u5B9A\u8EAB\u4EFD\u300D\uFF0C\u586B\u6807\u8BC6 + \u6D77\u5916\u9759\u6001\u4EE3\u7406\u3002",
       "accounts.collapseAll": "\u6536\u8D77\u5168\u90E8\u5E73\u53F0",
       "accounts.expandAll": "\u5C55\u5F00\u5168\u90E8\u5E73\u53F0",
       "accounts.collapse": "\u6536\u8D77\u5E73\u53F0",
@@ -207,6 +219,14 @@
       "accounts.unassignedTitle": "\u{1F9E9} \u672A\u5F52\u5C5E\u90AE\u7BB1 \xB7 {n} \u4E2A\u8D26\u53F7",
       "accounts.unassignedHint": "\u8FD9\u4E9B\u8D26\u53F7\u8FD8\u6CA1\u6302\u5230\u67D0\u4E2A Gmail \u4E0B\u3002\u5728\u8D26\u53F7\u4E0A\u9009\u300C\u5F52\u5C5E\u8EAB\u4EFD\u300D\u5F52\u7C7B\u5373\u53EF\u3002",
       "accounts.emptyEmailHint": "\u8FD9\u4E2A\u90AE\u7BB1\u8FD8\u6CA1\u6709\u8D26\u53F7 \u2014\u2014 \u70B9\u4E0A\u9762\u300C\u{1F680} \u68C0\u67E5\u5E76\u5F00\u901A\u8D26\u53F7\u300D\u81EA\u52A8\u5F00\u901A\u5404\u5E73\u53F0\uFF0C\u6216\u300C+ \u52A0\u8D26\u53F7\u300D\u624B\u52A8\u52A0\u3002",
+      // #13 身份 IP 类型
+      "accounts.ipAirport": "\u{1F6EB} \u673A\u573A\u8F6E\u6362",
+      "accounts.ipFixedCn": "\u{1F1E8}\u{1F1F3} \u56FD\u5185\u56FA\u5B9A",
+      "accounts.ipFixedOverseas": "\u{1F30D} \u6D77\u5916\u56FA\u5B9A",
+      "accounts.openBrowser": "\u{1F310} \u6253\u5F00\u6D4F\u89C8\u5668",
+      "accounts.proxy": "\u4EE3\u7406",
+      "accounts.fixedOneAccount": "\u56FA\u5B9A IP \u8EAB\u4EFD\u5EFA\u8BAE\u300C\u4E00\u8EAB\u4EFD\u4E00\u53F7\u300D\uFF0C\u8FD9\u4E2A\u8EAB\u4EFD\u5DF2\u6709\u8D26\u53F7\u4E86",
+      "accounts.fixedEmptyHint": "\u8FD9\u4E2A\u56FA\u5B9A IP \u8EAB\u4EFD\u8FD8\u6CA1\u6709\u8D26\u53F7 \u2014\u2014 \u70B9\u300C+ \u52A0\u8D26\u53F7\u300D\u52A0 1 \u4E2A\uFF08\u5EFA\u8BAE\u4E00\u8EAB\u4EFD\u4E00\u53F7\uFF09\u3002",
       // Nurturing (养号)
       "nurture.title": "\u8D26\u53F7\u517B\u62A4",
       "nurture.description": "\u6A21\u62DF\u6B63\u5E38\u7528\u6237\u6D4F\u89C8\u884C\u4E3A\uFF0C\u63D0\u5347\u8D26\u53F7\u6743\u91CD",
@@ -302,6 +322,23 @@
       "persona.deleteConfirm": "\u5220\u9664\u8EAB\u4EFD {email}\uFF1F\n\u4F1A\u5220\u6389\u5B83\u7684\u72EC\u7ACB\u6D4F\u89C8\u5668\u5E76\u91CA\u653E\u51FA\u53E3\u8282\u70B9\uFF1B\u540D\u4E0B\u8D26\u53F7\u4F1A\u53D8\u6210\u300C\u672A\u5F52\u5C5E\u300D\u3002",
       "persona.deleted": "\u8EAB\u4EFD\u5DF2\u5220\u9664",
       "persona.deleteFailed": "\u5220\u9664\u5931\u8D25\uFF1A",
+      // #13 身份类型 / 固定 IP 身份
+      "persona.newTypeTitle": "\u65B0\u5EFA\u8EAB\u4EFD",
+      "persona.newTypeHint": "\u6309\u5E73\u53F0\u5BF9\u51FA\u53E3 IP \u7684\u8981\u6C42\u9009\u62E9\u8EAB\u4EFD\u7C7B\u578B\uFF1A",
+      "persona.newGmail": "\u{1F4E7} Gmail \u8EAB\u4EFD",
+      "persona.newGmailDesc": "\u6D77\u5916\u5E73\u53F0\uFF08Reddit/PH/Twitter\u2026\uFF09\xB7 \u673A\u573A\u8282\u70B9\u81EA\u52A8\u8F6E\u6362",
+      "persona.newFixedCn": "\u{1F1E8}\u{1F1F3} \u56FD\u5185\u56FA\u5B9A IP \u8EAB\u4EFD",
+      "persona.newFixedCnDesc": "\u5C0F\u7EA2\u4E66/\u6296\u97F3/\u5FAE\u535A\u2026 \xB7 \u81EA\u5907\u56FD\u5185\u4F4F\u5B85/4G \u4EE3\u7406 \xB7 IP \u9489\u6B7B\u4E0D\u8F6E\u6362",
+      "persona.newFixedOverseas": "\u{1F30D} \u56FD\u5916\u56FA\u5B9A IP \u8EAB\u4EFD",
+      "persona.newFixedOverseasDesc": "\u9700\u7A33\u5B9A\u6D77\u5916 IP \u7684\u5E73\u53F0 \xB7 \u81EA\u5907\u6D77\u5916\u9759\u6001\u4EE3\u7406 \xB7 IP \u9489\u6B7B\u4E0D\u8F6E\u6362",
+      "persona.fixedTitle": "\u65B0\u5EFA\u56FA\u5B9A IP \u8EAB\u4EFD",
+      "persona.fixedLabelLabel": "\u8EAB\u4EFD\u6807\u8BC6\uFF08\u540D\u79F0\u6216\u624B\u673A\u53F7\uFF0C\u552F\u4E00\uFF09",
+      "persona.fixedLabelPlaceholder": "\u5982\uFF1A\u5C0F\u7EA2\u4E66-1 \u6216 \u624B\u673A\u53F7",
+      "persona.fixedProxyLabel": "\u56FA\u5B9A\u4EE3\u7406\u5730\u5740\uFF08\u4F4F\u5B85/4G\uFF0C\u9489\u6B7B\u7ED9\u8FD9\u4E2A\u8EAB\u4EFD\u72EC\u7528\uFF09",
+      "persona.fixedProxyPlaceholder": "socks5://user:pass@host:port",
+      "persona.fixedOk": "\u521B\u5EFA",
+      "persona.creatingFixed": "\u6B63\u5728\u521B\u5EFA\u56FA\u5B9A IP \u8EAB\u4EFD\u2026\uFF08\u5EFA\u6D4F\u89C8\u5668+\u968F\u673A\u6307\u7EB9+\u7ED1\u5B9A\u4EE3\u7406\uFF09",
+      "persona.fixedCreated": "\u56FA\u5B9A IP \u8EAB\u4EFD\u300C{label}\u300D\u5DF2\u5EFA\u597D \u2713 \u51FA\u53E3 IP \u5DF2\u9489\u6B7B\u3001\u4E0D\u4F1A\u88AB\u81EA\u52A8\u8F6E\u6362",
       // Settings
       "settings.title": "\u8BBE\u7F6E",
       "settings.aiConfig": "AI \u914D\u7F6E",
@@ -559,6 +596,7 @@
       "dashboard.startEngage": "Start Engage",
       // Accounts
       "accounts.title": "Platform Accounts",
+      "accounts.pageTitle": "\u{1F464} Identities",
       "accounts.addAccount": "+ Add Account",
       "accounts.overallHealth": "Overall Health",
       "accounts.active": "Active",
@@ -589,6 +627,17 @@
       "accounts.deleteFailed": "Failed to delete account",
       // Email hub layout
       "accounts.newGmail": "+ New Gmail",
+      "accounts.newIdentity": "+ New identity",
+      "accounts.newFixedCn": "+ New CN fixed-IP identity",
+      "accounts.newFixedOverseas": "+ New overseas fixed-IP identity",
+      // #13 identity category tabs
+      "idcat.gmail": "\u{1F4E7} Gmail identities",
+      "idcat.fixedCn": "\u{1F1E8}\u{1F1F3} CN fixed-IP",
+      "idcat.fixedOverseas": "\u{1F30D} Overseas fixed-IP",
+      "idcat.unassigned": "\u{1F9E9} Unassigned",
+      "idcat.emptyGmail": 'No Gmail identity yet \u2014 click "+ New Gmail" to create one with a real Gmail.',
+      "idcat.emptyFixedCn": 'No CN fixed-IP identity yet \u2014 click "+ New CN fixed-IP identity", enter a label + a CN residential/4G proxy.',
+      "idcat.emptyFixedOverseas": 'No overseas fixed-IP identity yet \u2014 click "+ New overseas fixed-IP identity", enter a label + a static proxy.',
       "accounts.collapseAll": "Collapse all",
       "accounts.expandAll": "Expand all",
       "accounts.collapse": "Collapse",
@@ -606,6 +655,14 @@
       "accounts.unassignedTitle": "\u{1F9E9} Unassigned \xB7 {n} account(s)",
       "accounts.unassignedHint": 'These accounts are not under any Gmail yet. Set "Identity" on an account to group it.',
       "accounts.emptyEmailHint": 'No accounts under this email yet \u2014 click "\u{1F680} Check & provision" to auto-provision, or "+ Add account" to add manually.',
+      // #13 identity IP type
+      "accounts.ipAirport": "\u{1F6EB} Airport rotation",
+      "accounts.ipFixedCn": "\u{1F1E8}\u{1F1F3} CN fixed",
+      "accounts.ipFixedOverseas": "\u{1F30D} Overseas fixed",
+      "accounts.openBrowser": "\u{1F310} Open browser",
+      "accounts.proxy": "Proxy",
+      "accounts.fixedOneAccount": "Fixed-IP identity is meant to hold one account; this identity already has one",
+      "accounts.fixedEmptyHint": 'No account under this fixed-IP identity yet \u2014 click "+ Add account" to add one (one account per identity recommended).',
       "accounts.existingAccounts": "Existing Accounts",
       "accounts.delete": "Delete",
       "accounts.useGlobalProfile": "-- Use Global Profile --",
@@ -707,6 +764,23 @@
       "persona.deleteConfirm": 'Delete identity {email}?\nIts dedicated browser will be removed and exit node released; accounts under it become "unassigned".',
       "persona.deleted": "Identity deleted",
       "persona.deleteFailed": "Delete failed: ",
+      // #13 identity type / fixed-IP identity
+      "persona.newTypeTitle": "New identity",
+      "persona.newTypeHint": "Pick the identity type by the platform's exit-IP requirement:",
+      "persona.newGmail": "\u{1F4E7} Gmail identity",
+      "persona.newGmailDesc": "Overseas platforms (Reddit/PH/Twitter\u2026) \xB7 airport node auto-rotation",
+      "persona.newFixedCn": "\u{1F1E8}\u{1F1F3} China fixed-IP identity",
+      "persona.newFixedCnDesc": "Xiaohongshu/Douyin/Weibo\u2026 \xB7 your own CN residential/4G proxy \xB7 IP pinned",
+      "persona.newFixedOverseas": "\u{1F30D} Overseas fixed-IP identity",
+      "persona.newFixedOverseasDesc": "Platforms needing a stable overseas IP \xB7 your own static proxy \xB7 IP pinned",
+      "persona.fixedTitle": "New fixed-IP identity",
+      "persona.fixedLabelLabel": "Identity label (name or phone, unique)",
+      "persona.fixedLabelPlaceholder": "e.g. xhs-1 or phone number",
+      "persona.fixedProxyLabel": "Fixed proxy (residential/4G, pinned & dedicated to this identity)",
+      "persona.fixedProxyPlaceholder": "socks5://user:pass@host:port",
+      "persona.fixedOk": "Create",
+      "persona.creatingFixed": "Creating fixed-IP identity\u2026 (browser + fingerprint + proxy bind)",
+      "persona.fixedCreated": 'Fixed-IP identity "{label}" ready \u2713 Exit IP pinned, will not be auto-rotated',
       // Settings
       "settings.title": "Settings",
       "settings.aiConfig": "AI Configuration",
@@ -1354,18 +1428,19 @@
            <input class="input" type="password" data-plat="${escapeHtml(c.platform)}" data-field="password" placeholder="${escapeHtml(t("addacct.passwordPlaceholder"))}" style="flex:1;min-width:110px;">`;
         return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;flex-wrap:wrap;">${head}${inputs}</div>`;
       };
-      const block = (titleKey, method) => {
-        const items = candidates.filter((c) => c.login_method === method);
+      const block = (titleKey, items) => {
         if (!items.length) return "";
         return `<div style="margin:12px 0 4px;font-weight:700;font-size:13px;color:var(--text-muted);">${t(titleKey)}</div>${items.map(rowHtml).join("")}`;
       };
+      const phoneItems = candidates.filter((c) => c.login_method === "phone");
+      const credItems = candidates.filter((c) => c.login_method !== "phone");
       overlay.innerHTML = `
       <div class="modal-content" style="max-width:640px;max-height:84vh;display:flex;flex-direction:column;">
         <div class="modal-header"><h3>${escapeHtml(tf("addacct.title", { email }))}</h3><button class="modal-close" data-cancel>&times;</button></div>
         <div class="modal-body" style="overflow:auto;">
           <div class="text-muted" style="font-size:12px;margin-bottom:4px;">${escapeHtml(t("addacct.hint"))}</div>
-          ${block("addacct.phoneGroup", "phone")}
-          ${block("addacct.passwordGroup", "password")}
+          ${block("addacct.phoneGroup", phoneItems)}
+          ${block("addacct.passwordGroup", credItems)}
         </div>
         <div class="modal-footer" style="display:flex;align-items:center;gap:8px;">
           <span style="flex:1;"></span>
@@ -2062,90 +2137,135 @@
   var personasCache = [];
   var airportStatusCache = null;
   var selectedPersonaId = null;
+  var selectedIdentityCategory = "gmail";
+  var ID_CATEGORIES = [
+    { key: "gmail", labelKey: "idcat.gmail", match: (p) => (p?.ip_mode || "airport") === "airport" },
+    { key: "fixed_cn", labelKey: "idcat.fixedCn", match: (p) => p?.ip_mode === "fixed" && (p?.region || "") === "cn" },
+    { key: "fixed_overseas", labelKey: "idcat.fixedOverseas", match: (p) => p?.ip_mode === "fixed" && (p?.region || "") !== "cn" }
+  ];
+  function personasInCategory(cat) {
+    const c = ID_CATEGORIES.find((x) => x.key === cat);
+    return c ? personasCache.filter(c.match) : [];
+  }
+  window.selectIdentityCategory = function(cat) {
+    selectedIdentityCategory = cat;
+    selectedPersonaId = null;
+    renderAccounts();
+  };
   function renderAccounts() {
     const list = document.getElementById("accountsList");
     const empty = document.getElementById("emptyAccounts");
     if (!list || !empty) return;
-    const a = airportStatusCache;
-    const configured = !!(a && a.configured);
-    const airportInfo = configured ? tf("airport.poolInfo", { total: a.total, free: a.free }) : t("airport.notConfigured");
-    const airportBar = `<div class="card" style="margin:0 0 10px;padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-left:4px solid ${configured ? "#1a9d4a" : "#d97706"};">
-    <span style="font-weight:700;">${escapeHtml(t("airport.title"))}</span>
-    <span class="text-muted" style="font-size:12px;">${escapeHtml(airportInfo)}</span>
-    <span style="margin-left:auto;display:flex;gap:6px;">
-      ${configured ? `<button class="btn btn-small btn-secondary" onclick="refreshAirport()" title="\u7528\u5DF2\u4FDD\u5B58\u7684\u8BA2\u9605\u91CD\u65B0\u62C9\u53D6\u3001\u66FF\u6362\u5931\u6548\u8282\u70B9\uFF08\u540C\u5B9A\u65F6\u5237\u65B0\uFF09">\u{1F504} ${escapeHtml(t("airport.refreshSub"))}</button>` : ""}
-      <button class="btn btn-small btn-secondary" onclick="setAirportPrompt()">${escapeHtml(t("airport.setSub"))}</button>
-    </span>
-  </div>`;
+    list.style.display = "block";
+    empty.style.display = "none";
     const groups = /* @__PURE__ */ new Map();
     for (const acc of accounts) {
       const key = acc.persona_id || "__none__";
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key).push(acc);
     }
-    const hasUnassigned = groups.has("__none__");
-    const tabIds = [...personasCache.map((p) => p.id), ...hasUnassigned ? ["__none__"] : []];
-    list.style.display = "block";
-    empty.style.display = "none";
-    if (tabIds.length === 0) {
-      list.innerHTML = airportBar + `<div class="card" style="padding:18px;text-align:center;">
-      <div class="text-muted">${escapeHtml(t("accounts.noEmailYet"))}</div>
-      <button class="btn btn-primary" style="margin-top:10px;" onclick="createPersonaPrompt()">${escapeHtml(t("accounts.newGmail"))}</button></div>`;
+    const unassigned = groups.get("__none__") || [];
+    if (selectedIdentityCategory === "__none__" && !unassigned.length) selectedIdentityCategory = "gmail";
+    const catTab = (key, label, count) => `<button class="email-tab ${selectedIdentityCategory === key ? "active" : ""}" onclick="selectIdentityCategory('${key}')">${escapeHtml(label)}${count ? ` (${count})` : ""}</button>`;
+    let catTabsHtml = ID_CATEGORIES.map((c) => catTab(c.key, t(c.labelKey), personasInCategory(c.key).length)).join("");
+    if (unassigned.length) catTabsHtml += catTab("__none__", t("idcat.unassigned"), unassigned.length);
+    const categoryBar = `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 12px;">${catTabsHtml}</div>`;
+    let airportBar = "";
+    if (selectedIdentityCategory === "gmail") {
+      const a = airportStatusCache;
+      const configured = !!(a && a.configured);
+      const airportInfo = configured ? tf("airport.poolInfo", { total: a.total, free: a.free }) : t("airport.notConfigured");
+      airportBar = `<div class="card" style="margin:0 0 10px;padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-left:4px solid ${configured ? "#1a9d4a" : "#d97706"};">
+      <span style="font-weight:700;">${escapeHtml(t("airport.title"))}</span>
+      <span class="text-muted" style="font-size:12px;">${escapeHtml(airportInfo)}</span>
+      <span style="margin-left:auto;display:flex;gap:6px;">
+        ${configured ? `<button class="btn btn-small btn-secondary" onclick="refreshAirport()" title="\u7528\u5DF2\u4FDD\u5B58\u7684\u8BA2\u9605\u91CD\u65B0\u62C9\u53D6\u3001\u66FF\u6362\u5931\u6548\u8282\u70B9\uFF08\u540C\u5B9A\u65F6\u5237\u65B0\uFF09">\u{1F504} ${escapeHtml(t("airport.refreshSub"))}</button>` : ""}
+        <button class="btn btn-small btn-secondary" onclick="setAirportPrompt()">${escapeHtml(t("airport.setSub"))}</button>
+      </span>
+    </div>`;
+    }
+    if (selectedIdentityCategory === "__none__") {
+      const cards = unassigned.map((x) => renderAccountCard(x)).join("");
+      const panel = `<div class="email-group"><div class="email-group-body">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;border-left:4px solid #d97706;padding-left:10px;">
+        <span style="font-weight:600;">${escapeHtml(tf("accounts.unassignedTitle", { n: unassigned.length }))}</span>
+        <span class="text-muted" style="font-size:12px;">${escapeHtml(t("accounts.unassignedHint"))}</span>
+      </div>${cards}</div></div>`;
+      list.innerHTML = categoryBar + panel;
       return;
     }
-    if (!selectedPersonaId || !tabIds.includes(selectedPersonaId)) selectedPersonaId = tabIds[0];
-    const allCollapsed = tabIds.length > 0 && tabIds.every((id) => collapsedPersonas.has(id));
-    const toolbar = `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 12px;">
-    <button class="btn btn-small btn-primary" onclick="createPersonaPrompt()" title="\u7528\u4E00\u4E2A\u771F\u5B9E Gmail \u65B0\u5EFA\u4E00\u5957\u72EC\u7ACB\u8EAB\u4EFD">${escapeHtml(t("accounts.newGmail"))}</button>
-    ${collapseBtnHtml("toggleCollapseAllPersonas()", allCollapsed, allCollapsed ? t("accounts.expandAll") : t("accounts.collapseAll"))}
-  </div>`;
+    const cat = selectedIdentityCategory;
+    const personas = personasInCategory(cat);
+    const newBtn = cat === "gmail" ? `<button class="btn btn-small btn-primary" onclick="createPersonaPrompt()" title="\u7528\u4E00\u4E2A\u771F\u5B9E Gmail \u65B0\u5EFA\u4E00\u5957\u72EC\u7ACB\u8EAB\u4EFD">${escapeHtml(t("accounts.newGmail"))}</button>` : cat === "fixed_cn" ? `<button class="btn btn-small btn-primary" onclick="createFixedPersonaPrompt('cn')" title="\u65B0\u5EFA\u56FD\u5185\u56FA\u5B9A IP \u8EAB\u4EFD">${escapeHtml(t("accounts.newFixedCn"))}</button>` : `<button class="btn btn-small btn-primary" onclick="createFixedPersonaPrompt('overseas')" title="\u65B0\u5EFA\u56FD\u5916\u56FA\u5B9A IP \u8EAB\u4EFD">${escapeHtml(t("accounts.newFixedOverseas"))}</button>`;
+    if (!personas.length) {
+      const emptyKey = cat === "gmail" ? "idcat.emptyGmail" : cat === "fixed_cn" ? "idcat.emptyFixedCn" : "idcat.emptyFixedOverseas";
+      list.innerHTML = categoryBar + airportBar + `<div class="card" style="padding:18px;text-align:center;">
+      <div class="text-muted" style="margin-bottom:10px;">${escapeHtml(t(emptyKey))}</div>${newBtn}</div>`;
+      return;
+    }
+    const ids = personas.map((p2) => p2.id);
+    if (!selectedPersonaId || !ids.includes(selectedPersonaId)) selectedPersonaId = ids[0];
     const sel = selectedPersonaId;
     const accts = groups.get(sel) || [];
     const collapsed = collapsedPersonas.has(sel);
-    const tabsHtml = tabIds.map((id) => {
-      const active = id === selectedPersonaId;
-      let label;
-      if (id === "__none__") label = `\u{1F9E9} \u672A\u5F52\u5C5E(${groups.get("__none__").length})`;
-      else {
-        const p = personasCache.find((x) => x.id === id);
-        label = `\u{1F4E7} ${p?.email || "\u90AE\u7BB1"}`;
-      }
-      return `<button class="email-tab ${active ? "active" : ""}" onclick="selectEmail('${id}')" title="${escapeHtml(label)}">${escapeHtml(label)}</button>`;
+    const allCollapsed = ids.length > 0 && ids.every((id) => collapsedPersonas.has(id));
+    const toolbar = `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 12px;">
+    ${newBtn}
+    ${collapseBtnHtml("toggleCollapseAllPersonas()", allCollapsed, allCollapsed ? t("accounts.expandAll") : t("accounts.collapseAll"))}
+  </div>`;
+    const tabsHtml = personas.map((p2) => {
+      const active = p2.id === sel;
+      const label = `${personaIcon(p2)} ${p2?.email || "\u8EAB\u4EFD"}`;
+      return `<button class="email-tab ${active ? "active" : ""}" onclick="selectEmail('${p2.id}')" title="${escapeHtml(label)}">${escapeHtml(label)}</button>`;
     }).join("");
     const groupHead = `<div class="email-group-head">
     <div class="email-tabs">${tabsHtml}</div>
     ${collapseBtnHtml(`togglePersonaCollapse('${sel}')`, collapsed, collapsed ? t("accounts.expand") : t("accounts.collapse"))}
   </div>`;
-    const cardsHtml = collapsed ? `<div class="text-muted" style="text-align:center;padding:6px 0;">${escapeHtml(tf("accounts.collapsedHint", { n: accts.length }))}</div>` : accts.length ? accts.map((x) => renderAccountCard(x)).join("") : `<div class="text-muted" style="text-align:center;padding:8px 0;">${escapeHtml(sel === "__none__" ? t("accounts.unassignedHint") : t("accounts.emptyEmailHint"))}</div>`;
-    let infoBar = "";
-    if (sel === "__none__") {
-      infoBar = `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;border-left:4px solid #d97706;padding-left:10px;">
-      <span style="font-weight:600;">${escapeHtml(tf("accounts.unassignedTitle", { n: accts.length }))}</span>
-      <span class="text-muted" style="font-size:12px;">${escapeHtml(t("accounts.unassignedHint"))}</span>
-    </div>`;
-    } else {
-      const p = personasCache.find((x) => x.id === sel);
-      const pname = profileNameOf(p);
-      const meta = [
-        p?.region ? escapeHtml(p.region) : t("accounts.noNode"),
-        pname ? `\u{1F5A5}\uFE0F ${t("accounts.browser")}: ${escapeHtml(pname)}` : "",
-        tf("accounts.accountCount", { n: accts.length })
-      ].filter(Boolean).join(" \xB7 ");
-      infoBar = `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;border-left:4px solid #4a8cff;padding-left:10px;">
+    const p = personasCache.find((x) => x.id === sel);
+    const isFixed = (p?.ip_mode || "airport") === "fixed";
+    const emptyHintKey = isFixed ? "accounts.fixedEmptyHint" : "accounts.emptyEmailHint";
+    const cardsHtml = collapsed ? `<div class="text-muted" style="text-align:center;padding:6px 0;">${escapeHtml(tf("accounts.collapsedHint", { n: accts.length }))}</div>` : accts.length ? accts.map((x) => renderAccountCard(x)).join("") : `<div class="text-muted" style="text-align:center;padding:8px 0;">${escapeHtml(t(emptyHintKey))}</div>`;
+    const pname = profileNameOf(p);
+    const meta = [
+      personaIpBadge(p),
+      // #13 IP 类型徽章
+      isFixed ? p?.fixed_proxy ? `${t("accounts.proxy")}: ${escapeHtml(maskProxy(p.fixed_proxy))}` : "" : p?.region ? escapeHtml(p.region) : t("accounts.noNode"),
+      pname ? `\u{1F5A5}\uFE0F ${t("accounts.browser")}: ${escapeHtml(pname)}` : "",
+      tf("accounts.accountCount", { n: accts.length })
+    ].filter(Boolean).join(" \xB7 ");
+    const actions = isFixed ? `<button class="btn btn-small btn-secondary" onclick="personaOpenBrowser('${sel}')" title="\u6253\u5F00\u8FD9\u4E2A\u8EAB\u4EFD\u7684\u6D4F\u89C8\u5668\uFF08\u624B\u52A8\u64CD\u4F5C\u5E73\u53F0\uFF09">${escapeHtml(t("accounts.openBrowser"))}</button>
+       <button class="btn btn-small btn-primary" onclick="personaAddAccounts('${sel}','${escapeHtml(p?.email || "")}')" title="\u52A0\u8D26\u53F7\uFF08\u56FA\u5B9A IP \u8EAB\u4EFD\u5EFA\u8BAE\u4E00\u8EAB\u4EFD\u4E00\u53F7\uFF09">${escapeHtml(t("accounts.addAccountBtn"))}</button>` : `<button class="btn btn-small btn-secondary" onclick="personaGmailLogin('${sel}')" title="\u6253\u5F00\u8FD9\u4E2A\u90AE\u7BB1\u7684\u6D4F\u89C8\u5668\u767B\u5F55\u5B83\u7684 Gmail\uFF08\u57FA\u7840\u767B\u5F55\uFF0C\u5148\u505A\u8FD9\u6B65\uFF09">${escapeHtml(t("accounts.loginGmail"))}</button>
+       <button class="btn btn-small btn-success" onclick="personaProvisionAll('${sel}','${escapeHtml(p?.email || "")}')" title="\u81EA\u52A8\u5F00\u901A Google \u767B\u5F55\u5E73\u53F0">${escapeHtml(t("accounts.provisionBtn"))}</button>
+       <button class="btn btn-small btn-primary" onclick="personaAddAccounts('${sel}','${escapeHtml(p?.email || "")}')" title="\u624B\u673A\u53F7 / \u8D26\u53F7\u5BC6\u7801\u5E73\u53F0\u624B\u52A8\u52A0\u8D26\u53F7">${escapeHtml(t("accounts.addAccountBtn"))}</button>`;
+    const infoBar = `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;border-left:4px solid ${isFixed ? "#16a34a" : "#4a8cff"};padding-left:10px;">
       <span class="text-muted" style="font-size:12px;">${meta}</span>
     </div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
-      <button class="btn btn-small btn-secondary" onclick="personaGmailLogin('${sel}')" title="\u6253\u5F00\u8FD9\u4E2A\u90AE\u7BB1\u7684\u6D4F\u89C8\u5668\u767B\u5F55\u5B83\u7684 Gmail\uFF08\u57FA\u7840\u767B\u5F55\uFF0C\u5148\u505A\u8FD9\u6B65\uFF09">${escapeHtml(t("accounts.loginGmail"))}</button>
-      <button class="btn btn-small btn-success" onclick="personaProvisionAll('${sel}','${escapeHtml(p?.email || "")}')" title="\u81EA\u52A8\u5F00\u901A Google \u767B\u5F55\u5E73\u53F0">${escapeHtml(t("accounts.provisionBtn"))}</button>
-      <button class="btn btn-small btn-primary" onclick="personaAddAccounts('${sel}','${escapeHtml(p?.email || "")}')" title="\u624B\u673A\u53F7 / \u8D26\u53F7\u5BC6\u7801\u5E73\u53F0\u624B\u52A8\u52A0\u8D26\u53F7">${escapeHtml(t("accounts.addAccountBtn"))}</button>
-      <button class="btn btn-small btn-secondary" style="margin-left:auto;color:#e55;" onclick="deletePersonaAcct('${sel}','${escapeHtml(p?.email || "")}')" title="\u5220\u9664\u8FD9\u4E2A\u90AE\u7BB1\u8EAB\u4EFD">${escapeHtml(t("accounts.deleteEmail"))}</button>
+      ${actions}
+      <button class="btn btn-small btn-secondary" style="margin-left:auto;color:#e55;" onclick="deletePersonaAcct('${sel}','${escapeHtml(p?.email || "")}')" title="\u5220\u9664\u8FD9\u4E2A\u8EAB\u4EFD">${escapeHtml(t("accounts.deleteEmail"))}</button>
     </div>`;
-    }
     const emailGroup = `<div class="email-group">${groupHead}<div class="email-group-body">${infoBar}${cardsHtml}</div></div>`;
-    list.innerHTML = airportBar + toolbar + emailGroup;
+    list.innerHTML = categoryBar + airportBar + toolbar + emailGroup;
   }
   function collapseBtnHtml(onclick, collapsed, label) {
     return `<button class="collapse-btn ${collapsed ? "is-collapsed" : ""}" onclick="${onclick}"><span class="chev">\u25BE</span>${escapeHtml(label)}</button>`;
+  }
+  function personaIcon(persona) {
+    if ((persona?.ip_mode || "airport") !== "fixed") return "\u{1F4E7}";
+    return (persona?.region || "") === "cn" ? "\u{1F1E8}\u{1F1F3}" : "\u{1F30D}";
+  }
+  function personaIpBadge(persona) {
+    if ((persona?.ip_mode || "airport") !== "fixed") return t("accounts.ipAirport");
+    return (persona?.region || "") === "cn" ? t("accounts.ipFixedCn") : t("accounts.ipFixedOverseas");
+  }
+  function maskProxy(proxy) {
+    try {
+      const m = String(proxy).match(/^([a-z0-9]+:\/\/)(?:[^@/]*@)?(.+)$/i);
+      return m ? `${m[1]}${m[2]}` : String(proxy);
+    } catch {
+      return String(proxy);
+    }
   }
   function profileNameOf(persona) {
     if (!persona?.profile_id) return null;
@@ -2161,12 +2281,10 @@
     renderAccounts();
   };
   window.toggleCollapseAllPersonas = function() {
-    const groups = /* @__PURE__ */ new Map();
-    for (const acc of accounts) groups.set(acc.persona_id || "__none__", []);
-    const tabIds = [...personasCache.map((p) => p.id), ...groups.has("__none__") ? ["__none__"] : []];
-    const allCollapsed = tabIds.length > 0 && tabIds.every((id) => collapsedPersonas.has(id));
-    if (allCollapsed) collapsedPersonas.clear();
-    else tabIds.forEach((id) => collapsedPersonas.add(id));
+    const ids = personasInCategory(selectedIdentityCategory).map((p) => p.id);
+    const allCollapsed = ids.length > 0 && ids.every((id) => collapsedPersonas.has(id));
+    if (allCollapsed) ids.forEach((id) => collapsedPersonas.delete(id));
+    else ids.forEach((id) => collapsedPersonas.add(id));
     renderAccounts();
   };
   window.selectEmail = function(id) {
@@ -2228,11 +2346,111 @@
     showToast(t("persona.creating"), "info");
     try {
       const dto = await invoke2("persona_create", { email });
+      selectedIdentityCategory = "gmail";
       if (dto && dto.id) selectedPersonaId = dto.id;
       showToast(tf("persona.created", { email }), "info");
       await loadAccounts();
     } catch (e) {
       showToast(t("persona.createFailed") + e, "error");
+    }
+  };
+  window.newIdentityChooser = function() {
+    const overlay = document.createElement("div");
+    overlay.className = "modal active";
+    const opt = (onclick, title, desc) => `<button class="email-tab" style="width:100%;flex-direction:column;align-items:flex-start;gap:3px;max-width:none;padding:10px 12px;" data-act="${onclick}">
+       <span style="font-weight:700;">${escapeHtml(title)}</span>
+       <span class="text-muted" style="font-size:11px;font-weight:400;white-space:normal;">${escapeHtml(desc)}</span>
+     </button>`;
+    overlay.innerHTML = `
+    <div class="modal-content" style="max-width:460px;display:flex;flex-direction:column;">
+      <div class="modal-header"><h3>${escapeHtml(t("persona.newTypeTitle"))}</h3><button class="modal-close" data-cancel>&times;</button></div>
+      <div class="modal-body">
+        <div class="text-muted" style="font-size:12px;margin-bottom:8px;">${escapeHtml(t("persona.newTypeHint"))}</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          ${opt("gmail", t("persona.newGmail"), t("persona.newGmailDesc"))}
+          ${opt("cn", t("persona.newFixedCn"), t("persona.newFixedCnDesc"))}
+          ${opt("overseas", t("persona.newFixedOverseas"), t("persona.newFixedOverseasDesc"))}
+        </div>
+      </div>
+    </div>`;
+    let done = false;
+    const close = () => {
+      if (done) return;
+      done = true;
+      overlay.remove();
+    };
+    overlay.querySelectorAll("[data-cancel]").forEach((el) => el.addEventListener("click", close));
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) close();
+    });
+    overlay.querySelectorAll("button[data-act]").forEach((btn) => btn.addEventListener("click", () => {
+      const act = btn.getAttribute("data-act");
+      close();
+      if (act === "gmail") window.createPersonaPrompt();
+      else window.createFixedPersonaPrompt(act);
+    }));
+    document.body.appendChild(overlay);
+  };
+  window.createFixedPersonaPrompt = async function(region) {
+    const fields = await promptFixedPersona();
+    if (!fields) return;
+    showToast(t("persona.creatingFixed"), "info");
+    try {
+      const dto = await invoke2("persona_create_fixed", { label: fields.label, region, proxy: fields.proxy });
+      selectedIdentityCategory = region === "cn" ? "fixed_cn" : "fixed_overseas";
+      if (dto && dto.id) selectedPersonaId = dto.id;
+      showToast(tf("persona.fixedCreated", { label: fields.label }), "success");
+      await loadAccounts();
+    } catch (e) {
+      showToast(t("persona.createFailed") + e, "error");
+    }
+  };
+  function promptFixedPersona() {
+    return new Promise((resolve) => {
+      const overlay = document.createElement("div");
+      overlay.className = "modal active";
+      overlay.innerHTML = `
+      <div class="modal-content" style="max-width:480px;">
+        <div class="modal-header"><h3>${escapeHtml(t("persona.fixedTitle"))}</h3><button class="modal-close" data-cancel>&times;</button></div>
+        <div class="modal-body">
+          <label style="display:block;margin-bottom:4px;font-size:13px;">${escapeHtml(t("persona.fixedLabelLabel"))}</label>
+          <input type="text" class="input" id="__fpLabel" placeholder="${escapeHtml(t("persona.fixedLabelPlaceholder"))}" style="width:100%;margin-bottom:12px;">
+          <label style="display:block;margin-bottom:4px;font-size:13px;">${escapeHtml(t("persona.fixedProxyLabel"))}</label>
+          <input type="text" class="input" id="__fpProxy" placeholder="${escapeHtml(t("persona.fixedProxyPlaceholder"))}" style="width:100%;">
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-cancel>${escapeHtml(t("provision.cancel"))}</button>
+          <button class="btn btn-primary" data-ok>${escapeHtml(t("persona.fixedOk"))}</button>
+        </div>
+      </div>`;
+      let done = false;
+      const finish = (v) => {
+        if (done) return;
+        done = true;
+        overlay.remove();
+        resolve(v);
+      };
+      const submit = () => {
+        const label = overlay.querySelector("#__fpLabel").value.trim();
+        const proxy = overlay.querySelector("#__fpProxy").value.trim();
+        if (!label || !proxy) return;
+        finish({ label, proxy });
+      };
+      overlay.querySelectorAll("[data-cancel]").forEach((el) => el.addEventListener("click", () => finish(null)));
+      overlay.querySelector("[data-ok]")?.addEventListener("click", submit);
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) finish(null);
+      });
+      document.body.appendChild(overlay);
+      setTimeout(() => overlay.querySelector("#__fpLabel")?.focus(), 30);
+    });
+  }
+  window.personaOpenBrowser = async function(id) {
+    try {
+      const msg = await invoke2("persona_open_browser", { personaId: id });
+      showToast("" + msg, "info");
+    } catch (e) {
+      showToast("" + e, "error");
     }
   };
   window.personaProvisionAll = async function(id, email) {
@@ -2243,7 +2461,7 @@
       showToast(t("provision.loadFailed") + e, "error");
       return;
     }
-    const selectable = catalog.filter((c) => c.login_method === "google" && !c.provisioned);
+    const selectable = catalog.filter((c) => c.login_method === "google" && c.ip_policy === "shared_overseas" && !c.provisioned);
     if (!selectable.length) {
       showToast(t("provision.allDone"), "info");
       return;
@@ -2265,6 +2483,12 @@
     }
   };
   window.personaAddAccounts = async function(id, email) {
+    const persona = personasCache.find((p) => p.id === id);
+    const isFixed = (persona?.ip_mode || "airport") === "fixed";
+    if (isFixed && accounts.filter((a) => a.persona_id === id).length >= 1) {
+      showToast(t("accounts.fixedOneAccount"), "info");
+      return;
+    }
     let catalog;
     try {
       catalog = await invoke2("persona_platform_catalog", { personaId: id });
@@ -2272,13 +2496,20 @@
       showToast(t("provision.loadFailed") + e, "error");
       return;
     }
-    const candidates = catalog.filter((c) => (c.login_method === "phone" || c.login_method === "password") && !c.provisioned);
+    const candidates = catalog.filter((c) => {
+      if (c.provisioned) return false;
+      if (isFixed) {
+        return c.ip_policy === ((persona?.region || "") === "cn" ? "residential_cn" : "static_overseas");
+      }
+      return c.ip_policy === "shared_overseas" && c.login_method !== "google";
+    });
     if (!candidates.length) {
       showToast(t("addacct.none"), "info");
       return;
     }
-    const entries = await pickAddAccounts(email, candidates);
-    if (!entries) return;
+    const picked = await pickAddAccounts(email, candidates);
+    if (!picked) return;
+    const entries = isFixed ? picked.slice(0, 1) : picked;
     if (!entries.length) {
       showToast(t("addacct.nothing"), "info");
       return;
