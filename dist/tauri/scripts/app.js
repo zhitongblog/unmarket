@@ -154,6 +154,10 @@
       // Accounts
       "accounts.title": "\u5E73\u53F0\u8D26\u53F7",
       "accounts.pageTitle": "\u{1F464} \u8EAB\u4EFD\u7BA1\u7406",
+      // 账号生命周期阶段徽章
+      "stage.new": "\u65B0\u8D26\u53F7",
+      "stage.warming": "\u517B\u53F7\u4E2D ({n}\u5929)",
+      "stage.active": "\u6B63\u5E38",
       "accounts.addAccount": "+ \u6DFB\u52A0\u8D26\u53F7",
       "accounts.overallHealth": "\u6574\u4F53\u5065\u5EB7",
       "accounts.active": "\u6D3B\u8DC3",
@@ -249,6 +253,7 @@
       "nurture.failed": "\u517B\u53F7\u5931\u8D25",
       "nurture.stopped": "\u517B\u53F7\u5DF2\u505C\u6B62",
       "nurture.noAccounts": "\u6682\u65E0\u8D26\u53F7\uFF0C\u8BF7\u5148\u6DFB\u52A0\u8D26\u53F7",
+      "nurture.daysProgressTitle": "\u517B\u53F7\u8FDB\u5EA6\uFF08\u5DF2\u517B\u5929\u6570 / \u9700\u8981\u603B\u5929\u6570\uFF09",
       // Provision (开通账号选择器 / 加账号流程)
       "provision.title": "\u7528 {email} \u5F00\u901A\u5E73\u53F0",
       "provision.hint": "\u52FE\u9009\u8981\u5F00\u901A\u7684\u5E73\u53F0\uFF08\u4EC5\u5217\u51FA\u53EF\u81EA\u52A8\u5F00\u901A\u3001\u4E14\u5C1A\u672A\u5F00\u901A\u7684 Google \u767B\u5F55\u5E73\u53F0\uFF09\u3002",
@@ -597,6 +602,10 @@
       // Accounts
       "accounts.title": "Platform Accounts",
       "accounts.pageTitle": "\u{1F464} Identities",
+      // Account lifecycle stage badges
+      "stage.new": "New",
+      "stage.warming": "Warming ({n}d)",
+      "stage.active": "Active",
       "accounts.addAccount": "+ Add Account",
       "accounts.overallHealth": "Overall Health",
       "accounts.active": "Active",
@@ -691,6 +700,7 @@
       "nurture.failed": "Nurturing failed",
       "nurture.stopped": "Nurturing stopped",
       "nurture.noAccounts": "No accounts yet, please add accounts first",
+      "nurture.daysProgressTitle": "Warmup progress (days done / days required)",
       // Provision (platform provisioning selector / add-account flow)
       "provision.title": "Provision platforms for {email}",
       "provision.hint": "Check platforms to provision (only auto-provisionable, not-yet-added Google-login platforms are listed).",
@@ -2550,25 +2560,22 @@
   };
   function renderAccountCard(account) {
     {
-      const getProfileForAccount = (accountId) => browserProfiles.find((p) => p.account_id === accountId);
-      const profile = getProfileForAccount(account.id);
-      const hasProfile = !!profile;
-      const stealthBadge = profile?.stealth_enabled ? '<span class="badge badge-stealth" title="Stealth Mode">\u{1F6E1}\uFE0F</span>' : "";
-      const fingerprintBadge = profile?.fingerprint_id ? '<span class="badge badge-fingerprint" title="Fingerprint Randomized">\u{1F3AD}</span>' : "";
-      const proxyBadge = profile?.proxy ? `<span class="badge badge-proxy" title="${escapeHtml(profile.proxy)}">\u{1F310}</span>` : "";
       const healthBadge = getHealthBadge(account);
       const lifecycle = accountLifecycles.get(account.id);
       const stage = lifecycle?.stage || "new";
       const daysRemaining = lifecycle?.days_remaining || 0;
       const progressPercent = lifecycle?.progress_percent || 0;
+      const daysSinceStart = lifecycle?.days_since_start ?? 0;
+      const warmupDays = lifecycle?.warmup_days ?? 14;
       const todaySessions = lifecycle?.today?.sessions_completed || 0;
       const todayTarget = lifecycle?.today?.sessions_min || 2;
       const todayCompleted = todaySessions >= todayTarget;
       const stageBadges = {
-        "new": '<span class="badge badge-new" style="background:#6c757d;color:white;">\u{1F195} \u65B0\u8D26\u53F7</span>',
-        "warming": `<span class="badge badge-warming" style="background:#ffc107;color:black;">\u{1F525} \u517B\u53F7\u4E2D (${daysRemaining}\u5929)</span>`,
-        "active": '<span class="badge badge-active" style="background:#28a745;color:white;">\u2705 \u6B63\u5E38</span>'
+        "new": `<span class="stage-badge new">\u{1F195} ${t("stage.new")}</span>`,
+        "warming": `<span class="stage-badge warming">\u{1F525} ${tf("stage.warming", { n: daysRemaining })}</span>`,
+        "active": `<span class="stage-badge active">\u2705 ${t("stage.active")}</span>`
       };
+      const nurtureDaysProgress = lifecycle ? `<span class="stage-badge ${stage}" title="${escapeHtml(t("nurture.daysProgressTitle"))}">\u{1F331} ${Math.min(daysSinceStart, warmupDays)}/${warmupDays} ${t("nurture.days")}</span>` : "";
       const stageBadge = stageBadges[stage] || stageBadges["new"];
       const todayProgress = lifecycle ? `
       <div class="nurture-today" style="margin: 8px 0; padding: 8px; background: var(--bg-secondary); border-radius: 6px;">
@@ -2588,26 +2595,23 @@
         ` : ""}
       </div>
     ` : "";
-      const profileOptions = availableProfiles.map(
-        (p) => `<option value="${escapeHtml(p.id)}" ${account.profile_id === p.id ? "selected" : ""}>${escapeHtml(p.name)} (${escapeHtml(p.id)})</option>`
-      ).join("");
-      const personaBadge = account.persona_email ? `<span class="badge badge-profile" title="\u8EAB\u4EFD: ${escapeHtml(account.persona_email)}\uFF08\u5171\u7528\u5176\u6D4F\u89C8\u5668+IP\uFF09">\u{1F9D1}\u200D\u{1F91D}\u200D\u{1F9D1} ${escapeHtml(account.persona_email)}</span>` : '<span class="badge badge-no-profile" title="\u672A\u5F52\u5C5E\u8EAB\u4EFD">\u{1F9E9} \u672A\u5F52\u5C5E</span>';
+      const personaBadge = account.persona_email ? `<span class="id-badge" title="\u8EAB\u4EFD: ${escapeHtml(account.persona_email)}\uFF08\u5171\u7528\u5176\u6D4F\u89C8\u5668+IP\uFF09">\u{1F9D1}\u200D\u{1F91D}\u200D\u{1F9D1} ${escapeHtml(account.persona_email)}</span>` : '<span class="id-badge none" title="\u672A\u5F52\u5C5E\u8EAB\u4EFD">\u{1F9E9} \u672A\u5F52\u5C5E</span>';
       const nurtureStats = account.total_nurture_seconds > 0 || account.last_nurture_at ? `<span class="text-muted" style="font-size:12px;">${account.total_nurture_seconds > 0 ? `\u{1F331} \u7D2F\u8BA1 ${formatNurtureTime(account.total_nurture_seconds)}` : ""}${account.last_nurture_at ? ` \xB7 ${t("nurture.lastNurture")} ${formatTimeAgo(account.last_nurture_at)}` : ""}</span>` : "";
       return `
-      <div class="account-item ${hasProfile ? "has-profile" : ""}">
+      <div class="account-item">
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
           <span class="account-platform" style="font-weight:700;">${escapeHtml(account.platform)}</span>
           ${healthBadge}
           ${stageBadge}
+          ${nurtureDaysProgress}
           <span style="margin-left:auto;display:flex;align-items:center;gap:6px;">
-            ${stealthBadge}${fingerprintBadge}${proxyBadge}
             <button class="btn btn-small btn-danger" onclick="deleteAccount('${account.id}')" title="\u5220\u9664\u8D26\u53F7">\u{1F5D1}</button>
           </span>
         </div>
         <div class="account-username text-muted" style="font-size:13px;">${escapeHtml(account.username || account.email || "N/A")}</div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
           ${personaBadge}
-          ${account.login_method !== "google" ? `<button class="btn btn-small btn-secondary" onclick="transferAccountPersona('${account.id}','${escapeHtml(account.persona_id || "")}')" title="\u628A\u8FD9\u4E2A\u8D26\u53F7\u6539\u6302\u5230\u522B\u7684 Gmail \u8EAB\u4EFD\u4E0B">\u{1F504} ${escapeHtml(t("transfer.btn"))}</button>` : ""}
+          ${account.login_method !== "google" ? `<button class="chip-btn" onclick="transferAccountPersona('${account.id}','${escapeHtml(account.persona_id || "")}')" title="\u628A\u8FD9\u4E2A\u8D26\u53F7\u6539\u6302\u5230\u522B\u7684\u8EAB\u4EFD\u4E0B">\u{1F504} ${escapeHtml(t("transfer.btn"))}</button>` : ""}
           ${nurtureStats}
         </div>
         ${todayProgress}
@@ -2615,10 +2619,6 @@
           <button class="btn btn-small btn-primary" onclick="autoLoginAccount('${account.id}','${escapeHtml(account.platform)}')" title="\u81EA\u52A8\u767B\u5F55\uFF1A\u67E5\u767B\u5F55\u2192Google\u767B\u5F55\u2192\u5426\u5219\u6CE8\u518C">\u{1F511} \u81EA\u52A8\u767B\u5F55</button>
           <button class="btn btn-small btn-success" data-nurture-account="${account.id}" onclick="openNurtureModal('${account.id}', '${escapeHtml(account.platform)}', '${escapeHtml(account.username || account.email || "N/A")}')" title="${t("nurture.quickNurture")}">\u{1F331} ${t("nurture.quickNurture")}</button>
           ${stage === "new" ? `<button class="btn btn-small btn-warning" onclick="startWarmup('${account.id}')" title="\u5F00\u59CB\u517B\u53F7">\u{1F525} \u5F00\u59CB\u517B\u53F7</button>` : ""}
-          ${!hasProfile ? `<button class="btn btn-small btn-secondary" onclick="createProfileForAccount('${account.id}', '${escapeHtml(account.platform)}')">${t("accounts.createProfile")}</button>` : ""}
-          ${hasProfile ? `<button class="btn btn-small btn-secondary" onclick="toggleStealth('${profile.id}', ${!profile.stealth_enabled})" title="${profile.stealth_enabled ? "Disable" : "Enable"} Stealth">${profile.stealth_enabled ? "\u{1F6E1}\uFE0F" : "\u26A1"}</button>` : ""}
-          ${hasProfile ? `<button class="btn btn-small btn-secondary" onclick="randomizeFingerprint('${profile.id}')" title="Randomize Fingerprint">\u{1F3AD}</button>` : ""}
-          ${hasProfile ? `<button class="btn btn-small btn-secondary" onclick="showProxyModal('${profile.id}')" title="Set Proxy">\u{1F310}</button>` : ""}
         </div>
       </div>
     `;

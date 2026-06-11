@@ -3511,3 +3511,61 @@ textarea.input {
 }
 .email-group-body { padding: 12px 14px; }
 .email-group-body .account-item:last-child { margin-bottom: 0; }
+
+/* ===== 账号卡片徽章/按钮美化（#15 转移归属、#16 状态标记） ===== */
+/* 状态徽章：与 .account-health-badge 统一的柔和胶囊风格 */
+.stage-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.stage-badge.new     { background: rgba(100, 116, 139, 0.12); color: #64748b; }
+.stage-badge.warming { background: rgba(249, 115, 22, 0.12);  color: #f97316; }
+.stage-badge.active  { background: rgba(34, 197, 94, 0.12);   color: #22c55e; }
+
+/* 归属身份徽章 */
+.id-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.5;
+  background: rgba(74, 140, 255, 0.10);
+  color: #4a8cff;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.id-badge.none { background: rgba(217, 119, 6, 0.12); color: #d97706; }
+
+/* 卡片内小动作胶囊按钮（转移归属等），与 .collapse-btn 同语言、更小 */
+.chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color .15s ease, border-color .15s ease, background .15s ease;
+  white-space: nowrap;
+}
+.chip-btn:hover {
+  color: var(--accent-text);
+  border-color: var(--accent);
+  background: var(--accent-light);
+}

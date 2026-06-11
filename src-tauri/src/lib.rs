@@ -1011,6 +1011,38 @@ fn platform_ip_policy(platform: &str) -> &'static str {
     }
 }
 
+/// 各平台养号预热天数（按真实风控严格度 / 账号养成需求差异化）。
+/// 越严/越吃账号年龄与声望 → 养越久；纯内容/代码托管/消息类 → 养越短。
+/// 用于初始化 nurture_strategies.warmup_days（替代原来一刀切 14 天）。
+const NURTURE_WARMUP_DAYS: &[(&str, i64)] = &[
+    // —— 强风控 / 需积累声望年龄（30 天）——
+    ("reddit", 30),        // karma + 账号年龄门槛、新号易 shadowban
+    ("hackernews", 30),    // 多数功能要先攒 karma
+    ("facebook", 30),      // 新号 checkpoint 极严
+    ("instagram", 30),     // 极严
+    ("xiaohongshu", 30),   // 极严，需慢养拟真
+    ("v2ex", 30),          // 部分节点要金币/账号年龄才能发
+    // —— 较严（21 天）——
+    ("twitter", 21), ("x", 21),
+    ("linkedin", 21),      // 职场，限制新号
+    ("tiktok", 21),
+    ("weibo", 21),         // 较严
+    // —— 中等（14 天）——
+    ("habr", 14),          // 需 karma / 历史邀请制
+    ("vk", 14),
+    ("naver_blog", 14),
+    ("youtube", 14),
+    ("zhihu", 14),
+    ("jike", 14), ("okjike", 14),
+    // —— 宽松内容/产品社区（7 天）——
+    ("medium", 7), ("producthunt", 7), ("qiita", 7), ("zenn", 7),
+    ("note", 7), ("note_japan", 7), ("betalist", 7), ("alternativeto", 7),
+    ("indiehackers", 7), ("segmentfault", 7), ("sspai", 7),
+    // —— 几乎无需养（3 天）：代码托管 / 消息 / 宽松技术站 ——
+    ("github", 3), ("devto", 3), ("hashnode", 3),
+    ("telegram", 3), ("csdn", 3), ("oschina", 3),
+];
+
 /// 返回某身份的平台开通目录：全部 29 个平台 + 该身份是否已开通(登录态 healthy)。
 /// 供前端「开通账号」选择器分组渲染、决定哪些预选锁定。
 #[tauri::command]
@@ -3182,6 +3214,22 @@ fn run_migrations(conn: &Connection) -> rusqlite::Result<()> {
                     params![platform, warmup_days, sessions_min, sessions_max, duration_min, duration_max, hours_start, hours_end],
                 );
             }
+        }
+
+        // 一次性：按平台差异化 warmup_days（替代原来一刀切 14）。flag 守护，只跑一次，
+        // 不覆盖用户后续在设置里手改的值。已有行只更 warmup_days；缺的平台补一条（其余列走表默认）。
+        if engine_cfg_get(&conn, "nurture_warmup_v2_seeded").is_none() {
+            for (platform, days) in NURTURE_WARMUP_DAYS {
+                let updated = conn.execute(
+                    "UPDATE nurture_strategies SET warmup_days=?2 WHERE platform=?1",
+                    params![platform, days]).unwrap_or(0);
+                if updated == 0 {
+                    let _ = conn.execute(
+                        "INSERT OR IGNORE INTO nurture_strategies (platform, warmup_days) VALUES (?1, ?2)",
+                        params![platform, days]);
+                }
+            }
+            engine_cfg_set(&conn, "nurture_warmup_v2_seeded", "1");
         }
     }
 

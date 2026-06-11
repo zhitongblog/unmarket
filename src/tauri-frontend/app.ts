@@ -46,6 +46,10 @@ const translations: Record<Language, Record<string, string>> = {
     // Accounts
     'accounts.title': '平台账号',
     'accounts.pageTitle': '👤 身份管理',
+    // 账号生命周期阶段徽章
+    'stage.new': '新账号',
+    'stage.warming': '养号中 ({n}天)',
+    'stage.active': '正常',
     'accounts.addAccount': '+ 添加账号',
     'accounts.overallHealth': '整体健康',
     'accounts.active': '活跃',
@@ -142,6 +146,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nurture.failed': '养号失败',
     'nurture.stopped': '养号已停止',
     'nurture.noAccounts': '暂无账号，请先添加账号',
+    'nurture.daysProgressTitle': '养号进度（已养天数 / 需要总天数）',
 
     // Provision (开通账号选择器 / 加账号流程)
     'provision.title': '用 {email} 开通平台',
@@ -503,6 +508,10 @@ const translations: Record<Language, Record<string, string>> = {
     // Accounts
     'accounts.title': 'Platform Accounts',
     'accounts.pageTitle': '👤 Identities',
+    // Account lifecycle stage badges
+    'stage.new': 'New',
+    'stage.warming': 'Warming ({n}d)',
+    'stage.active': 'Active',
     'accounts.addAccount': '+ Add Account',
     'accounts.overallHealth': 'Overall Health',
     'accounts.active': 'Active',
@@ -598,6 +607,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nurture.failed': 'Nurturing failed',
     'nurture.stopped': 'Nurturing stopped',
     'nurture.noAccounts': 'No accounts yet, please add accounts first',
+    'nurture.daysProgressTitle': 'Warmup progress (days done / days required)',
 
     // Provision (platform provisioning selector / add-account flow)
     'provision.title': 'Provision platforms for {email}',
@@ -2753,19 +2763,7 @@ function personaSelectOptions(selectedId?: string | null): string {
 
 function renderAccountCard(account: any): string {
   {
-    const getProfileForAccount = (accountId: string) =>
-      browserProfiles.find(p => p.account_id === accountId);
-    const profile = getProfileForAccount(account.id);
-    const hasProfile = !!profile;
-    const stealthBadge = profile?.stealth_enabled
-      ? '<span class="badge badge-stealth" title="Stealth Mode">🛡️</span>'
-      : '';
-    const fingerprintBadge = profile?.fingerprint_id
-      ? '<span class="badge badge-fingerprint" title="Fingerprint Randomized">🎭</span>'
-      : '';
-    const proxyBadge = profile?.proxy
-      ? `<span class="badge badge-proxy" title="${escapeHtml(profile.proxy)}">🌐</span>`
-      : '';
+    // #14 账号的浏览器/IP/指纹统一由所属身份(persona)提供，不再有「每账号 profile」
     const healthBadge = getHealthBadge(account);
 
     // Get lifecycle data
@@ -2773,16 +2771,22 @@ function renderAccountCard(account: any): string {
     const stage = lifecycle?.stage || 'new';
     const daysRemaining = lifecycle?.days_remaining || 0;
     const progressPercent = lifecycle?.progress_percent || 0;
+    const daysSinceStart = lifecycle?.days_since_start ?? 0;
+    const warmupDays = lifecycle?.warmup_days ?? 14;
     const todaySessions = lifecycle?.today?.sessions_completed || 0;
     const todayTarget = lifecycle?.today?.sessions_min || 2;
     const todayCompleted = todaySessions >= todayTarget;
 
-    // Stage badge
+    // Stage badge（#16 柔和胶囊风格，与健康徽章统一）
     const stageBadges: Record<string, string> = {
-      'new': '<span class="badge badge-new" style="background:#6c757d;color:white;">🆕 新账号</span>',
-      'warming': `<span class="badge badge-warming" style="background:#ffc107;color:black;">🔥 养号中 (${daysRemaining}天)</span>`,
-      'active': '<span class="badge badge-active" style="background:#28a745;color:white;">✅ 正常</span>'
+      'new': `<span class="stage-badge new">🆕 ${t('stage.new')}</span>`,
+      'warming': `<span class="stage-badge warming">🔥 ${tf('stage.warming', { n: daysRemaining })}</span>`,
+      'active': `<span class="stage-badge active">✅ ${t('stage.active')}</span>`
     };
+    // 养号天数进度：已养天数 / 需要总天数（如 3/14 天）
+    const nurtureDaysProgress = lifecycle
+      ? `<span class="stage-badge ${stage}" title="${escapeHtml(t('nurture.daysProgressTitle'))}">🌱 ${Math.min(daysSinceStart, warmupDays)}/${warmupDays} ${t('nurture.days')}</span>`
+      : '';
     const stageBadge = stageBadges[stage] || stageBadges['new'];
 
     // Today's nurture progress
@@ -2805,27 +2809,22 @@ function renderAccountCard(account: any): string {
       </div>
     ` : '';
 
-    // Build profile binding dropdown options
-    const profileOptions = availableProfiles.map(p =>
-      `<option value="${escapeHtml(p.id)}" ${account.profile_id === p.id ? 'selected' : ''}>${escapeHtml(p.name)} (${escapeHtml(p.id)})</option>`
-    ).join('');
-
     const personaBadge = account.persona_email
-      ? `<span class="badge badge-profile" title="身份: ${escapeHtml(account.persona_email)}（共用其浏览器+IP）">🧑‍🤝‍🧑 ${escapeHtml(account.persona_email)}</span>`
-      : '<span class="badge badge-no-profile" title="未归属身份">🧩 未归属</span>';
+      ? `<span class="id-badge" title="身份: ${escapeHtml(account.persona_email)}（共用其浏览器+IP）">🧑‍🤝‍🧑 ${escapeHtml(account.persona_email)}</span>`
+      : '<span class="id-badge none" title="未归属身份">🧩 未归属</span>';
 
     const nurtureStats = (account.total_nurture_seconds > 0 || account.last_nurture_at)
       ? `<span class="text-muted" style="font-size:12px;">${account.total_nurture_seconds > 0 ? `🌱 累计 ${formatNurtureTime(account.total_nurture_seconds)}` : ''}${account.last_nurture_at ? ` · ${t('nurture.lastNurture')} ${formatTimeAgo(account.last_nurture_at)}` : ''}</span>`
       : '';
 
     return `
-      <div class="account-item ${hasProfile ? 'has-profile' : ''}">
+      <div class="account-item">
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
           <span class="account-platform" style="font-weight:700;">${escapeHtml(account.platform)}</span>
           ${healthBadge}
           ${stageBadge}
+          ${nurtureDaysProgress}
           <span style="margin-left:auto;display:flex;align-items:center;gap:6px;">
-            ${stealthBadge}${fingerprintBadge}${proxyBadge}
             <button class="btn btn-small btn-danger" onclick="deleteAccount('${account.id}')" title="删除账号">🗑</button>
           </span>
         </div>
@@ -2833,7 +2832,7 @@ function renderAccountCard(account: any): string {
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
           ${personaBadge}
           ${account.login_method !== 'google'
-            ? `<button class="btn btn-small btn-secondary" onclick="transferAccountPersona('${account.id}','${escapeHtml(account.persona_id || '')}')" title="把这个账号改挂到别的 Gmail 身份下">🔄 ${escapeHtml(t('transfer.btn'))}</button>`
+            ? `<button class="chip-btn" onclick="transferAccountPersona('${account.id}','${escapeHtml(account.persona_id || '')}')" title="把这个账号改挂到别的身份下">🔄 ${escapeHtml(t('transfer.btn'))}</button>`
             : ''}
           ${nurtureStats}
         </div>
@@ -2842,10 +2841,6 @@ function renderAccountCard(account: any): string {
           <button class="btn btn-small btn-primary" onclick="autoLoginAccount('${account.id}','${escapeHtml(account.platform)}')" title="自动登录：查登录→Google登录→否则注册">🔑 自动登录</button>
           <button class="btn btn-small btn-success" data-nurture-account="${account.id}" onclick="openNurtureModal('${account.id}', '${escapeHtml(account.platform)}', '${escapeHtml(account.username || account.email || 'N/A')}')" title="${t('nurture.quickNurture')}">🌱 ${t('nurture.quickNurture')}</button>
           ${stage === 'new' ? `<button class="btn btn-small btn-warning" onclick="startWarmup('${account.id}')" title="开始养号">🔥 开始养号</button>` : ''}
-          ${!hasProfile ? `<button class="btn btn-small btn-secondary" onclick="createProfileForAccount('${account.id}', '${escapeHtml(account.platform)}')">${t('accounts.createProfile')}</button>` : ''}
-          ${hasProfile ? `<button class="btn btn-small btn-secondary" onclick="toggleStealth('${profile!.id}', ${!profile!.stealth_enabled})" title="${profile!.stealth_enabled ? 'Disable' : 'Enable'} Stealth">${profile!.stealth_enabled ? '🛡️' : '⚡'}</button>` : ''}
-          ${hasProfile ? `<button class="btn btn-small btn-secondary" onclick="randomizeFingerprint('${profile!.id}')" title="Randomize Fingerprint">🎭</button>` : ''}
-          ${hasProfile ? `<button class="btn btn-small btn-secondary" onclick="showProxyModal('${profile!.id}')" title="Set Proxy">🌐</button>` : ''}
         </div>
       </div>
     `;
