@@ -67,6 +67,37 @@ const translations: Record<Language, Record<string, string>> = {
     'accounts.createProfile': '创建 Profile',
     'accounts.noAccounts': '暂无账号',
     'accounts.autoRegisterHint': '使用自动注册或手动添加账号',
+    // 添加账号弹窗
+    'accounts.modalTitle': '添加平台账号',
+    'accounts.platform': '平台',
+    'accounts.usernameEmail': '用户名 / 邮箱',
+    'accounts.usernameEmailPlaceholder': '用户名或邮箱',
+    'accounts.passwordApiKey': '密码 / API Key',
+    'accounts.passwordApiKeyPlaceholder': '密码或 API Key',
+    'accounts.saveAccount': '保存账号',
+    'accounts.requiredFields': '平台和用户名为必填项',
+    'accounts.saveFailed': '保存账号失败',
+    'accounts.deleteConfirm': '删除该账号？',
+    'accounts.deleteFailed': '删除账号失败',
+    // 邮箱中心页布局
+    'accounts.newGmail': '+ 新建 Gmail',
+    'accounts.collapseAll': '收起全部平台',
+    'accounts.expandAll': '展开全部平台',
+    'accounts.collapse': '收起平台',
+    'accounts.expand': '展开平台',
+    'accounts.collapsedHint': '已收起 {n} 个平台账号',
+    'accounts.emailLabel': '📧 邮箱：',
+    'accounts.browser': '浏览器',
+    'accounts.noNode': '🌐 节点未分配',
+    'accounts.accountCount': '{n} 个账号',
+    'accounts.loginGmail': '📧 登录 Gmail',
+    'accounts.provisionBtn': '🚀 检查并开通账号',
+    'accounts.addAccountBtn': '+ 加账号',
+    'accounts.deleteEmail': '删除此邮箱',
+    'accounts.noEmailYet': '还没有邮箱。用一个真实 Gmail 新建第一个 →',
+    'accounts.unassignedTitle': '🧩 未归属邮箱 · {n} 个账号',
+    'accounts.unassignedHint': '这些账号还没挂到某个 Gmail 下。在账号上选「归属身份」归类即可。',
+    'accounts.emptyEmailHint': '这个邮箱还没有账号 —— 点上面「🚀 检查并开通账号」自动开通各平台，或「+ 加账号」手动加。',
 
     // Nurturing (养号)
     'nurture.title': '账号养护',
@@ -90,6 +121,65 @@ const translations: Record<Language, Record<string, string>> = {
     'nurture.failed': '养号失败',
     'nurture.stopped': '养号已停止',
     'nurture.noAccounts': '暂无账号，请先添加账号',
+
+    // Provision (开通账号选择器 / 加账号流程)
+    'provision.title': '用 {email} 开通平台',
+    'provision.hint': '勾选要开通的平台（仅列出可自动开通、且尚未开通的 Google 登录平台）。',
+    'provision.selectAuto': '全选',
+    'provision.cancel': '取消',
+    'provision.apply': '开通 ({n})',
+    'provision.provisioned': '已开通',
+    'provision.auto': '🟢自动',
+    'provision.manual': '🟡需手动',
+    'provision.loadFailed': '加载平台列表失败：',
+    'provision.noChanges': '没有变更',
+    'provision.provisioning': '正在用 {email} 开通 {n} 个平台…（逐个跑，请耐心等）',
+    'provision.removed': '已移除 {n} 个平台账号',
+    'provision.allDone': '该邮箱可自动开通的平台都已开通',
+    // 加账号（手机号 / 账号密码 分区录入）
+    'addacct.title': '给 {email} 加账号',
+    'addacct.hint': '只列出可手动添加、且尚未添加的平台；填了凭据的才会被添加。',
+    'addacct.phoneGroup': '📱 手机号登录',
+    'addacct.passwordGroup': '🔑 账号密码登录',
+    'addacct.phonePlaceholder': '手机号',
+    'addacct.usernamePlaceholder': '账号 / 邮箱',
+    'addacct.passwordPlaceholder': '密码',
+    'addacct.submit': '添加 ({n})',
+    'addacct.none': '该邮箱可手动添加的平台都已添加',
+    'addacct.nothing': '没有填写任何凭据',
+    'addacct.added': '已添加 {n} 个账号',
+    'addacct.addFailed': '加账号失败：',
+    // 转移归属（手工账号才可转移）
+    'transfer.btn': '转移归属',
+    'transfer.title': '转移归属',
+    'transfer.hint': '选择把这个账号挂到哪个 Gmail 身份下（之后共用该身份的浏览器+IP+指纹）。',
+    'transfer.unassigned': '未归属（用全局 Profile）',
+    'transfer.current': '当前',
+    'transfer.done': '已转移归属',
+    'transfer.failed': '转移失败：',
+    // 登录方式标注
+    'login.method': '登录方式',
+    'login.google': 'Google 登录',
+    'login.phone': '手机号',
+    'login.password': '账号密码',
+    // 场景分组
+    'scene.research': '💻 研发/技术',
+    'scene.product': '🚀 产品/创业',
+    'scene.social': '🌐 通用/大众社交',
+    'scene.content': '📝 知识/内容',
+    'scene.career': '💼 职场/商务',
+    'scene.lifestyle': '🛍️ 生活/种草',
+    // 新建 / 删除身份
+    'persona.createTitle': '新建 Gmail 身份',
+    'persona.createLabel': '输入一个真实 Gmail（这个邮箱会成为一套独立身份：独立浏览器+IP+指纹）',
+    'persona.createOk': '创建',
+    'persona.invalidEmail': '请输入有效的 Gmail 地址',
+    'persona.creating': '正在创建身份…（建浏览器+随机指纹+分配出口节点，约 5-10 秒）',
+    'persona.created': '邮箱已建好 ✓ 已打开 Google 登录页 → 请在弹出的浏览器窗口登录 {email}（基础登录，只需一次；登好后才能自动注册/登录账号）',
+    'persona.createFailed': '创建失败：',
+    'persona.deleteConfirm': '删除身份 {email}？\n会删掉它的独立浏览器并释放出口节点；名下账号会变成「未归属」。',
+    'persona.deleted': '身份已删除',
+    'persona.deleteFailed': '删除失败：',
 
     // Settings
     'settings.title': '设置',
@@ -376,6 +466,36 @@ const translations: Record<Language, Record<string, string>> = {
     'accounts.autoLogin': 'Auto-Login/Register Selected',
     'accounts.syncAll': 'Sync All',
     'accounts.syncAllHint': '"Sync All" will check which platforms you\'re already logged into in Unzoo browser',
+    'accounts.modalTitle': 'Add Platform Account',
+    'accounts.platform': 'Platform',
+    'accounts.usernameEmail': 'Username / Email',
+    'accounts.usernameEmailPlaceholder': 'username or email',
+    'accounts.passwordApiKey': 'Password / API Key',
+    'accounts.passwordApiKeyPlaceholder': 'password or API key',
+    'accounts.saveAccount': 'Save Account',
+    'accounts.requiredFields': 'Platform and username are required',
+    'accounts.saveFailed': 'Failed to save account',
+    'accounts.deleteConfirm': 'Delete this account?',
+    'accounts.deleteFailed': 'Failed to delete account',
+    // Email hub layout
+    'accounts.newGmail': '+ New Gmail',
+    'accounts.collapseAll': 'Collapse all',
+    'accounts.expandAll': 'Expand all',
+    'accounts.collapse': 'Collapse',
+    'accounts.expand': 'Expand',
+    'accounts.collapsedHint': '{n} platform account(s) collapsed',
+    'accounts.emailLabel': '📧 Email:',
+    'accounts.browser': 'Browser',
+    'accounts.noNode': '🌐 No node assigned',
+    'accounts.accountCount': '{n} account(s)',
+    'accounts.loginGmail': '📧 Sign in Gmail',
+    'accounts.provisionBtn': '🚀 Check & provision',
+    'accounts.addAccountBtn': '+ Add account',
+    'accounts.deleteEmail': 'Delete this email',
+    'accounts.noEmailYet': 'No email yet. Create your first one with a real Gmail →',
+    'accounts.unassignedTitle': '🧩 Unassigned · {n} account(s)',
+    'accounts.unassignedHint': 'These accounts are not under any Gmail yet. Set "Identity" on an account to group it.',
+    'accounts.emptyEmailHint': 'No accounts under this email yet — click "🚀 Check & provision" to auto-provision, or "+ Add account" to add manually.',
     'accounts.existingAccounts': 'Existing Accounts',
     'accounts.delete': 'Delete',
     'accounts.useGlobalProfile': '-- Use Global Profile --',
@@ -405,6 +525,65 @@ const translations: Record<Language, Record<string, string>> = {
     'nurture.failed': 'Nurturing failed',
     'nurture.stopped': 'Nurturing stopped',
     'nurture.noAccounts': 'No accounts yet, please add accounts first',
+
+    // Provision (platform provisioning selector / add-account flow)
+    'provision.title': 'Provision platforms for {email}',
+    'provision.hint': 'Check platforms to provision (only auto-provisionable, not-yet-added Google-login platforms are listed).',
+    'provision.selectAuto': 'Select all',
+    'provision.cancel': 'Cancel',
+    'provision.apply': 'Provision ({n})',
+    'provision.provisioned': 'Provisioned',
+    'provision.auto': '🟢 Auto',
+    'provision.manual': '🟡 Manual',
+    'provision.loadFailed': 'Failed to load platform list: ',
+    'provision.noChanges': 'No changes',
+    'provision.provisioning': 'Provisioning {n} platform(s) with {email}… (one by one, please wait)',
+    'provision.removed': 'Removed {n} platform account(s)',
+    'provision.allDone': 'All auto-provisionable platforms for this email are already provisioned',
+    // Add account (phone / username-password grouped input)
+    'addacct.title': 'Add accounts for {email}',
+    'addacct.hint': 'Only manually-addable, not-yet-added platforms are listed; only those with credentials filled will be added.',
+    'addacct.phoneGroup': '📱 Phone login',
+    'addacct.passwordGroup': '🔑 Username & password',
+    'addacct.phonePlaceholder': 'Phone number',
+    'addacct.usernamePlaceholder': 'Username / email',
+    'addacct.passwordPlaceholder': 'Password',
+    'addacct.submit': 'Add ({n})',
+    'addacct.none': 'All manually-addable platforms for this email are already added',
+    'addacct.nothing': 'No credentials entered',
+    'addacct.added': 'Added {n} account(s)',
+    'addacct.addFailed': 'Failed to add account: ',
+    // Transfer ownership (manual accounts only)
+    'transfer.btn': 'Transfer',
+    'transfer.title': 'Transfer ownership',
+    'transfer.hint': 'Choose which Gmail identity this account belongs to (it will share that identity\'s browser + IP + fingerprint).',
+    'transfer.unassigned': 'Unassigned (global profile)',
+    'transfer.current': 'Current',
+    'transfer.done': 'Ownership transferred',
+    'transfer.failed': 'Transfer failed: ',
+    // Login method labels
+    'login.method': 'Login method',
+    'login.google': 'Google sign-in',
+    'login.phone': 'Phone number',
+    'login.password': 'Username & password',
+    // Scene groups
+    'scene.research': '💻 Dev / Tech',
+    'scene.product': '🚀 Product / Startup',
+    'scene.social': '🌐 General / Social',
+    'scene.content': '📝 Knowledge / Content',
+    'scene.career': '💼 Career / Business',
+    'scene.lifestyle': '🛍️ Lifestyle / Recommendation',
+    // Create / delete persona
+    'persona.createTitle': 'New Gmail identity',
+    'persona.createLabel': 'Enter a real Gmail (this email becomes a standalone identity: dedicated browser + IP + fingerprint)',
+    'persona.createOk': 'Create',
+    'persona.invalidEmail': 'Please enter a valid Gmail address',
+    'persona.creating': 'Creating identity… (browser + random fingerprint + exit node, ~5-10s)',
+    'persona.created': 'Email ready ✓ Google sign-in page opened → please sign in to {email} in the popup browser window (basic login, once only; required before auto register/login)',
+    'persona.createFailed': 'Create failed: ',
+    'persona.deleteConfirm': 'Delete identity {email}?\nIts dedicated browser will be removed and exit node released; accounts under it become "unassigned".',
+    'persona.deleted': 'Identity deleted',
+    'persona.deleteFailed': 'Delete failed: ',
 
     // Settings
     'settings.title': 'Settings',
@@ -645,6 +824,15 @@ const translations: Record<Language, Record<string, string>> = {
 
 function t(key: string): string {
   return translations[currentLanguage][key] || translations['en'][key] || key;
+}
+
+// 带变量插值的翻译：t('x.y', { email, n }) 会把文案里的 {email}/{n} 替换掉。
+function tf(key: string, vars: Record<string, string | number>): string {
+  let s = t(key);
+  for (const [k, v] of Object.entries(vars)) {
+    s = s.replace(new RegExp(`\\{${k}\\}`, 'g'), String(v));
+  }
+  return s;
 }
 
 // Update all elements with data-i18n attribute
@@ -1036,15 +1224,21 @@ function uiConfirm(message: string, opts?: { title?: string; okText?: string; ca
 }
 (window as any).uiConfirm = uiConfirm;
 
-// ===== 开通账号：平台选择器（场景分组 + 地区标签 + 模式徽章） =====
-const SCENE_LABELS: Record<string, string> = {
-  research: '💻 研发/技术', product: '🚀 产品/创业', social: '🌐 通用/大众社交',
-  content: '📝 知识/内容', career: '💼 职场/商务', lifestyle: '🛍️ 生活/种草',
-};
+// ===== 开通账号：平台选择器（场景分组 + 地区标签 + 模式徽章 + 登录方式） =====
 const SCENE_ORDER = ['research', 'product', 'social', 'content', 'career', 'lifestyle'];
 const REGION_FLAGS: Record<string, string> = { us: '🇺🇸', jp: '🇯🇵', kr: '🇰🇷', ru: '🇷🇺', cn: '🇨🇳', global: '🌐' };
+// 登录方式 → 图标（与 i18n 文案配合，单独成徽章，便于区分开通/登录流程）
+const LOGIN_ICONS: Record<string, string> = { google: '🔵', phone: '📱', password: '🔑' };
 
-interface CatalogItem { platform: string; name: string; scene: string; region: string; mode: string; provisioned: boolean; }
+interface CatalogItem { platform: string; name: string; scene: string; region: string; mode: string; login_method?: string; provisioned: boolean; }
+
+// 登录方式徽章：图标 + i18n 文案（google/phone/password），未知则不渲染。
+function loginMethodBadge(method?: string): string {
+  if (!method) return '';
+  const icon = LOGIN_ICONS[method] || '🔐';
+  const label = t(`login.${method}`);
+  return `<span title="${escapeHtml(t('login.method'))}" style="color:var(--text-muted);font-size:11px;white-space:nowrap;">${icon} ${escapeHtml(label)}</span>`;
+}
 
 // 弹出分组复选框（已开通项预勾、可取消）。返回用户【最终勾选】的全部平台 key；取消返回 null。
 // 由调用方对比 catalog.provisioned 算出 新增/移除。
@@ -1054,32 +1248,35 @@ function pickProvisionPlatforms(email: string, catalog: CatalogItem[]): Promise<
     overlay.className = 'modal active';
     const groups = SCENE_ORDER.map(s => ({ s, items: catalog.filter(c => c.scene === s) })).filter(g => g.items.length);
     const groupHtml = groups.map(g => `
-      <div style="margin:14px 0 8px;font-weight:700;font-size:13px;color:var(--text-muted);">${SCENE_LABELS[g.s] || g.s}</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;">
+      <div style="margin:14px 0 8px;font-weight:700;font-size:13px;color:var(--text-muted);">${t(`scene.${g.s}`)}</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;">
         ${g.items.map(c => {
           const flag = REGION_FLAGS[c.region] || '🌐';
           const badge = c.provisioned
-            ? '<span style="color:#16a34a;font-size:12px;">已开通</span>'
-            : (c.mode === 'auto' ? '<span style="color:#16a34a;font-size:12px;">🟢自动</span>' : '<span style="color:#d97706;font-size:12px;">🟡需手动</span>');
+            ? `<span style="color:#16a34a;font-size:12px;">${t('provision.provisioned')}</span>`
+            : (c.mode === 'auto' ? `<span style="color:#16a34a;font-size:12px;">${t('provision.auto')}</span>` : `<span style="color:#d97706;font-size:12px;">${t('provision.manual')}</span>`);
           return `<label style="display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:8px;padding:8px 10px;cursor:pointer;">
             <input type="checkbox" data-plat="${escapeHtml(c.platform)}" data-prov="${c.provisioned ? 1 : 0}" ${c.provisioned ? 'checked' : ''}>
-            <span style="display:flex;align-items:center;gap:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(c.name)} ${flag} ${badge}</span>
+            <span style="display:flex;flex-direction:column;gap:2px;overflow:hidden;">
+              <span style="display:flex;align-items:center;gap:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(c.name)} ${flag} ${badge}</span>
+              ${loginMethodBadge(c.login_method)}
+            </span>
           </label>`;
         }).join('')}
       </div>`).join('');
 
     overlay.innerHTML = `
       <div class="modal-content" style="max-width:760px;max-height:84vh;display:flex;flex-direction:column;">
-        <div class="modal-header"><h3>用 ${escapeHtml(email)} 开通平台</h3><button class="modal-close" data-cancel>&times;</button></div>
+        <div class="modal-header"><h3>${escapeHtml(tf('provision.title', { email }))}</h3><button class="modal-close" data-cancel>&times;</button></div>
         <div class="modal-body" style="overflow:auto;">
-          <div class="text-muted" style="font-size:12px;margin-bottom:4px;">勾选要开通的平台；取消勾选「已开通」的会删除该账号。</div>
+          <div class="text-muted" style="font-size:12px;margin-bottom:4px;">${escapeHtml(t('provision.hint'))}</div>
           ${groupHtml}
         </div>
         <div class="modal-footer" style="display:flex;align-items:center;gap:8px;">
-          <button class="btn btn-secondary btn-small" data-selauto>全选可开通的</button>
+          <button class="btn btn-secondary btn-small" data-selauto>${escapeHtml(t('provision.selectAuto'))}</button>
           <span style="flex:1;"></span>
-          <button class="btn btn-secondary" data-cancel>取消</button>
-          <button class="btn btn-primary" data-ok>应用更改 (0)</button>
+          <button class="btn btn-secondary" data-cancel>${escapeHtml(t('provision.cancel'))}</button>
+          <button class="btn btn-primary" data-ok>${escapeHtml(tf('provision.apply', { n: 0 }))}</button>
         </div>
       </div>`;
 
@@ -1087,7 +1284,7 @@ function pickProvisionPlatforms(email: string, catalog: CatalogItem[]): Promise<
     const picked = (): string[] => boxes().filter(b => b.checked).map(b => b.getAttribute('data-plat') as string);
     const changeCount = (): number => boxes().filter(b => b.checked !== (b.getAttribute('data-prov') === '1')).length;
     const okBtn = overlay.querySelector('[data-ok]') as HTMLElement;
-    const refresh = () => { okBtn.textContent = `应用更改 (${changeCount()})`; };
+    const refresh = () => { okBtn.textContent = tf('provision.apply', { n: changeCount() }); };
 
     let done = false;
     const finish = (val: string[] | null) => { if (done) return; done = true; overlay.remove(); resolve(val); };
@@ -1106,6 +1303,76 @@ function pickProvisionPlatforms(email: string, catalog: CatalogItem[]): Promise<
   });
 }
 (window as any).pickProvisionPlatforms = pickProvisionPlatforms;
+
+// ===== #4 加账号：手机号 / 账号密码 分区录入凭据 =====
+interface AddAcctEntry { platform: string; username: string; password: string; }
+
+// 弹出「加账号」选择器：按登录方式分两个区块，填了凭据的平台才会被收集。
+// 返回 [{platform, username, password}]（手机号平台 username=手机号、password=''）；取消返回 null。
+function pickAddAccounts(email: string, candidates: CatalogItem[]): Promise<AddAcctEntry[] | null> {
+  return new Promise((resolve) => {
+    const overlay = document.createElement('div');
+    overlay.className = 'modal active';
+
+    const rowHtml = (c: CatalogItem): string => {
+      const flag = REGION_FLAGS[c.region] || '🌐';
+      const head = `<div style="display:flex;align-items:center;gap:6px;min-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(c.name)} ${flag}</div>`;
+      const inputs = c.login_method === 'phone'
+        ? `<input class="input" data-plat="${escapeHtml(c.platform)}" data-field="phone" placeholder="${escapeHtml(t('addacct.phonePlaceholder'))}" style="flex:1;min-width:120px;">`
+        : `<input class="input" data-plat="${escapeHtml(c.platform)}" data-field="username" placeholder="${escapeHtml(t('addacct.usernamePlaceholder'))}" style="flex:1;min-width:120px;">
+           <input class="input" type="password" data-plat="${escapeHtml(c.platform)}" data-field="password" placeholder="${escapeHtml(t('addacct.passwordPlaceholder'))}" style="flex:1;min-width:110px;">`;
+      return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;flex-wrap:wrap;">${head}${inputs}</div>`;
+    };
+
+    const block = (titleKey: string, method: string): string => {
+      const items = candidates.filter(c => c.login_method === method);
+      if (!items.length) return '';
+      return `<div style="margin:12px 0 4px;font-weight:700;font-size:13px;color:var(--text-muted);">${t(titleKey)}</div>${items.map(rowHtml).join('')}`;
+    };
+
+    overlay.innerHTML = `
+      <div class="modal-content" style="max-width:640px;max-height:84vh;display:flex;flex-direction:column;">
+        <div class="modal-header"><h3>${escapeHtml(tf('addacct.title', { email }))}</h3><button class="modal-close" data-cancel>&times;</button></div>
+        <div class="modal-body" style="overflow:auto;">
+          <div class="text-muted" style="font-size:12px;margin-bottom:4px;">${escapeHtml(t('addacct.hint'))}</div>
+          ${block('addacct.phoneGroup', 'phone')}
+          ${block('addacct.passwordGroup', 'password')}
+        </div>
+        <div class="modal-footer" style="display:flex;align-items:center;gap:8px;">
+          <span style="flex:1;"></span>
+          <button class="btn btn-secondary" data-cancel>${escapeHtml(t('provision.cancel'))}</button>
+          <button class="btn btn-primary" data-ok>${escapeHtml(tf('addacct.submit', { n: 0 }))}</button>
+        </div>
+      </div>`;
+
+    // 收集填了「主字段」（手机号 / 账号）的平台
+    const collect = (): AddAcctEntry[] => {
+      const out: AddAcctEntry[] = [];
+      candidates.forEach(c => {
+        if (c.login_method === 'phone') {
+          const v = (overlay.querySelector(`input[data-plat="${c.platform}"][data-field="phone"]`) as HTMLInputElement | null)?.value.trim();
+          if (v) out.push({ platform: c.platform, username: v, password: '' });
+        } else {
+          const u = (overlay.querySelector(`input[data-plat="${c.platform}"][data-field="username"]`) as HTMLInputElement | null)?.value.trim();
+          const p = (overlay.querySelector(`input[data-plat="${c.platform}"][data-field="password"]`) as HTMLInputElement | null)?.value || '';
+          if (u) out.push({ platform: c.platform, username: u, password: p });
+        }
+      });
+      return out;
+    };
+    const okBtn = overlay.querySelector('[data-ok]') as HTMLElement;
+    const refresh = () => { okBtn.textContent = tf('addacct.submit', { n: collect().length }); };
+
+    let done = false;
+    const finish = (val: AddAcctEntry[] | null) => { if (done) return; done = true; overlay.remove(); resolve(val); };
+    overlay.querySelectorAll('[data-cancel]').forEach(el => el.addEventListener('click', () => finish(null)));
+    okBtn.addEventListener('click', () => finish(collect()));
+    overlay.addEventListener('input', refresh);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) finish(null); });
+    document.body.appendChild(overlay);
+  });
+}
+(window as any).pickAddAccounts = pickAddAccounts;
 
 // Tabs
 function initTabs() {
@@ -1963,55 +2230,103 @@ function renderAccounts() {
 
   if (tabIds.length === 0) {
     list.innerHTML = airportBar + `<div class="card" style="padding:18px;text-align:center;">
-      <div class="text-muted">还没有邮箱。用一个真实 Gmail 新建第一个 →</div>
-      <button class="btn btn-primary" style="margin-top:10px;" onclick="createPersonaPrompt()">+ 新建 Gmail</button></div>`;
+      <div class="text-muted">${escapeHtml(t('accounts.noEmailYet'))}</div>
+      <button class="btn btn-primary" style="margin-top:10px;" onclick="createPersonaPrompt()">${escapeHtml(t('accounts.newGmail'))}</button></div>`;
     return;
   }
   // 默认选中：保持上次，或第一个
   if (!selectedPersonaId || !tabIds.includes(selectedPersonaId)) selectedPersonaId = tabIds[0];
 
-  // 邮箱切换条（tab）
-  const tabs = tabIds.map((id: string) => {
+  // #9 顶部工具条：只放全局动作（新建 Gmail 靠左 + 一键收起/展开全部平台）
+  const allCollapsed = tabIds.length > 0 && tabIds.every((id: string) => collapsedPersonas.has(id));
+  const toolbar = `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 12px;">
+    <button class="btn btn-small btn-primary" onclick="createPersonaPrompt()" title="用一个真实 Gmail 新建一套独立身份">${escapeHtml(t('accounts.newGmail'))}</button>
+    ${collapseBtnHtml('toggleCollapseAllPersonas()', allCollapsed, allCollapsed ? t('accounts.expandAll') : t('accounts.collapseAll'))}
+  </div>`;
+
+  // #9 邮箱编组：邮箱 tab 与「收起平台」同一行（group head），下面是该邮箱的平台列表（group body）
+  const sel = selectedPersonaId as string;
+  const accts = groups.get(sel) || [];
+  const collapsed = collapsedPersonas.has(sel);
+
+  const tabsHtml = tabIds.map((id: string) => {
     const active = id === selectedPersonaId;
     let label: string;
     if (id === '__none__') label = `🧩 未归属(${groups.get('__none__')!.length})`;
     else { const p = personasCache.find((x: any) => x.id === id); label = `📧 ${p?.email || '邮箱'}`; }
-    return `<button class="btn btn-small ${active ? 'btn-primary' : 'btn-secondary'}" onclick="selectEmail('${id}')">${escapeHtml(label)}</button>`;
+    return `<button class="email-tab ${active ? 'active' : ''}" onclick="selectEmail('${id}')" title="${escapeHtml(label)}">${escapeHtml(label)}</button>`;
   }).join('');
-  const tabBar = `<div class="card" style="margin:0 0 12px;padding:10px 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-    <span style="font-weight:700;">📧 邮箱：</span>${tabs}
-    <button class="btn btn-small btn-primary" style="margin-left:auto;" onclick="createPersonaPrompt()" title="用一个真实 Gmail 新建一套独立身份">+ 新建 Gmail</button>
+  const groupHead = `<div class="email-group-head">
+    <div class="email-tabs">${tabsHtml}</div>
+    ${collapseBtnHtml(`togglePersonaCollapse('${sel}')`, collapsed, collapsed ? t('accounts.expand') : t('accounts.collapse'))}
   </div>`;
 
-  // 当前选中邮箱的面板
-  const sel = selectedPersonaId as string;
-  const accts = groups.get(sel) || [];
-  let panel = '';
+  const cardsHtml = collapsed
+    ? `<div class="text-muted" style="text-align:center;padding:6px 0;">${escapeHtml(tf('accounts.collapsedHint', { n: accts.length }))}</div>`
+    : (accts.length ? accts.map((x: any) => renderAccountCard(x)).join('')
+        : `<div class="text-muted" style="text-align:center;padding:8px 0;">${escapeHtml(sel === '__none__' ? t('accounts.unassignedHint') : t('accounts.emptyEmailHint'))}</div>`);
+
+  let infoBar = '';
   if (sel === '__none__') {
-    panel = `<div class="card" style="margin:0 0 8px;padding:10px 14px;border-left:4px solid #d97706;">
-      <div style="font-weight:600;">🧩 未归属邮箱 · ${accts.length} 个账号</div>
-      <div class="text-muted" style="font-size:12px;">这些账号还没挂到某个 Gmail 下。在账号上选「归属身份」归类即可。</div></div>`;
-    panel += accts.map((x: any) => renderAccountCard(x)).join('');
+    infoBar = `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;border-left:4px solid #d97706;padding-left:10px;">
+      <span style="font-weight:600;">${escapeHtml(tf('accounts.unassignedTitle', { n: accts.length }))}</span>
+      <span class="text-muted" style="font-size:12px;">${escapeHtml(t('accounts.unassignedHint'))}</span>
+    </div>`;
   } else {
     const p = personasCache.find((x: any) => x.id === sel);
-    panel = `<div class="card" style="margin:0 0 8px;padding:12px 14px;border-left:4px solid #4a8cff;">
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-        <span style="font-weight:700;font-size:15px;">📧 ${escapeHtml(p?.email || '邮箱')}</span>
-        <span class="text-muted" style="font-size:12px;">${p?.region ? escapeHtml(p.region) : '🌐 节点未分配'}${p?.profile_id ? ' · 独立浏览器 ' + escapeHtml(p.profile_id) : ''} · ${accts.length} 个账号</span>
-      </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;">
-        <button class="btn btn-small btn-secondary" onclick="personaGmailLogin('${sel}')" title="打开这个邮箱的浏览器登录它的 Gmail（基础登录，先做这步）">📧 登录Gmail</button>
-        <button class="btn btn-small btn-success" onclick="personaProvisionAll('${sel}','${escapeHtml(p?.email||'')}')" title="逐平台：有就登录、没有就注册">🚀 检查并开通账号</button>
-        <button class="btn btn-small btn-primary" onclick="window.__addAccountPersona='${sel}';openModal('modalAddAccount');">+ 加账号</button>
-        <button class="btn btn-small btn-secondary" style="margin-left:auto;color:#e55;" onclick="deletePersonaAcct('${sel}','${escapeHtml(p?.email || '')}')" title="删除这个邮箱身份">删除此邮箱</button>
-      </div></div>`;
-    panel += accts.length
-      ? accts.map((x: any) => renderAccountCard(x)).join('')
-      : `<div class="card" style="padding:16px;text-align:center;"><div class="text-muted">这个邮箱还没有账号 —— 点上面「🚀 检查并开通账号」自动开通各平台，或「+ 加账号」手动加。</div></div>`;
+    const pname = profileNameOf(p);                       // #6 可读 profile 名
+    const meta = [
+      p?.region ? escapeHtml(p.region) : t('accounts.noNode'),
+      pname ? `🖥️ ${t('accounts.browser')}: ${escapeHtml(pname)}` : '',
+      tf('accounts.accountCount', { n: accts.length }),
+    ].filter(Boolean).join(' · ');
+    infoBar = `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;border-left:4px solid #4a8cff;padding-left:10px;">
+      <span class="text-muted" style="font-size:12px;">${meta}</span>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
+      <button class="btn btn-small btn-secondary" onclick="personaGmailLogin('${sel}')" title="打开这个邮箱的浏览器登录它的 Gmail（基础登录，先做这步）">${escapeHtml(t('accounts.loginGmail'))}</button>
+      <button class="btn btn-small btn-success" onclick="personaProvisionAll('${sel}','${escapeHtml(p?.email||'')}')" title="自动开通 Google 登录平台">${escapeHtml(t('accounts.provisionBtn'))}</button>
+      <button class="btn btn-small btn-primary" onclick="personaAddAccounts('${sel}','${escapeHtml(p?.email||'')}')" title="手机号 / 账号密码平台手动加账号">${escapeHtml(t('accounts.addAccountBtn'))}</button>
+      <button class="btn btn-small btn-secondary" style="margin-left:auto;color:#e55;" onclick="deletePersonaAcct('${sel}','${escapeHtml(p?.email || '')}')" title="删除这个邮箱身份">${escapeHtml(t('accounts.deleteEmail'))}</button>
+    </div>`;
   }
 
-  list.innerHTML = airportBar + tabBar + panel;
+  const emailGroup = `<div class="email-group">${groupHead}<div class="email-group-body">${infoBar}${cardsHtml}</div></div>`;
+
+  list.innerHTML = airportBar + toolbar + emailGroup;
 }
+
+// #8 收起/展开按钮：胶囊 + 旋转 chevron，统一好看的样式
+function collapseBtnHtml(onclick: string, collapsed: boolean, label: string): string {
+  return `<button class="collapse-btn ${collapsed ? 'is-collapsed' : ''}" onclick="${onclick}"><span class="chev">▾</span>${escapeHtml(label)}</button>`;
+}
+
+// #6 把 persona.profile_id（profile 文件夹名）映射为 Unzoo 里可读的 profile 名称
+function profileNameOf(persona: any): string | null {
+  if (!persona?.profile_id) return null;
+  const pid: string = persona.profile_id;
+  const lastSeg = (s: string) => (s || '').split(/[\\/]/).filter(Boolean).pop() || '';
+  const found = availableProfiles.find((p: any) =>
+    p.id === pid || lastSeg(p.id) === pid || lastSeg(p.path) === pid);
+  // 匹配不到可读名时，宁可不展示难看的文件夹名（返回 null 让 meta 行省略该项）
+  return found?.name || null;
+}
+
+// #7 平台收起：按 persona 记录折叠状态
+let collapsedPersonas: Set<string> = new Set();
+(window as any).togglePersonaCollapse = function(id: string) {
+  if (collapsedPersonas.has(id)) collapsedPersonas.delete(id); else collapsedPersonas.add(id);
+  renderAccounts();
+};
+(window as any).toggleCollapseAllPersonas = function() {
+  const groups = new Map<string, any[]>();
+  for (const acc of accounts) groups.set(acc.persona_id || '__none__', []);
+  const tabIds = [...personasCache.map((p: any) => p.id), ...(groups.has('__none__') ? ['__none__'] : [])];
+  const allCollapsed = tabIds.length > 0 && tabIds.every((id: string) => collapsedPersonas.has(id));
+  if (allCollapsed) collapsedPersonas.clear();
+  else tabIds.forEach((id: string) => collapsedPersonas.add(id));
+  renderAccounts();
+};
 
 // 切换当前邮箱视角
 (window as any).selectEmail = function(id: string) { selectedPersonaId = id; renderAccounts(); };
@@ -2036,48 +2351,62 @@ function renderAccounts() {
 // 在邮箱账号页直接新建一个 Gmail 身份（自动建 profile+指纹+分配节点）
 (window as any).createPersonaPrompt = async function() {
   const email = ((await uiPrompt({
-    title: '新建 Gmail 身份',
-    label: '输入一个真实 Gmail（这个邮箱会成为一套独立身份：独立浏览器+IP+指纹）',
+    title: t('persona.createTitle'),
+    label: t('persona.createLabel'),
     placeholder: 'yourname@gmail.com',
-    okText: '创建',
+    okText: t('persona.createOk'),
   })) || '').trim();
   if (!email) return;
-  if (!email.includes('@')) { showToast('请输入有效的 Gmail 地址', 'error'); return; }
-  showToast('正在创建身份…（建浏览器+随机指纹+分配出口节点，约 5-10 秒）', 'info');
+  if (!email.includes('@')) { showToast(t('persona.invalidEmail'), 'error'); return; }
+  showToast(t('persona.creating'), 'info');
   try {
     const dto: any = await invoke('persona_create', { email });
     if (dto && dto.id) selectedPersonaId = dto.id; // 建好自动切到这个新邮箱
-    showToast(`邮箱已建好 ✓ 已打开 Google 登录页 → 请在弹出的浏览器窗口登录 ${email}（基础登录，只需一次；登好后才能自动注册/登录账号）`, 'info');
+    showToast(tf('persona.created', { email }), 'info');
     await loadAccounts();
-  } catch (e) { showToast('创建失败：' + e, 'error'); }
+  } catch (e) { showToast(t('persona.createFailed') + e, 'error'); }
 };
 
-// 以邮箱为单位：逐平台「有就登录、没有就注册」，账号自动开通到这个邮箱名下
+// 以邮箱为单位：自动开通「Google 登录」平台（#5 选择器只列出尚未开通的）
 (window as any).personaProvisionAll = async function(id: string, email: string) {
   let catalog: CatalogItem[];
   try {
     catalog = await invoke<CatalogItem[]>('persona_platform_catalog', { personaId: id });
-  } catch (e) { showToast('加载平台列表失败：' + e, 'error'); return; }
-  const checkedArr = await pickProvisionPlatforms(email, catalog);
+  } catch (e) { showToast(t('provision.loadFailed') + e, 'error'); return; }
+  // 只保留「Google 登录」且尚未开通的平台（手机号/帐密走「+ 加账号」）
+  const selectable = catalog.filter(c => c.login_method === 'google' && !c.provisioned);
+  if (!selectable.length) { showToast(t('provision.allDone'), 'info'); return; }
+  const checkedArr = await pickProvisionPlatforms(email, selectable);
   if (!checkedArr) return;                       // 取消
-  const checked = new Set(checkedArr);
-  const provisioned = new Set(catalog.filter(c => c.provisioned).map(c => c.platform));
-  const toAdd = [...checked].filter(p => !provisioned.has(p));        // 新勾选 = 新增开通
-  const toRemove = [...provisioned].filter(p => !checked.has(p));     // 取消已开通 = 删账号
-  if (!toAdd.length && !toRemove.length) { showToast('没有变更', 'info'); return; }
+  const toAdd = checkedArr;                       // 全部都是未开通的 Google 平台
+  if (!toAdd.length) { showToast(t('provision.noChanges'), 'info'); return; }
   try {
-    if (toRemove.length) {
-      await invoke('persona_remove_platforms', { personaId: id, platforms: toRemove });
-    }
-    if (toAdd.length) {
-      showToast(`正在用 ${email} 开通 ${toAdd.length} 个平台…（逐个跑，请耐心等）`, 'info');
-      const msg = await invoke<string>('persona_provision_all', { personaId: id, platforms: toAdd });
-      showToast('' + msg, 'success');
-    } else {
-      showToast(`已移除 ${toRemove.length} 个平台账号`, 'success');
-    }
-    await loadAccounts();                          // 开通/移除后列表直接刷新
+    showToast(tf('provision.provisioning', { email, n: toAdd.length }), 'info');
+    const msg = await invoke<string>('persona_provision_all', { personaId: id, platforms: toAdd });
+    showToast('' + msg, 'success');
+    await loadAccounts();                          // 开通后列表直接刷新
   } catch (e) { showToast('' + e, 'error'); }
+};
+
+// #4 加账号：按「手机号 / 账号密码」分区，列出尚未开通的可手动平台，填凭据后逐个添加并归属到该邮箱
+(window as any).personaAddAccounts = async function(id: string, email: string) {
+  let catalog: CatalogItem[];
+  try {
+    catalog = await invoke<CatalogItem[]>('persona_platform_catalog', { personaId: id });
+  } catch (e) { showToast(t('provision.loadFailed') + e, 'error'); return; }
+  const candidates = catalog.filter(c => (c.login_method === 'phone' || c.login_method === 'password') && !c.provisioned);
+  if (!candidates.length) { showToast(t('addacct.none'), 'info'); return; }
+  const entries = await pickAddAccounts(email, candidates);
+  if (!entries) return;                           // 取消
+  if (!entries.length) { showToast(t('addacct.nothing'), 'info'); return; }
+  try {
+    for (const e of entries) {
+      const created: any = await invoke('add_account', { platform: e.platform, username: e.username, password: e.password || '' });
+      if (created?.id) { try { await invoke('set_account_persona', { accountId: created.id, personaId: id }); } catch {} }
+    }
+    showToast(tf('addacct.added', { n: entries.length }), 'success');
+    await loadAccounts();
+  } catch (e) { showToast(t('addacct.addFailed') + e, 'error'); }
 };
 
 // 打开某身份的浏览器到 Google 登录页（补登/重登该 Gmail）
@@ -2090,12 +2419,12 @@ function renderAccounts() {
 
 // 删除一个 Gmail 身份（连带其独立浏览器，释放节点）
 (window as any).deletePersonaAcct = async function(id: string, email: string) {
-  if (!(await uiConfirm(`删除身份 ${email}？\n会删掉它的独立浏览器并释放出口节点；名下账号会变成「未归属」。`))) return;
+  if (!(await uiConfirm(tf('persona.deleteConfirm', { email })))) return;
   try {
     await invoke('persona_delete', { id });
-    showToast('身份已删除', 'success');
+    showToast(t('persona.deleted'), 'success');
     await loadAccounts();
-  } catch (e) { showToast('删除失败：' + e, 'error'); }
+  } catch (e) { showToast(t('persona.deleteFailed') + e, 'error'); }
 };
 
 function personaSelectOptions(selectedId?: string | null): string {
@@ -2184,11 +2513,10 @@ function renderAccountCard(account: any): string {
         </div>
         <div class="account-username text-muted" style="font-size:13px;">${escapeHtml(account.username || account.email || 'N/A')}</div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <label class="text-muted" style="font-size:12px;">归属身份</label>
-          <select class="select select-small" onchange="setAccountPersona('${account.id}', this.value)" style="width:auto;min-width:200px;">
-            ${personaSelectOptions(account.persona_id)}
-          </select>
           ${personaBadge}
+          ${account.login_method !== 'google'
+            ? `<button class="btn btn-small btn-secondary" onclick="transferAccountPersona('${account.id}','${escapeHtml(account.persona_id || '')}')" title="把这个账号改挂到别的 Gmail 身份下">🔄 ${escapeHtml(t('transfer.btn'))}</button>`
+            : ''}
           ${nurtureStats}
         </div>
         ${todayProgress}
@@ -2242,6 +2570,48 @@ function renderAccountCard(account: any): string {
     showToast(personaId ? '已归属到该身份（自动共用其浏览器+IP）' : '已解除归属', 'success');
     await loadAccounts();
   } catch (error) { showToast('' + error, 'error'); }
+};
+
+// #10 转移归属：弹出身份选择器（仅手工账号会显示该入口），选定后改挂到目标 Gmail 身份
+(window as any).transferAccountPersona = function(accountId: string, currentPersonaId: string) {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal active';
+  const optionRow = (id: string, label: string): string => {
+    const isCur = (id || '') === (currentPersonaId || '');
+    return `<button class="email-tab ${isCur ? 'active' : ''}" data-pid="${escapeHtml(id)}" style="width:100%;justify-content:space-between;max-width:none;">
+      <span style="overflow:hidden;text-overflow:ellipsis;">${escapeHtml(label)}</span>${isCur ? `<span style="font-size:11px;opacity:.85;margin-left:8px;">${escapeHtml(t('transfer.current'))}</span>` : ''}
+    </button>`;
+  };
+  const rows = [
+    ...personasCache.map((p: any) => optionRow(p.id, `📧 ${p.email}`)),
+    optionRow('', `🧩 ${t('transfer.unassigned')}`),
+  ].join('');
+  overlay.innerHTML = `
+    <div class="modal-content" style="max-width:460px;display:flex;flex-direction:column;">
+      <div class="modal-header"><h3>${escapeHtml(t('transfer.title'))}</h3><button class="modal-close" data-cancel>&times;</button></div>
+      <div class="modal-body" style="overflow:auto;">
+        <div class="text-muted" style="font-size:12px;margin-bottom:8px;">${escapeHtml(t('transfer.hint'))}</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">${rows}</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-cancel>${escapeHtml(t('provision.cancel'))}</button>
+      </div>
+    </div>`;
+  let done = false;
+  const close = () => { if (done) return; done = true; overlay.remove(); };
+  overlay.querySelectorAll('[data-cancel]').forEach(el => el.addEventListener('click', close));
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+  overlay.querySelectorAll('button[data-pid]').forEach(btn => btn.addEventListener('click', async () => {
+    const pid = btn.getAttribute('data-pid') || '';
+    if (pid === (currentPersonaId || '')) { close(); return; }   // 没变化
+    close();
+    try {
+      await invoke('set_account_persona', { accountId, personaId: pid || null });
+      showToast(t('transfer.done'), 'success');
+      await loadAccounts();
+    } catch (error) { showToast(t('transfer.failed') + error, 'error'); }
+  }));
+  document.body.appendChild(overlay);
 };
 
 // Start warmup for a new account
@@ -2435,7 +2805,7 @@ async function saveAccount() {
   const password = (document.getElementById('accountPassword') as HTMLInputElement)?.value;
 
   if (!platform || !username) {
-    showToast('Platform and username are required', 'error');
+    showToast(t('accounts.requiredFields'), 'error');
     return;
   }
 
@@ -2452,18 +2822,18 @@ async function saveAccount() {
     showToast(t('msg.accountAdded'), 'success');
   } catch (error) {
     console.error('Failed to save account:', error);
-    showToast('Failed to save account', 'error');
+    showToast(t('accounts.saveFailed'), 'error');
   }
 }
 
 (window as any).deleteAccount = async function(id: string) {
-  if (!(await uiConfirm('Delete this account?'))) return;
+  if (!(await uiConfirm(t('accounts.deleteConfirm')))) return;
   try {
     await invoke('delete_account', { id });
     await loadAccounts();
     showToast(t('msg.accountDeleted'), 'success');
   } catch (error) {
-    showToast('Failed to delete account', 'error');
+    showToast(t('accounts.deleteFailed'), 'error');
   }
 };
 

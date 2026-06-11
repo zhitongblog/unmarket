@@ -3430,3 +3430,84 @@ textarea.input {
   font-size: 10px;
   text-transform: uppercase;
 }
+
+/* ===== 收起/展开平台按钮（#8 美化）+ 邮箱编组（#9） ===== */
+.collapse-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color .15s ease, border-color .15s ease, background .15s ease;
+  white-space: nowrap;
+}
+.collapse-btn:hover {
+  color: var(--accent-text);
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+.collapse-btn .chev {
+  display: inline-block;
+  font-size: 9px;
+  transition: transform .18s ease;
+}
+.collapse-btn.is-collapsed .chev {
+  transform: rotate(-90deg);
+}
+
+/* 邮箱编组卡片：邮箱 tab 行 + 收起按钮 + 平台列表 视觉成组 */
+.email-group {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md, 8px);
+  overflow: hidden;
+  margin: 0 0 12px;
+}
+.email-group-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-light);
+}
+.email-tabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
+}
+.email-tab {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all .15s ease;
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.email-tab:hover { border-color: var(--border-focus); color: var(--text-primary); }
+.email-tab.active {
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.email-group-body { padding: 12px 14px; }
+.email-group-body .account-item:last-child { margin-bottom: 0; }

@@ -137,6 +137,37 @@
       "accounts.createProfile": "\u521B\u5EFA Profile",
       "accounts.noAccounts": "\u6682\u65E0\u8D26\u53F7",
       "accounts.autoRegisterHint": "\u4F7F\u7528\u81EA\u52A8\u6CE8\u518C\u6216\u624B\u52A8\u6DFB\u52A0\u8D26\u53F7",
+      // 添加账号弹窗
+      "accounts.modalTitle": "\u6DFB\u52A0\u5E73\u53F0\u8D26\u53F7",
+      "accounts.platform": "\u5E73\u53F0",
+      "accounts.usernameEmail": "\u7528\u6237\u540D / \u90AE\u7BB1",
+      "accounts.usernameEmailPlaceholder": "\u7528\u6237\u540D\u6216\u90AE\u7BB1",
+      "accounts.passwordApiKey": "\u5BC6\u7801 / API Key",
+      "accounts.passwordApiKeyPlaceholder": "\u5BC6\u7801\u6216 API Key",
+      "accounts.saveAccount": "\u4FDD\u5B58\u8D26\u53F7",
+      "accounts.requiredFields": "\u5E73\u53F0\u548C\u7528\u6237\u540D\u4E3A\u5FC5\u586B\u9879",
+      "accounts.saveFailed": "\u4FDD\u5B58\u8D26\u53F7\u5931\u8D25",
+      "accounts.deleteConfirm": "\u5220\u9664\u8BE5\u8D26\u53F7\uFF1F",
+      "accounts.deleteFailed": "\u5220\u9664\u8D26\u53F7\u5931\u8D25",
+      // 邮箱中心页布局
+      "accounts.newGmail": "+ \u65B0\u5EFA Gmail",
+      "accounts.collapseAll": "\u6536\u8D77\u5168\u90E8\u5E73\u53F0",
+      "accounts.expandAll": "\u5C55\u5F00\u5168\u90E8\u5E73\u53F0",
+      "accounts.collapse": "\u6536\u8D77\u5E73\u53F0",
+      "accounts.expand": "\u5C55\u5F00\u5E73\u53F0",
+      "accounts.collapsedHint": "\u5DF2\u6536\u8D77 {n} \u4E2A\u5E73\u53F0\u8D26\u53F7",
+      "accounts.emailLabel": "\u{1F4E7} \u90AE\u7BB1\uFF1A",
+      "accounts.browser": "\u6D4F\u89C8\u5668",
+      "accounts.noNode": "\u{1F310} \u8282\u70B9\u672A\u5206\u914D",
+      "accounts.accountCount": "{n} \u4E2A\u8D26\u53F7",
+      "accounts.loginGmail": "\u{1F4E7} \u767B\u5F55 Gmail",
+      "accounts.provisionBtn": "\u{1F680} \u68C0\u67E5\u5E76\u5F00\u901A\u8D26\u53F7",
+      "accounts.addAccountBtn": "+ \u52A0\u8D26\u53F7",
+      "accounts.deleteEmail": "\u5220\u9664\u6B64\u90AE\u7BB1",
+      "accounts.noEmailYet": "\u8FD8\u6CA1\u6709\u90AE\u7BB1\u3002\u7528\u4E00\u4E2A\u771F\u5B9E Gmail \u65B0\u5EFA\u7B2C\u4E00\u4E2A \u2192",
+      "accounts.unassignedTitle": "\u{1F9E9} \u672A\u5F52\u5C5E\u90AE\u7BB1 \xB7 {n} \u4E2A\u8D26\u53F7",
+      "accounts.unassignedHint": "\u8FD9\u4E9B\u8D26\u53F7\u8FD8\u6CA1\u6302\u5230\u67D0\u4E2A Gmail \u4E0B\u3002\u5728\u8D26\u53F7\u4E0A\u9009\u300C\u5F52\u5C5E\u8EAB\u4EFD\u300D\u5F52\u7C7B\u5373\u53EF\u3002",
+      "accounts.emptyEmailHint": "\u8FD9\u4E2A\u90AE\u7BB1\u8FD8\u6CA1\u6709\u8D26\u53F7 \u2014\u2014 \u70B9\u4E0A\u9762\u300C\u{1F680} \u68C0\u67E5\u5E76\u5F00\u901A\u8D26\u53F7\u300D\u81EA\u52A8\u5F00\u901A\u5404\u5E73\u53F0\uFF0C\u6216\u300C+ \u52A0\u8D26\u53F7\u300D\u624B\u52A8\u52A0\u3002",
       // Nurturing (养号)
       "nurture.title": "\u8D26\u53F7\u517B\u62A4",
       "nurture.description": "\u6A21\u62DF\u6B63\u5E38\u7528\u6237\u6D4F\u89C8\u884C\u4E3A\uFF0C\u63D0\u5347\u8D26\u53F7\u6743\u91CD",
@@ -159,6 +190,64 @@
       "nurture.failed": "\u517B\u53F7\u5931\u8D25",
       "nurture.stopped": "\u517B\u53F7\u5DF2\u505C\u6B62",
       "nurture.noAccounts": "\u6682\u65E0\u8D26\u53F7\uFF0C\u8BF7\u5148\u6DFB\u52A0\u8D26\u53F7",
+      // Provision (开通账号选择器 / 加账号流程)
+      "provision.title": "\u7528 {email} \u5F00\u901A\u5E73\u53F0",
+      "provision.hint": "\u52FE\u9009\u8981\u5F00\u901A\u7684\u5E73\u53F0\uFF08\u4EC5\u5217\u51FA\u53EF\u81EA\u52A8\u5F00\u901A\u3001\u4E14\u5C1A\u672A\u5F00\u901A\u7684 Google \u767B\u5F55\u5E73\u53F0\uFF09\u3002",
+      "provision.selectAuto": "\u5168\u9009",
+      "provision.cancel": "\u53D6\u6D88",
+      "provision.apply": "\u5F00\u901A ({n})",
+      "provision.provisioned": "\u5DF2\u5F00\u901A",
+      "provision.auto": "\u{1F7E2}\u81EA\u52A8",
+      "provision.manual": "\u{1F7E1}\u9700\u624B\u52A8",
+      "provision.loadFailed": "\u52A0\u8F7D\u5E73\u53F0\u5217\u8868\u5931\u8D25\uFF1A",
+      "provision.noChanges": "\u6CA1\u6709\u53D8\u66F4",
+      "provision.provisioning": "\u6B63\u5728\u7528 {email} \u5F00\u901A {n} \u4E2A\u5E73\u53F0\u2026\uFF08\u9010\u4E2A\u8DD1\uFF0C\u8BF7\u8010\u5FC3\u7B49\uFF09",
+      "provision.removed": "\u5DF2\u79FB\u9664 {n} \u4E2A\u5E73\u53F0\u8D26\u53F7",
+      "provision.allDone": "\u8BE5\u90AE\u7BB1\u53EF\u81EA\u52A8\u5F00\u901A\u7684\u5E73\u53F0\u90FD\u5DF2\u5F00\u901A",
+      // 加账号（手机号 / 账号密码 分区录入）
+      "addacct.title": "\u7ED9 {email} \u52A0\u8D26\u53F7",
+      "addacct.hint": "\u53EA\u5217\u51FA\u53EF\u624B\u52A8\u6DFB\u52A0\u3001\u4E14\u5C1A\u672A\u6DFB\u52A0\u7684\u5E73\u53F0\uFF1B\u586B\u4E86\u51ED\u636E\u7684\u624D\u4F1A\u88AB\u6DFB\u52A0\u3002",
+      "addacct.phoneGroup": "\u{1F4F1} \u624B\u673A\u53F7\u767B\u5F55",
+      "addacct.passwordGroup": "\u{1F511} \u8D26\u53F7\u5BC6\u7801\u767B\u5F55",
+      "addacct.phonePlaceholder": "\u624B\u673A\u53F7",
+      "addacct.usernamePlaceholder": "\u8D26\u53F7 / \u90AE\u7BB1",
+      "addacct.passwordPlaceholder": "\u5BC6\u7801",
+      "addacct.submit": "\u6DFB\u52A0 ({n})",
+      "addacct.none": "\u8BE5\u90AE\u7BB1\u53EF\u624B\u52A8\u6DFB\u52A0\u7684\u5E73\u53F0\u90FD\u5DF2\u6DFB\u52A0",
+      "addacct.nothing": "\u6CA1\u6709\u586B\u5199\u4EFB\u4F55\u51ED\u636E",
+      "addacct.added": "\u5DF2\u6DFB\u52A0 {n} \u4E2A\u8D26\u53F7",
+      "addacct.addFailed": "\u52A0\u8D26\u53F7\u5931\u8D25\uFF1A",
+      // 转移归属（手工账号才可转移）
+      "transfer.btn": "\u8F6C\u79FB\u5F52\u5C5E",
+      "transfer.title": "\u8F6C\u79FB\u5F52\u5C5E",
+      "transfer.hint": "\u9009\u62E9\u628A\u8FD9\u4E2A\u8D26\u53F7\u6302\u5230\u54EA\u4E2A Gmail \u8EAB\u4EFD\u4E0B\uFF08\u4E4B\u540E\u5171\u7528\u8BE5\u8EAB\u4EFD\u7684\u6D4F\u89C8\u5668+IP+\u6307\u7EB9\uFF09\u3002",
+      "transfer.unassigned": "\u672A\u5F52\u5C5E\uFF08\u7528\u5168\u5C40 Profile\uFF09",
+      "transfer.current": "\u5F53\u524D",
+      "transfer.done": "\u5DF2\u8F6C\u79FB\u5F52\u5C5E",
+      "transfer.failed": "\u8F6C\u79FB\u5931\u8D25\uFF1A",
+      // 登录方式标注
+      "login.method": "\u767B\u5F55\u65B9\u5F0F",
+      "login.google": "Google \u767B\u5F55",
+      "login.phone": "\u624B\u673A\u53F7",
+      "login.password": "\u8D26\u53F7\u5BC6\u7801",
+      // 场景分组
+      "scene.research": "\u{1F4BB} \u7814\u53D1/\u6280\u672F",
+      "scene.product": "\u{1F680} \u4EA7\u54C1/\u521B\u4E1A",
+      "scene.social": "\u{1F310} \u901A\u7528/\u5927\u4F17\u793E\u4EA4",
+      "scene.content": "\u{1F4DD} \u77E5\u8BC6/\u5185\u5BB9",
+      "scene.career": "\u{1F4BC} \u804C\u573A/\u5546\u52A1",
+      "scene.lifestyle": "\u{1F6CD}\uFE0F \u751F\u6D3B/\u79CD\u8349",
+      // 新建 / 删除身份
+      "persona.createTitle": "\u65B0\u5EFA Gmail \u8EAB\u4EFD",
+      "persona.createLabel": "\u8F93\u5165\u4E00\u4E2A\u771F\u5B9E Gmail\uFF08\u8FD9\u4E2A\u90AE\u7BB1\u4F1A\u6210\u4E3A\u4E00\u5957\u72EC\u7ACB\u8EAB\u4EFD\uFF1A\u72EC\u7ACB\u6D4F\u89C8\u5668+IP+\u6307\u7EB9\uFF09",
+      "persona.createOk": "\u521B\u5EFA",
+      "persona.invalidEmail": "\u8BF7\u8F93\u5165\u6709\u6548\u7684 Gmail \u5730\u5740",
+      "persona.creating": "\u6B63\u5728\u521B\u5EFA\u8EAB\u4EFD\u2026\uFF08\u5EFA\u6D4F\u89C8\u5668+\u968F\u673A\u6307\u7EB9+\u5206\u914D\u51FA\u53E3\u8282\u70B9\uFF0C\u7EA6 5-10 \u79D2\uFF09",
+      "persona.created": "\u90AE\u7BB1\u5DF2\u5EFA\u597D \u2713 \u5DF2\u6253\u5F00 Google \u767B\u5F55\u9875 \u2192 \u8BF7\u5728\u5F39\u51FA\u7684\u6D4F\u89C8\u5668\u7A97\u53E3\u767B\u5F55 {email}\uFF08\u57FA\u7840\u767B\u5F55\uFF0C\u53EA\u9700\u4E00\u6B21\uFF1B\u767B\u597D\u540E\u624D\u80FD\u81EA\u52A8\u6CE8\u518C/\u767B\u5F55\u8D26\u53F7\uFF09",
+      "persona.createFailed": "\u521B\u5EFA\u5931\u8D25\uFF1A",
+      "persona.deleteConfirm": "\u5220\u9664\u8EAB\u4EFD {email}\uFF1F\n\u4F1A\u5220\u6389\u5B83\u7684\u72EC\u7ACB\u6D4F\u89C8\u5668\u5E76\u91CA\u653E\u51FA\u53E3\u8282\u70B9\uFF1B\u540D\u4E0B\u8D26\u53F7\u4F1A\u53D8\u6210\u300C\u672A\u5F52\u5C5E\u300D\u3002",
+      "persona.deleted": "\u8EAB\u4EFD\u5DF2\u5220\u9664",
+      "persona.deleteFailed": "\u5220\u9664\u5931\u8D25\uFF1A",
       // Settings
       "settings.title": "\u8BBE\u7F6E",
       "settings.aiConfig": "AI \u914D\u7F6E",
@@ -433,6 +522,36 @@
       "accounts.autoLogin": "Auto-Login/Register Selected",
       "accounts.syncAll": "Sync All",
       "accounts.syncAllHint": `"Sync All" will check which platforms you're already logged into in Unzoo browser`,
+      "accounts.modalTitle": "Add Platform Account",
+      "accounts.platform": "Platform",
+      "accounts.usernameEmail": "Username / Email",
+      "accounts.usernameEmailPlaceholder": "username or email",
+      "accounts.passwordApiKey": "Password / API Key",
+      "accounts.passwordApiKeyPlaceholder": "password or API key",
+      "accounts.saveAccount": "Save Account",
+      "accounts.requiredFields": "Platform and username are required",
+      "accounts.saveFailed": "Failed to save account",
+      "accounts.deleteConfirm": "Delete this account?",
+      "accounts.deleteFailed": "Failed to delete account",
+      // Email hub layout
+      "accounts.newGmail": "+ New Gmail",
+      "accounts.collapseAll": "Collapse all",
+      "accounts.expandAll": "Expand all",
+      "accounts.collapse": "Collapse",
+      "accounts.expand": "Expand",
+      "accounts.collapsedHint": "{n} platform account(s) collapsed",
+      "accounts.emailLabel": "\u{1F4E7} Email:",
+      "accounts.browser": "Browser",
+      "accounts.noNode": "\u{1F310} No node assigned",
+      "accounts.accountCount": "{n} account(s)",
+      "accounts.loginGmail": "\u{1F4E7} Sign in Gmail",
+      "accounts.provisionBtn": "\u{1F680} Check & provision",
+      "accounts.addAccountBtn": "+ Add account",
+      "accounts.deleteEmail": "Delete this email",
+      "accounts.noEmailYet": "No email yet. Create your first one with a real Gmail \u2192",
+      "accounts.unassignedTitle": "\u{1F9E9} Unassigned \xB7 {n} account(s)",
+      "accounts.unassignedHint": 'These accounts are not under any Gmail yet. Set "Identity" on an account to group it.',
+      "accounts.emptyEmailHint": 'No accounts under this email yet \u2014 click "\u{1F680} Check & provision" to auto-provision, or "+ Add account" to add manually.',
       "accounts.existingAccounts": "Existing Accounts",
       "accounts.delete": "Delete",
       "accounts.useGlobalProfile": "-- Use Global Profile --",
@@ -461,6 +580,64 @@
       "nurture.failed": "Nurturing failed",
       "nurture.stopped": "Nurturing stopped",
       "nurture.noAccounts": "No accounts yet, please add accounts first",
+      // Provision (platform provisioning selector / add-account flow)
+      "provision.title": "Provision platforms for {email}",
+      "provision.hint": "Check platforms to provision (only auto-provisionable, not-yet-added Google-login platforms are listed).",
+      "provision.selectAuto": "Select all",
+      "provision.cancel": "Cancel",
+      "provision.apply": "Provision ({n})",
+      "provision.provisioned": "Provisioned",
+      "provision.auto": "\u{1F7E2} Auto",
+      "provision.manual": "\u{1F7E1} Manual",
+      "provision.loadFailed": "Failed to load platform list: ",
+      "provision.noChanges": "No changes",
+      "provision.provisioning": "Provisioning {n} platform(s) with {email}\u2026 (one by one, please wait)",
+      "provision.removed": "Removed {n} platform account(s)",
+      "provision.allDone": "All auto-provisionable platforms for this email are already provisioned",
+      // Add account (phone / username-password grouped input)
+      "addacct.title": "Add accounts for {email}",
+      "addacct.hint": "Only manually-addable, not-yet-added platforms are listed; only those with credentials filled will be added.",
+      "addacct.phoneGroup": "\u{1F4F1} Phone login",
+      "addacct.passwordGroup": "\u{1F511} Username & password",
+      "addacct.phonePlaceholder": "Phone number",
+      "addacct.usernamePlaceholder": "Username / email",
+      "addacct.passwordPlaceholder": "Password",
+      "addacct.submit": "Add ({n})",
+      "addacct.none": "All manually-addable platforms for this email are already added",
+      "addacct.nothing": "No credentials entered",
+      "addacct.added": "Added {n} account(s)",
+      "addacct.addFailed": "Failed to add account: ",
+      // Transfer ownership (manual accounts only)
+      "transfer.btn": "Transfer",
+      "transfer.title": "Transfer ownership",
+      "transfer.hint": "Choose which Gmail identity this account belongs to (it will share that identity's browser + IP + fingerprint).",
+      "transfer.unassigned": "Unassigned (global profile)",
+      "transfer.current": "Current",
+      "transfer.done": "Ownership transferred",
+      "transfer.failed": "Transfer failed: ",
+      // Login method labels
+      "login.method": "Login method",
+      "login.google": "Google sign-in",
+      "login.phone": "Phone number",
+      "login.password": "Username & password",
+      // Scene groups
+      "scene.research": "\u{1F4BB} Dev / Tech",
+      "scene.product": "\u{1F680} Product / Startup",
+      "scene.social": "\u{1F310} General / Social",
+      "scene.content": "\u{1F4DD} Knowledge / Content",
+      "scene.career": "\u{1F4BC} Career / Business",
+      "scene.lifestyle": "\u{1F6CD}\uFE0F Lifestyle / Recommendation",
+      // Create / delete persona
+      "persona.createTitle": "New Gmail identity",
+      "persona.createLabel": "Enter a real Gmail (this email becomes a standalone identity: dedicated browser + IP + fingerprint)",
+      "persona.createOk": "Create",
+      "persona.invalidEmail": "Please enter a valid Gmail address",
+      "persona.creating": "Creating identity\u2026 (browser + random fingerprint + exit node, ~5-10s)",
+      "persona.created": "Email ready \u2713 Google sign-in page opened \u2192 please sign in to {email} in the popup browser window (basic login, once only; required before auto register/login)",
+      "persona.createFailed": "Create failed: ",
+      "persona.deleteConfirm": 'Delete identity {email}?\nIts dedicated browser will be removed and exit node released; accounts under it become "unassigned".',
+      "persona.deleted": "Identity deleted",
+      "persona.deleteFailed": "Delete failed: ",
       // Settings
       "settings.title": "Settings",
       "settings.aiConfig": "AI Configuration",
@@ -690,6 +867,13 @@
   };
   function t(key) {
     return translations[currentLanguage][key] || translations["en"][key] || key;
+  }
+  function tf(key, vars) {
+    let s = t(key);
+    for (const [k, v] of Object.entries(vars)) {
+      s = s.replace(new RegExp(`\\{${k}\\}`, "g"), String(v));
+    }
+    return s;
   }
   function updateAllTranslations() {
     document.querySelectorAll("[data-i18n]").forEach((el) => {
@@ -1006,45 +1190,47 @@
     });
   }
   window.uiConfirm = uiConfirm;
-  var SCENE_LABELS = {
-    research: "\u{1F4BB} \u7814\u53D1/\u6280\u672F",
-    product: "\u{1F680} \u4EA7\u54C1/\u521B\u4E1A",
-    social: "\u{1F310} \u901A\u7528/\u5927\u4F17\u793E\u4EA4",
-    content: "\u{1F4DD} \u77E5\u8BC6/\u5185\u5BB9",
-    career: "\u{1F4BC} \u804C\u573A/\u5546\u52A1",
-    lifestyle: "\u{1F6CD}\uFE0F \u751F\u6D3B/\u79CD\u8349"
-  };
   var SCENE_ORDER = ["research", "product", "social", "content", "career", "lifestyle"];
   var REGION_FLAGS = { us: "\u{1F1FA}\u{1F1F8}", jp: "\u{1F1EF}\u{1F1F5}", kr: "\u{1F1F0}\u{1F1F7}", ru: "\u{1F1F7}\u{1F1FA}", cn: "\u{1F1E8}\u{1F1F3}", global: "\u{1F310}" };
+  var LOGIN_ICONS = { google: "\u{1F535}", phone: "\u{1F4F1}", password: "\u{1F511}" };
+  function loginMethodBadge(method) {
+    if (!method) return "";
+    const icon = LOGIN_ICONS[method] || "\u{1F510}";
+    const label = t(`login.${method}`);
+    return `<span title="${escapeHtml(t("login.method"))}" style="color:var(--text-muted);font-size:11px;white-space:nowrap;">${icon} ${escapeHtml(label)}</span>`;
+  }
   function pickProvisionPlatforms(email, catalog) {
     return new Promise((resolve) => {
       const overlay = document.createElement("div");
       overlay.className = "modal active";
       const groups = SCENE_ORDER.map((s) => ({ s, items: catalog.filter((c) => c.scene === s) })).filter((g) => g.items.length);
       const groupHtml = groups.map((g) => `
-      <div style="margin:14px 0 8px;font-weight:700;font-size:13px;color:var(--text-muted);">${SCENE_LABELS[g.s] || g.s}</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;">
+      <div style="margin:14px 0 8px;font-weight:700;font-size:13px;color:var(--text-muted);">${t(`scene.${g.s}`)}</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;">
         ${g.items.map((c) => {
         const flag = REGION_FLAGS[c.region] || "\u{1F310}";
-        const badge = c.provisioned ? '<span style="color:#16a34a;font-size:12px;">\u5DF2\u5F00\u901A</span>' : c.mode === "auto" ? '<span style="color:#16a34a;font-size:12px;">\u{1F7E2}\u81EA\u52A8</span>' : '<span style="color:#d97706;font-size:12px;">\u{1F7E1}\u9700\u624B\u52A8</span>';
+        const badge = c.provisioned ? `<span style="color:#16a34a;font-size:12px;">${t("provision.provisioned")}</span>` : c.mode === "auto" ? `<span style="color:#16a34a;font-size:12px;">${t("provision.auto")}</span>` : `<span style="color:#d97706;font-size:12px;">${t("provision.manual")}</span>`;
         return `<label style="display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:8px;padding:8px 10px;cursor:pointer;">
             <input type="checkbox" data-plat="${escapeHtml(c.platform)}" data-prov="${c.provisioned ? 1 : 0}" ${c.provisioned ? "checked" : ""}>
-            <span style="display:flex;align-items:center;gap:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(c.name)} ${flag} ${badge}</span>
+            <span style="display:flex;flex-direction:column;gap:2px;overflow:hidden;">
+              <span style="display:flex;align-items:center;gap:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(c.name)} ${flag} ${badge}</span>
+              ${loginMethodBadge(c.login_method)}
+            </span>
           </label>`;
       }).join("")}
       </div>`).join("");
       overlay.innerHTML = `
       <div class="modal-content" style="max-width:760px;max-height:84vh;display:flex;flex-direction:column;">
-        <div class="modal-header"><h3>\u7528 ${escapeHtml(email)} \u5F00\u901A\u5E73\u53F0</h3><button class="modal-close" data-cancel>&times;</button></div>
+        <div class="modal-header"><h3>${escapeHtml(tf("provision.title", { email }))}</h3><button class="modal-close" data-cancel>&times;</button></div>
         <div class="modal-body" style="overflow:auto;">
-          <div class="text-muted" style="font-size:12px;margin-bottom:4px;">\u52FE\u9009\u8981\u5F00\u901A\u7684\u5E73\u53F0\uFF1B\u53D6\u6D88\u52FE\u9009\u300C\u5DF2\u5F00\u901A\u300D\u7684\u4F1A\u5220\u9664\u8BE5\u8D26\u53F7\u3002</div>
+          <div class="text-muted" style="font-size:12px;margin-bottom:4px;">${escapeHtml(t("provision.hint"))}</div>
           ${groupHtml}
         </div>
         <div class="modal-footer" style="display:flex;align-items:center;gap:8px;">
-          <button class="btn btn-secondary btn-small" data-selauto>\u5168\u9009\u53EF\u5F00\u901A\u7684</button>
+          <button class="btn btn-secondary btn-small" data-selauto>${escapeHtml(t("provision.selectAuto"))}</button>
           <span style="flex:1;"></span>
-          <button class="btn btn-secondary" data-cancel>\u53D6\u6D88</button>
-          <button class="btn btn-primary" data-ok>\u5E94\u7528\u66F4\u6539 (0)</button>
+          <button class="btn btn-secondary" data-cancel>${escapeHtml(t("provision.cancel"))}</button>
+          <button class="btn btn-primary" data-ok>${escapeHtml(tf("provision.apply", { n: 0 }))}</button>
         </div>
       </div>`;
       const boxes = () => Array.from(overlay.querySelectorAll("input[type=checkbox]"));
@@ -1052,7 +1238,7 @@
       const changeCount = () => boxes().filter((b) => b.checked !== (b.getAttribute("data-prov") === "1")).length;
       const okBtn = overlay.querySelector("[data-ok]");
       const refresh = () => {
-        okBtn.textContent = `\u5E94\u7528\u66F4\u6539 (${changeCount()})`;
+        okBtn.textContent = tf("provision.apply", { n: changeCount() });
       };
       let done = false;
       const finish = (val) => {
@@ -1078,6 +1264,71 @@
     });
   }
   window.pickProvisionPlatforms = pickProvisionPlatforms;
+  function pickAddAccounts(email, candidates) {
+    return new Promise((resolve) => {
+      const overlay = document.createElement("div");
+      overlay.className = "modal active";
+      const rowHtml = (c) => {
+        const flag = REGION_FLAGS[c.region] || "\u{1F310}";
+        const head = `<div style="display:flex;align-items:center;gap:6px;min-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(c.name)} ${flag}</div>`;
+        const inputs = c.login_method === "phone" ? `<input class="input" data-plat="${escapeHtml(c.platform)}" data-field="phone" placeholder="${escapeHtml(t("addacct.phonePlaceholder"))}" style="flex:1;min-width:120px;">` : `<input class="input" data-plat="${escapeHtml(c.platform)}" data-field="username" placeholder="${escapeHtml(t("addacct.usernamePlaceholder"))}" style="flex:1;min-width:120px;">
+           <input class="input" type="password" data-plat="${escapeHtml(c.platform)}" data-field="password" placeholder="${escapeHtml(t("addacct.passwordPlaceholder"))}" style="flex:1;min-width:110px;">`;
+        return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;flex-wrap:wrap;">${head}${inputs}</div>`;
+      };
+      const block = (titleKey, method) => {
+        const items = candidates.filter((c) => c.login_method === method);
+        if (!items.length) return "";
+        return `<div style="margin:12px 0 4px;font-weight:700;font-size:13px;color:var(--text-muted);">${t(titleKey)}</div>${items.map(rowHtml).join("")}`;
+      };
+      overlay.innerHTML = `
+      <div class="modal-content" style="max-width:640px;max-height:84vh;display:flex;flex-direction:column;">
+        <div class="modal-header"><h3>${escapeHtml(tf("addacct.title", { email }))}</h3><button class="modal-close" data-cancel>&times;</button></div>
+        <div class="modal-body" style="overflow:auto;">
+          <div class="text-muted" style="font-size:12px;margin-bottom:4px;">${escapeHtml(t("addacct.hint"))}</div>
+          ${block("addacct.phoneGroup", "phone")}
+          ${block("addacct.passwordGroup", "password")}
+        </div>
+        <div class="modal-footer" style="display:flex;align-items:center;gap:8px;">
+          <span style="flex:1;"></span>
+          <button class="btn btn-secondary" data-cancel>${escapeHtml(t("provision.cancel"))}</button>
+          <button class="btn btn-primary" data-ok>${escapeHtml(tf("addacct.submit", { n: 0 }))}</button>
+        </div>
+      </div>`;
+      const collect = () => {
+        const out = [];
+        candidates.forEach((c) => {
+          if (c.login_method === "phone") {
+            const v = overlay.querySelector(`input[data-plat="${c.platform}"][data-field="phone"]`)?.value.trim();
+            if (v) out.push({ platform: c.platform, username: v, password: "" });
+          } else {
+            const u = overlay.querySelector(`input[data-plat="${c.platform}"][data-field="username"]`)?.value.trim();
+            const p = overlay.querySelector(`input[data-plat="${c.platform}"][data-field="password"]`)?.value || "";
+            if (u) out.push({ platform: c.platform, username: u, password: p });
+          }
+        });
+        return out;
+      };
+      const okBtn = overlay.querySelector("[data-ok]");
+      const refresh = () => {
+        okBtn.textContent = tf("addacct.submit", { n: collect().length });
+      };
+      let done = false;
+      const finish = (val) => {
+        if (done) return;
+        done = true;
+        overlay.remove();
+        resolve(val);
+      };
+      overlay.querySelectorAll("[data-cancel]").forEach((el) => el.addEventListener("click", () => finish(null)));
+      okBtn.addEventListener("click", () => finish(collect()));
+      overlay.addEventListener("input", refresh);
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) finish(null);
+      });
+      document.body.appendChild(overlay);
+    });
+  }
+  window.pickAddAccounts = pickAddAccounts;
   function initTabs() {
     document.querySelectorAll(".tabs").forEach((tabGroup) => {
       tabGroup.querySelectorAll(".tab").forEach((tab) => {
@@ -1754,12 +2005,20 @@
     empty.style.display = "none";
     if (tabIds.length === 0) {
       list.innerHTML = airportBar + `<div class="card" style="padding:18px;text-align:center;">
-      <div class="text-muted">\u8FD8\u6CA1\u6709\u90AE\u7BB1\u3002\u7528\u4E00\u4E2A\u771F\u5B9E Gmail \u65B0\u5EFA\u7B2C\u4E00\u4E2A \u2192</div>
-      <button class="btn btn-primary" style="margin-top:10px;" onclick="createPersonaPrompt()">+ \u65B0\u5EFA Gmail</button></div>`;
+      <div class="text-muted">${escapeHtml(t("accounts.noEmailYet"))}</div>
+      <button class="btn btn-primary" style="margin-top:10px;" onclick="createPersonaPrompt()">${escapeHtml(t("accounts.newGmail"))}</button></div>`;
       return;
     }
     if (!selectedPersonaId || !tabIds.includes(selectedPersonaId)) selectedPersonaId = tabIds[0];
-    const tabs = tabIds.map((id) => {
+    const allCollapsed = tabIds.length > 0 && tabIds.every((id) => collapsedPersonas.has(id));
+    const toolbar = `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 12px;">
+    <button class="btn btn-small btn-primary" onclick="createPersonaPrompt()" title="\u7528\u4E00\u4E2A\u771F\u5B9E Gmail \u65B0\u5EFA\u4E00\u5957\u72EC\u7ACB\u8EAB\u4EFD">${escapeHtml(t("accounts.newGmail"))}</button>
+    ${collapseBtnHtml("toggleCollapseAllPersonas()", allCollapsed, allCollapsed ? t("accounts.expandAll") : t("accounts.collapseAll"))}
+  </div>`;
+    const sel = selectedPersonaId;
+    const accts = groups.get(sel) || [];
+    const collapsed = collapsedPersonas.has(sel);
+    const tabsHtml = tabIds.map((id) => {
       const active = id === selectedPersonaId;
       let label;
       if (id === "__none__") label = `\u{1F9E9} \u672A\u5F52\u5C5E(${groups.get("__none__").length})`;
@@ -1767,37 +2026,65 @@
         const p = personasCache.find((x) => x.id === id);
         label = `\u{1F4E7} ${p?.email || "\u90AE\u7BB1"}`;
       }
-      return `<button class="btn btn-small ${active ? "btn-primary" : "btn-secondary"}" onclick="selectEmail('${id}')">${escapeHtml(label)}</button>`;
+      return `<button class="email-tab ${active ? "active" : ""}" onclick="selectEmail('${id}')" title="${escapeHtml(label)}">${escapeHtml(label)}</button>`;
     }).join("");
-    const tabBar = `<div class="card" style="margin:0 0 12px;padding:10px 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-    <span style="font-weight:700;">\u{1F4E7} \u90AE\u7BB1\uFF1A</span>${tabs}
-    <button class="btn btn-small btn-primary" style="margin-left:auto;" onclick="createPersonaPrompt()" title="\u7528\u4E00\u4E2A\u771F\u5B9E Gmail \u65B0\u5EFA\u4E00\u5957\u72EC\u7ACB\u8EAB\u4EFD">+ \u65B0\u5EFA Gmail</button>
+    const groupHead = `<div class="email-group-head">
+    <div class="email-tabs">${tabsHtml}</div>
+    ${collapseBtnHtml(`togglePersonaCollapse('${sel}')`, collapsed, collapsed ? t("accounts.expand") : t("accounts.collapse"))}
   </div>`;
-    const sel = selectedPersonaId;
-    const accts = groups.get(sel) || [];
-    let panel = "";
+    const cardsHtml = collapsed ? `<div class="text-muted" style="text-align:center;padding:6px 0;">${escapeHtml(tf("accounts.collapsedHint", { n: accts.length }))}</div>` : accts.length ? accts.map((x) => renderAccountCard(x)).join("") : `<div class="text-muted" style="text-align:center;padding:8px 0;">${escapeHtml(sel === "__none__" ? t("accounts.unassignedHint") : t("accounts.emptyEmailHint"))}</div>`;
+    let infoBar = "";
     if (sel === "__none__") {
-      panel = `<div class="card" style="margin:0 0 8px;padding:10px 14px;border-left:4px solid #d97706;">
-      <div style="font-weight:600;">\u{1F9E9} \u672A\u5F52\u5C5E\u90AE\u7BB1 \xB7 ${accts.length} \u4E2A\u8D26\u53F7</div>
-      <div class="text-muted" style="font-size:12px;">\u8FD9\u4E9B\u8D26\u53F7\u8FD8\u6CA1\u6302\u5230\u67D0\u4E2A Gmail \u4E0B\u3002\u5728\u8D26\u53F7\u4E0A\u9009\u300C\u5F52\u5C5E\u8EAB\u4EFD\u300D\u5F52\u7C7B\u5373\u53EF\u3002</div></div>`;
-      panel += accts.map((x) => renderAccountCard(x)).join("");
+      infoBar = `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;border-left:4px solid #d97706;padding-left:10px;">
+      <span style="font-weight:600;">${escapeHtml(tf("accounts.unassignedTitle", { n: accts.length }))}</span>
+      <span class="text-muted" style="font-size:12px;">${escapeHtml(t("accounts.unassignedHint"))}</span>
+    </div>`;
     } else {
       const p = personasCache.find((x) => x.id === sel);
-      panel = `<div class="card" style="margin:0 0 8px;padding:12px 14px;border-left:4px solid #4a8cff;">
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-        <span style="font-weight:700;font-size:15px;">\u{1F4E7} ${escapeHtml(p?.email || "\u90AE\u7BB1")}</span>
-        <span class="text-muted" style="font-size:12px;">${p?.region ? escapeHtml(p.region) : "\u{1F310} \u8282\u70B9\u672A\u5206\u914D"}${p?.profile_id ? " \xB7 \u72EC\u7ACB\u6D4F\u89C8\u5668 " + escapeHtml(p.profile_id) : ""} \xB7 ${accts.length} \u4E2A\u8D26\u53F7</span>
-      </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;">
-        <button class="btn btn-small btn-secondary" onclick="personaGmailLogin('${sel}')" title="\u6253\u5F00\u8FD9\u4E2A\u90AE\u7BB1\u7684\u6D4F\u89C8\u5668\u767B\u5F55\u5B83\u7684 Gmail\uFF08\u57FA\u7840\u767B\u5F55\uFF0C\u5148\u505A\u8FD9\u6B65\uFF09">\u{1F4E7} \u767B\u5F55Gmail</button>
-        <button class="btn btn-small btn-success" onclick="personaProvisionAll('${sel}','${escapeHtml(p?.email || "")}')" title="\u9010\u5E73\u53F0\uFF1A\u6709\u5C31\u767B\u5F55\u3001\u6CA1\u6709\u5C31\u6CE8\u518C">\u{1F680} \u68C0\u67E5\u5E76\u5F00\u901A\u8D26\u53F7</button>
-        <button class="btn btn-small btn-primary" onclick="window.__addAccountPersona='${sel}';openModal('modalAddAccount');">+ \u52A0\u8D26\u53F7</button>
-        <button class="btn btn-small btn-secondary" style="margin-left:auto;color:#e55;" onclick="deletePersonaAcct('${sel}','${escapeHtml(p?.email || "")}')" title="\u5220\u9664\u8FD9\u4E2A\u90AE\u7BB1\u8EAB\u4EFD">\u5220\u9664\u6B64\u90AE\u7BB1</button>
-      </div></div>`;
-      panel += accts.length ? accts.map((x) => renderAccountCard(x)).join("") : `<div class="card" style="padding:16px;text-align:center;"><div class="text-muted">\u8FD9\u4E2A\u90AE\u7BB1\u8FD8\u6CA1\u6709\u8D26\u53F7 \u2014\u2014 \u70B9\u4E0A\u9762\u300C\u{1F680} \u68C0\u67E5\u5E76\u5F00\u901A\u8D26\u53F7\u300D\u81EA\u52A8\u5F00\u901A\u5404\u5E73\u53F0\uFF0C\u6216\u300C+ \u52A0\u8D26\u53F7\u300D\u624B\u52A8\u52A0\u3002</div></div>`;
+      const pname = profileNameOf(p);
+      const meta = [
+        p?.region ? escapeHtml(p.region) : t("accounts.noNode"),
+        pname ? `\u{1F5A5}\uFE0F ${t("accounts.browser")}: ${escapeHtml(pname)}` : "",
+        tf("accounts.accountCount", { n: accts.length })
+      ].filter(Boolean).join(" \xB7 ");
+      infoBar = `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;border-left:4px solid #4a8cff;padding-left:10px;">
+      <span class="text-muted" style="font-size:12px;">${meta}</span>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
+      <button class="btn btn-small btn-secondary" onclick="personaGmailLogin('${sel}')" title="\u6253\u5F00\u8FD9\u4E2A\u90AE\u7BB1\u7684\u6D4F\u89C8\u5668\u767B\u5F55\u5B83\u7684 Gmail\uFF08\u57FA\u7840\u767B\u5F55\uFF0C\u5148\u505A\u8FD9\u6B65\uFF09">${escapeHtml(t("accounts.loginGmail"))}</button>
+      <button class="btn btn-small btn-success" onclick="personaProvisionAll('${sel}','${escapeHtml(p?.email || "")}')" title="\u81EA\u52A8\u5F00\u901A Google \u767B\u5F55\u5E73\u53F0">${escapeHtml(t("accounts.provisionBtn"))}</button>
+      <button class="btn btn-small btn-primary" onclick="personaAddAccounts('${sel}','${escapeHtml(p?.email || "")}')" title="\u624B\u673A\u53F7 / \u8D26\u53F7\u5BC6\u7801\u5E73\u53F0\u624B\u52A8\u52A0\u8D26\u53F7">${escapeHtml(t("accounts.addAccountBtn"))}</button>
+      <button class="btn btn-small btn-secondary" style="margin-left:auto;color:#e55;" onclick="deletePersonaAcct('${sel}','${escapeHtml(p?.email || "")}')" title="\u5220\u9664\u8FD9\u4E2A\u90AE\u7BB1\u8EAB\u4EFD">${escapeHtml(t("accounts.deleteEmail"))}</button>
+    </div>`;
     }
-    list.innerHTML = airportBar + tabBar + panel;
+    const emailGroup = `<div class="email-group">${groupHead}<div class="email-group-body">${infoBar}${cardsHtml}</div></div>`;
+    list.innerHTML = airportBar + toolbar + emailGroup;
   }
+  function collapseBtnHtml(onclick, collapsed, label) {
+    return `<button class="collapse-btn ${collapsed ? "is-collapsed" : ""}" onclick="${onclick}"><span class="chev">\u25BE</span>${escapeHtml(label)}</button>`;
+  }
+  function profileNameOf(persona) {
+    if (!persona?.profile_id) return null;
+    const pid = persona.profile_id;
+    const lastSeg = (s) => (s || "").split(/[\\/]/).filter(Boolean).pop() || "";
+    const found = availableProfiles.find((p) => p.id === pid || lastSeg(p.id) === pid || lastSeg(p.path) === pid);
+    return found?.name || null;
+  }
+  var collapsedPersonas = /* @__PURE__ */ new Set();
+  window.togglePersonaCollapse = function(id) {
+    if (collapsedPersonas.has(id)) collapsedPersonas.delete(id);
+    else collapsedPersonas.add(id);
+    renderAccounts();
+  };
+  window.toggleCollapseAllPersonas = function() {
+    const groups = /* @__PURE__ */ new Map();
+    for (const acc of accounts) groups.set(acc.persona_id || "__none__", []);
+    const tabIds = [...personasCache.map((p) => p.id), ...groups.has("__none__") ? ["__none__"] : []];
+    const allCollapsed = tabIds.length > 0 && tabIds.every((id) => collapsedPersonas.has(id));
+    if (allCollapsed) collapsedPersonas.clear();
+    else tabIds.forEach((id) => collapsedPersonas.add(id));
+    renderAccounts();
+  };
   window.selectEmail = function(id) {
     selectedPersonaId = id;
     renderAccounts();
@@ -1821,24 +2108,24 @@
   };
   window.createPersonaPrompt = async function() {
     const email = (await uiPrompt({
-      title: "\u65B0\u5EFA Gmail \u8EAB\u4EFD",
-      label: "\u8F93\u5165\u4E00\u4E2A\u771F\u5B9E Gmail\uFF08\u8FD9\u4E2A\u90AE\u7BB1\u4F1A\u6210\u4E3A\u4E00\u5957\u72EC\u7ACB\u8EAB\u4EFD\uFF1A\u72EC\u7ACB\u6D4F\u89C8\u5668+IP+\u6307\u7EB9\uFF09",
+      title: t("persona.createTitle"),
+      label: t("persona.createLabel"),
       placeholder: "yourname@gmail.com",
-      okText: "\u521B\u5EFA"
+      okText: t("persona.createOk")
     }) || "").trim();
     if (!email) return;
     if (!email.includes("@")) {
-      showToast("\u8BF7\u8F93\u5165\u6709\u6548\u7684 Gmail \u5730\u5740", "error");
+      showToast(t("persona.invalidEmail"), "error");
       return;
     }
-    showToast("\u6B63\u5728\u521B\u5EFA\u8EAB\u4EFD\u2026\uFF08\u5EFA\u6D4F\u89C8\u5668+\u968F\u673A\u6307\u7EB9+\u5206\u914D\u51FA\u53E3\u8282\u70B9\uFF0C\u7EA6 5-10 \u79D2\uFF09", "info");
+    showToast(t("persona.creating"), "info");
     try {
       const dto = await invoke2("persona_create", { email });
       if (dto && dto.id) selectedPersonaId = dto.id;
-      showToast(`\u90AE\u7BB1\u5DF2\u5EFA\u597D \u2713 \u5DF2\u6253\u5F00 Google \u767B\u5F55\u9875 \u2192 \u8BF7\u5728\u5F39\u51FA\u7684\u6D4F\u89C8\u5668\u7A97\u53E3\u767B\u5F55 ${email}\uFF08\u57FA\u7840\u767B\u5F55\uFF0C\u53EA\u9700\u4E00\u6B21\uFF1B\u767B\u597D\u540E\u624D\u80FD\u81EA\u52A8\u6CE8\u518C/\u767B\u5F55\u8D26\u53F7\uFF09`, "info");
+      showToast(tf("persona.created", { email }), "info");
       await loadAccounts();
     } catch (e) {
-      showToast("\u521B\u5EFA\u5931\u8D25\uFF1A" + e, "error");
+      showToast(t("persona.createFailed") + e, "error");
     }
   };
   window.personaProvisionAll = async function(id, email) {
@@ -1846,33 +2133,63 @@
     try {
       catalog = await invoke2("persona_platform_catalog", { personaId: id });
     } catch (e) {
-      showToast("\u52A0\u8F7D\u5E73\u53F0\u5217\u8868\u5931\u8D25\uFF1A" + e, "error");
+      showToast(t("provision.loadFailed") + e, "error");
       return;
     }
-    const checkedArr = await pickProvisionPlatforms(email, catalog);
+    const selectable = catalog.filter((c) => c.login_method === "google" && !c.provisioned);
+    if (!selectable.length) {
+      showToast(t("provision.allDone"), "info");
+      return;
+    }
+    const checkedArr = await pickProvisionPlatforms(email, selectable);
     if (!checkedArr) return;
-    const checked = new Set(checkedArr);
-    const provisioned = new Set(catalog.filter((c) => c.provisioned).map((c) => c.platform));
-    const toAdd = [...checked].filter((p) => !provisioned.has(p));
-    const toRemove = [...provisioned].filter((p) => !checked.has(p));
-    if (!toAdd.length && !toRemove.length) {
-      showToast("\u6CA1\u6709\u53D8\u66F4", "info");
+    const toAdd = checkedArr;
+    if (!toAdd.length) {
+      showToast(t("provision.noChanges"), "info");
       return;
     }
     try {
-      if (toRemove.length) {
-        await invoke2("persona_remove_platforms", { personaId: id, platforms: toRemove });
-      }
-      if (toAdd.length) {
-        showToast(`\u6B63\u5728\u7528 ${email} \u5F00\u901A ${toAdd.length} \u4E2A\u5E73\u53F0\u2026\uFF08\u9010\u4E2A\u8DD1\uFF0C\u8BF7\u8010\u5FC3\u7B49\uFF09`, "info");
-        const msg = await invoke2("persona_provision_all", { personaId: id, platforms: toAdd });
-        showToast("" + msg, "success");
-      } else {
-        showToast(`\u5DF2\u79FB\u9664 ${toRemove.length} \u4E2A\u5E73\u53F0\u8D26\u53F7`, "success");
-      }
+      showToast(tf("provision.provisioning", { email, n: toAdd.length }), "info");
+      const msg = await invoke2("persona_provision_all", { personaId: id, platforms: toAdd });
+      showToast("" + msg, "success");
       await loadAccounts();
     } catch (e) {
       showToast("" + e, "error");
+    }
+  };
+  window.personaAddAccounts = async function(id, email) {
+    let catalog;
+    try {
+      catalog = await invoke2("persona_platform_catalog", { personaId: id });
+    } catch (e) {
+      showToast(t("provision.loadFailed") + e, "error");
+      return;
+    }
+    const candidates = catalog.filter((c) => (c.login_method === "phone" || c.login_method === "password") && !c.provisioned);
+    if (!candidates.length) {
+      showToast(t("addacct.none"), "info");
+      return;
+    }
+    const entries = await pickAddAccounts(email, candidates);
+    if (!entries) return;
+    if (!entries.length) {
+      showToast(t("addacct.nothing"), "info");
+      return;
+    }
+    try {
+      for (const e of entries) {
+        const created = await invoke2("add_account", { platform: e.platform, username: e.username, password: e.password || "" });
+        if (created?.id) {
+          try {
+            await invoke2("set_account_persona", { accountId: created.id, personaId: id });
+          } catch {
+          }
+        }
+      }
+      showToast(tf("addacct.added", { n: entries.length }), "success");
+      await loadAccounts();
+    } catch (e) {
+      showToast(t("addacct.addFailed") + e, "error");
     }
   };
   window.personaGmailLogin = async function(id) {
@@ -1884,20 +2201,15 @@
     }
   };
   window.deletePersonaAcct = async function(id, email) {
-    if (!await uiConfirm(`\u5220\u9664\u8EAB\u4EFD ${email}\uFF1F
-\u4F1A\u5220\u6389\u5B83\u7684\u72EC\u7ACB\u6D4F\u89C8\u5668\u5E76\u91CA\u653E\u51FA\u53E3\u8282\u70B9\uFF1B\u540D\u4E0B\u8D26\u53F7\u4F1A\u53D8\u6210\u300C\u672A\u5F52\u5C5E\u300D\u3002`)) return;
+    if (!await uiConfirm(tf("persona.deleteConfirm", { email }))) return;
     try {
       await invoke2("persona_delete", { id });
-      showToast("\u8EAB\u4EFD\u5DF2\u5220\u9664", "success");
+      showToast(t("persona.deleted"), "success");
       await loadAccounts();
     } catch (e) {
-      showToast("\u5220\u9664\u5931\u8D25\uFF1A" + e, "error");
+      showToast(t("persona.deleteFailed") + e, "error");
     }
   };
-  function personaSelectOptions(selectedId) {
-    const opts = personasCache.map((p) => `<option value="${p.id}" ${p.id === selectedId ? "selected" : ""}>${escapeHtml(p.email)}</option>`).join("");
-    return `<option value="">\u672A\u5F52\u5C5E\uFF08\u7528\u5168\u5C40 Profile\uFF09</option>${opts}`;
-  }
   function renderAccountCard(account) {
     {
       const getProfileForAccount = (accountId) => browserProfiles.find((p) => p.account_id === accountId);
@@ -1956,11 +2268,8 @@
         </div>
         <div class="account-username text-muted" style="font-size:13px;">${escapeHtml(account.username || account.email || "N/A")}</div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <label class="text-muted" style="font-size:12px;">\u5F52\u5C5E\u8EAB\u4EFD</label>
-          <select class="select select-small" onchange="setAccountPersona('${account.id}', this.value)" style="width:auto;min-width:200px;">
-            ${personaSelectOptions(account.persona_id)}
-          </select>
           ${personaBadge}
+          ${account.login_method !== "google" ? `<button class="btn btn-small btn-secondary" onclick="transferAccountPersona('${account.id}','${escapeHtml(account.persona_id || "")}')" title="\u628A\u8FD9\u4E2A\u8D26\u53F7\u6539\u6302\u5230\u522B\u7684 Gmail \u8EAB\u4EFD\u4E0B">\u{1F504} ${escapeHtml(t("transfer.btn"))}</button>` : ""}
           ${nurtureStats}
         </div>
         ${todayProgress}
@@ -2010,6 +2319,57 @@
     } catch (error) {
       showToast("" + error, "error");
     }
+  };
+  window.transferAccountPersona = function(accountId, currentPersonaId) {
+    const overlay = document.createElement("div");
+    overlay.className = "modal active";
+    const optionRow = (id, label) => {
+      const isCur = (id || "") === (currentPersonaId || "");
+      return `<button class="email-tab ${isCur ? "active" : ""}" data-pid="${escapeHtml(id)}" style="width:100%;justify-content:space-between;max-width:none;">
+      <span style="overflow:hidden;text-overflow:ellipsis;">${escapeHtml(label)}</span>${isCur ? `<span style="font-size:11px;opacity:.85;margin-left:8px;">${escapeHtml(t("transfer.current"))}</span>` : ""}
+    </button>`;
+    };
+    const rows = [
+      ...personasCache.map((p) => optionRow(p.id, `\u{1F4E7} ${p.email}`)),
+      optionRow("", `\u{1F9E9} ${t("transfer.unassigned")}`)
+    ].join("");
+    overlay.innerHTML = `
+    <div class="modal-content" style="max-width:460px;display:flex;flex-direction:column;">
+      <div class="modal-header"><h3>${escapeHtml(t("transfer.title"))}</h3><button class="modal-close" data-cancel>&times;</button></div>
+      <div class="modal-body" style="overflow:auto;">
+        <div class="text-muted" style="font-size:12px;margin-bottom:8px;">${escapeHtml(t("transfer.hint"))}</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">${rows}</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-cancel>${escapeHtml(t("provision.cancel"))}</button>
+      </div>
+    </div>`;
+    let done = false;
+    const close = () => {
+      if (done) return;
+      done = true;
+      overlay.remove();
+    };
+    overlay.querySelectorAll("[data-cancel]").forEach((el) => el.addEventListener("click", close));
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) close();
+    });
+    overlay.querySelectorAll("button[data-pid]").forEach((btn) => btn.addEventListener("click", async () => {
+      const pid = btn.getAttribute("data-pid") || "";
+      if (pid === (currentPersonaId || "")) {
+        close();
+        return;
+      }
+      close();
+      try {
+        await invoke2("set_account_persona", { accountId, personaId: pid || null });
+        showToast(t("transfer.done"), "success");
+        await loadAccounts();
+      } catch (error) {
+        showToast(t("transfer.failed") + error, "error");
+      }
+    }));
+    document.body.appendChild(overlay);
   };
   window.startWarmup = async function(accountId) {
     try {
@@ -2173,7 +2533,7 @@
     const username = document.getElementById("accountUsername")?.value;
     const password = document.getElementById("accountPassword")?.value;
     if (!platform || !username) {
-      showToast("Platform and username are required", "error");
+      showToast(t("accounts.requiredFields"), "error");
       return;
     }
     try {
@@ -2191,17 +2551,17 @@
       showToast(t("msg.accountAdded"), "success");
     } catch (error) {
       console.error("Failed to save account:", error);
-      showToast("Failed to save account", "error");
+      showToast(t("accounts.saveFailed"), "error");
     }
   }
   window.deleteAccount = async function(id) {
-    if (!await uiConfirm("Delete this account?")) return;
+    if (!await uiConfirm(t("accounts.deleteConfirm"))) return;
     try {
       await invoke2("delete_account", { id });
       await loadAccounts();
       showToast(t("msg.accountDeleted"), "success");
     } catch (error) {
-      showToast("Failed to delete account", "error");
+      showToast(t("accounts.deleteFailed"), "error");
     }
   };
   async function loadBrowserProfiles() {

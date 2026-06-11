@@ -971,7 +971,25 @@ struct PlatformCatalogItem {
     scene: String,
     region: String,
     mode: String,
+    /// 登录方式：google(Gmail/Google 一键) | phone(手机号验证码) | password(账号密码)。
+    /// 用于区分开通/登录流程：google 可自动；phone/password 多需手动。
+    login_method: String,
     provisioned: bool,
+}
+
+/// 平台登录方式标注。优先 google(凡支持 Google OAuth 者)；其余按手机号 / 账号密码区分。
+/// 单一事实来源：google 由 PlatformConfig.google_oauth 推导，phone 为手机验证码主导平台。
+fn platform_login_method(platform: &str, google_oauth: bool) -> &'static str {
+    if google_oauth {
+        return "google";
+    }
+    match platform.to_lowercase().as_str() {
+        // 手机号 + 短信验证码为主的平台
+        "zhihu" | "weibo" | "sspai" | "jike" | "okjike" | "xiaohongshu" | "redbook" | "csdn"
+        | "telegram" => "phone",
+        // 其余以账号密码登录（hackernews / facebook / oschina / naver_blog / vk 等）
+        _ => "password",
+    }
 }
 
 /// 返回某身份的平台开通目录：全部 29 个平台 + 该身份是否已开通(登录态 healthy)。
@@ -982,7 +1000,10 @@ fn persona_platform_catalog(state: State<AppState>, persona_id: String) -> Resul
     let mut out = Vec::with_capacity(PLATFORM_KEYS.len());
     for &p in PLATFORM_KEYS {
         let meta = match platform_meta(p) { Some(m) => m, None => continue };
-        let name = get_platform_config(p).map(|c| c.name.to_string()).unwrap_or_else(|| p.to_string());
+        let cfg = get_platform_config(p);
+        let name = cfg.as_ref().map(|c| c.name.to_string()).unwrap_or_else(|| p.to_string());
+        let google_oauth = cfg.as_ref().map(|c| c.google_oauth).unwrap_or(false);
+        let login_method = platform_login_method(p, google_oauth).to_string();
         // 已开通 = 该身份下已存在这个平台的账号行（不要求 health_status，用户选定）
         let provisioned: bool = conn.query_row(
             "SELECT 1 FROM accounts WHERE persona_id=?1 AND platform=?2 LIMIT 1",
@@ -995,6 +1016,7 @@ fn persona_platform_catalog(state: State<AppState>, persona_id: String) -> Resul
             scene: meta.scene.to_string(),
             region: meta.region.to_string(),
             mode: meta.mode.to_string(),
+            login_method,
             provisioned,
         });
     }
@@ -2634,6 +2656,8 @@ pub struct Account {
     pub persona_id: Option<String>,      // 所属身份(Gmail)
     #[serde(default)]
     pub persona_email: Option<String>,   // 所属身份的 Gmail（展示用）
+    #[serde(default)]
+    pub login_method: Option<String>,    // google | phone | password（判断是否可转移归属）
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -3877,9 +3901,12 @@ fn list_accounts(state: State<AppState>) -> Result<Vec<Account>, String> {
         .map_err(|e| e.to_string())?;
 
     let accounts = stmt.query_map([], |row| {
+        let platform: String = row.get(1)?;
+        let google = get_platform_config(&platform).map(|c| c.google_oauth).unwrap_or(false);
+        let login_method = Some(platform_login_method(&platform, google).to_string());
         Ok(Account {
             id: row.get(0)?,
-            platform: row.get(1)?,
+            platform,
             username: row.get(2)?,
             email: row.get(3)?,
             status: row.get(4)?,
@@ -3890,6 +3917,7 @@ fn list_accounts(state: State<AppState>) -> Result<Vec<Account>, String> {
             last_nurture_at: row.get(9)?,
             persona_id: row.get(10)?,
             persona_email: row.get(11)?,
+            login_method,
         })
     }).map_err(|e| e.to_string())?;
 
@@ -3918,6 +3946,8 @@ fn add_account(state: State<AppState>, platform: String, username: String, passw
         params![id, platform, username, password, created_at],
     ).map_err(|e| e.to_string())?;
 
+    let google = get_platform_config(&platform).map(|c| c.google_oauth).unwrap_or(false);
+    let login_method = Some(platform_login_method(&platform, google).to_string());
     Ok(Account {
         id,
         platform,
@@ -3931,6 +3961,7 @@ fn add_account(state: State<AppState>, platform: String, username: String, passw
         last_nurture_at: None,
         persona_id: None,
         persona_email: None,
+        login_method,
     })
 }
 
@@ -9697,11 +9728,11 @@ async fn get_available_browser_profiles() -> Result<Vec<serde_json::Value>, Stri
             .map(|p| {
                 let name = p.get("name").and_then(|n| n.as_str()).unwrap_or("Unknown");
                 let path = p.get("path").and_then(|n| n.as_str()).unwrap_or("");
-                // Extract profile ID from path (last segment after Profile_)
+                // Extract profile ID = path 末段文件夹名（兼容 / 与 \ 两种分隔符，
+                // 与 personas.profile_id / accounts.profile_id 保持一致，#6 才能映射出可读名）
                 let profile_id = path
-                    .split('\\')
-                    .last()
-                    .or_else(|| path.split('/').last())
+                    .rsplit(|c| c == '/' || c == '\\')
+                    .find(|s| !s.is_empty())
                     .unwrap_or(path);
 
                 log::info!("[PROFILES] Profile: {} -> {}", name, profile_id);
@@ -12593,7 +12624,36 @@ fn open_profile_window(profile_path: &str, url: &str) -> Result<(), String> {
     Ok(())
 }
 
+/// 若该 profile 的浏览器【已经打开】，复用它的一个标签页导航到 url（避免重复开窗）。
+/// 找不到该 profile 的已开标签则返回 Err，调用方据此回退到新开窗口逻辑。
+/// 复用优先级：about:blank 空白页 > 当前激活页 > 第一个标签——尽量不覆盖用户正在用的登录页。
+fn navigate_existing_profile_tab(profile_path: &str, url: &str) -> Result<(), String> {
+    let client = get_blocking_client();
+    let resp = client.get(format!("{}/tabs", UNZOO_API_BASE)).send()
+        .map_err(|e| format!("查标签失败: {}", e))?;
+    let v: serde_json::Value = resp.json().map_err(|e| format!("解析标签失败: {}", e))?;
+    let tabs = v.get("data").and_then(|d| d.get("tabs")).or_else(|| v.get("tabs"))
+        .and_then(|x| x.as_array()).ok_or("无标签数据")?;
+    // 只看属于这个 profile 的标签（profile_path 精确匹配）
+    let mine: Vec<&serde_json::Value> = tabs.iter()
+        .filter(|t| t.get("profile_path").and_then(|p| p.as_str()) == Some(profile_path))
+        .collect();
+    if mine.is_empty() { return Err("该 profile 浏览器未打开".into()); }
+    let pick = mine.iter().copied().find(|t| t.get("url").and_then(|u| u.as_str()) == Some("about:blank"))
+        .or_else(|| mine.iter().copied().find(|t| t.get("active").and_then(|a| a.as_bool()) == Some(true)))
+        .or_else(|| mine.iter().copied().next())
+        .ok_or("无可复用标签")?;
+    let tab_id = pick.get("tab_id").cloned().ok_or("标签无 id")?;
+    let r = client.post(format!("{}/navigate", UNZOO_API_BASE))
+        .json(&serde_json::json!({"tab_id": tab_id, "url": url})).send()
+        .map_err(|e| format!("导航失败: {}", e))?;
+    if r.status().is_success() { Ok(()) } else { Err(format!("导航 HTTP {}", r.status())) }
+}
+
+const GMAIL_LOGIN_URL: &str = "https://accounts.google.com/signin/v2/identifier?flowName=GlifWebSignIn";
+
 /// 打开某个身份的浏览器到 Google 登录页（让用户补登/重登该身份的 Gmail）。
+/// 优先复用该 profile 已打开的浏览器窗口；没开过才新开一套窗口。
 #[tauri::command]
 async fn persona_open_gmail_login(app: AppHandle, persona_id: String) -> Result<String, String> {
     let (email, profile_id): (String, Option<String>) = {
@@ -12606,7 +12666,17 @@ async fn persona_open_gmail_login(app: AppHandle, persona_id: String) -> Result<
     };
     let pid = profile_id.ok_or("该身份没有 profile")?;
     let path = resolve_profile_path(&pid).await.ok_or("找不到该身份的 profile 路径")?;
-    tauri::async_runtime::spawn_blocking(move || open_profile_window(&path, "https://accounts.google.com/signin/v2/identifier?flowName=GlifWebSignIn"))
+
+    // ① 先尝试复用已打开的浏览器（导航现有标签）
+    let reuse_path = path.clone();
+    let reused = tauri::async_runtime::spawn_blocking(move || navigate_existing_profile_tab(&reuse_path, GMAIL_LOGIN_URL))
+        .await.map_err(|e| e.to_string())?;
+    if reused.is_ok() {
+        return Ok(format!("已在 {} 已打开的浏览器里跳到 Google 登录页（复用现有窗口）", email));
+    }
+
+    // ② 没有已打开的窗口 → 走原逻辑新开一套
+    tauri::async_runtime::spawn_blocking(move || open_profile_window(&path, GMAIL_LOGIN_URL))
         .await.map_err(|e| e.to_string())??;
     Ok(format!("已打开 {} 的浏览器到 Google 登录页，请在窗口里登录这个 Gmail", email))
 }
